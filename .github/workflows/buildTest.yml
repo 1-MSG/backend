@@ -31,8 +31,4 @@ jobs:
         run: |
           chmod +x ./gradlew
           ./gradlew build --no-daemon
-      - uses: actions/upload-artifact@v3
-        if: success() || failure()
-        with:
-          name: test-results
-          reporter: 'java-junit'
+
