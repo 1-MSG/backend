@@ -28,7 +28,5 @@ jobs:
           DB_ADDRESS: ${{ secrets.DB_ADDRESS }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        run: |
-          chmod +x ./gradlew
-          ./gradlew build --no-daemon
+        run: ./gradlew build
 
