@@ -1,0 +1,146 @@
+name: Deploy Containers
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  push-changed-image:
+    runs-on: ubuntu-latest
+    outputs:
+      spring-changed: ${{ steps.spring-check.outputs.changed }}
+      redis-changed: ${{ steps.redis-check.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Copy docker-compose File via ssh key
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          port: ${{ secrets.PORT }}
+          password: ${{ secrets.KEY }}
+          source: "docker-compose.yml"
+          target: '/home/ubuntu/'
+          overwrite: true
+
+      - name: Check for changes in a Spring file
+        id: spring-check
+        run: |
+          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep 'src'; then
+            echo "::set-output name=changed::true"
+          else
+            echo "::set-output name=changed::false"
+          fi
+
+      - name: Check for changes in a Redis file
+        id: redis-check
+        run: |
+          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | \
+          grep -E 'data/redis.conf|Dockerfile_redis'; then
+            echo "::set-output name=changed::true"
+          else
+            echo "::set-output name=changed::false"
+          fi
+
+  recreate-spring-image:
+    needs: push-changed-image
+    if: needs.push-changed-image.outputs.spring-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recreate Spring Image
+        run: echo "변경점이 있기 때문에 재배포를 시작합니다."
+
+      - name: Checkout action
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build and push - spring
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile_spring
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/msg_spring:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  recreate-redis-image:
+    needs: push-changed-image
+    if: needs.push-changed-image.outputs.redis-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recreate Redis Image
+        run: echo "변경점이 있기 때문에 재배포를 시밋작합니다."
+
+      - name: Checkout action
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build and push - redis
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile_redis
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/msg_redis:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  pull-and-deploy:
+    runs-on: ubuntu-latest
+    needs: [ push-changed-image,recreate-spring-image,recreate-redis-image ]
+    if: always()
+    steps:
+      - name: executing remote ssh commands using key
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          REDIS_DB_ADDRESS: ${{ secrets.REDIS_DB_ADDRESS }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}
+          DB_ADDRESS: ${{ secrets.DB_ADDRESS }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          envs: DOCKER_HUB_ACCESS_TOKEN,DOCKER_HUB_USERNAME,REDIS_DB_ADDRESS,REDIS_PORT,DB_ADDRESS,DB_USER,DB_PASSWORD,SECRET_KEY
+          script: |
+            cd /home/ubuntu
+            export DOCKER_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }}
+            export REDIS_DB_ADDRESS=$REDIS_DB_ADDRESS
+            export REDIS_PORT=$REDIS_PORT
+            export DB_ADDRESS=$DB_ADDRESS
+            export DB_USER=$DB_USER
+            export DB_PASSWORD=$DB_PASSWORD
+            docker-compose down
+            echo $DOCKER_HUB_ACCESS_TOKEN | docker login -u $DOCKER_HUB_USERNAME --password-stdin
+            docker pull $DOCKER_HUB_USERNAME/msg_redis:latest
+            docker pull $DOCKER_HUB_USERNAME/msg_spring:latest
+            docker-compose up -d

@@ -1,16 +1,19 @@
 spring:
   datasource:
-    url: jdbc:mysql://3.37.89.84:3306/ssg
-    username: root
-    password: msg0417
+    url: ${DB_ADDRESS}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         format_sql: true
+  data:
+    redis:
+      host: ${REDIS_DB_ADDRESS}
+      port: ${REDIS_PORT}
 
 
 logging:
@@ -19,7 +22,7 @@ logging:
     p6spy: info
 
 springdoc:
-  packages-to-scan: com.spharos.msg
+  packages-to-scan: spharos.msg
   default-consumes-media-type: application/json;charset=UTF-8
   default-produces-media-type: application/json;charset=UTF-8
   swagger-ui:
@@ -35,3 +38,11 @@ springdoc:
       enabled: true
   cache:
     disabled: true
+
+JWT:
+  SECRET_KEY: ${SECRET_KEY}
+  access-token-expiration: 3000000
+  refresh-token-expiration: 8640000
+
+server:
+  port: 8282

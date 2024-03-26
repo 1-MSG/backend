@@ -1,0 +1,23 @@
+version: '3.7'
+services:
+  redis:
+    image: ${DOCKER_USERNAME}/msg_redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  spring:
+    depends_on: [ redis ]
+    image: ${DOCKER_USERNAME}/msg_spring:latest
+    restart: always
+    container_name: spring
+    environment:
+      REDIS_DB_ADDRESS: ${REDIS_DB_ADDRESS}
+      REDIS_PORT: ${REDIS_PORT}
+      DB_ADDRESS: ${DB_ADDRESS}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      SECRET_KEY: ${SECRET_KEY}
+    ports:
+      - "8282:8282"
