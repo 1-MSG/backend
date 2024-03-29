@@ -2,6 +2,7 @@ package spharos.msg.domain.review.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ import java.math.BigDecimal;
 @Getter
 @NoArgsConstructor
 public class Review extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
@@ -42,7 +44,9 @@ public class Review extends BaseEntity {
     private Product product;
 
     @Builder
-    public Review(String reviewComment, BigDecimal reviewStar, Long userId, OrderDetail orderDetail, Product product) {
+    public Review(Long id, String reviewComment, BigDecimal reviewStar, Long userId,
+        OrderDetail orderDetail, Product product) {
+        this.id = id;
         this.reviewComment = reviewComment;
         this.reviewStar = reviewStar;
         this.userId = userId;

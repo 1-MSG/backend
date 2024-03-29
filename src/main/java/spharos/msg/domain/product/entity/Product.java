@@ -57,6 +57,10 @@ public class Product extends BaseEntity {
 
     @NotNull
     @Column(columnDefinition = "integer default 0")
+    private Integer deliveryFee;
+
+    @NotNull
+    @Column(columnDefinition = "integer default 0")
     private Integer minDeliveryFee;
 
     @NotNull

@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import spharos.msg.domain.product.dto.ProductDetailInfoDto;
 import spharos.msg.domain.product.service.ProductService;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.ErrorStatus;
@@ -41,6 +40,8 @@ public class ProductController {
             ErrorStatus.PRODUCT_ERROR.getMessage(), null);
     }
 
+    @Operation(summary = "상품 상세 조회",
+        description = "개별 상품에 대한 상세 정보를 조회합니다")
     @GetMapping("/product/{productId}")
     public ApiResponse<?> getProductDetails(@PathVariable("productId") Long product_id) {
         return productService.getProductDetail(product_id);

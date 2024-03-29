@@ -10,10 +10,22 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    show-sql: true
   data:
     redis:
       host: ${REDIS_DB_ADDRESS}
       port: ${REDIS_PORT}
+  mail:
+    host: smtp.naver.com
+    port: 465
+    username: ${EMAIL_ID}
+    password: ${EMAIL_PW}
+    expiration: 180000
+    stringSize: 6
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.ssl.enable: true
+      mail.smtp.ssl.trust: smtp.naver.com
 
 
 logging:

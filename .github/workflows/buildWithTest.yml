@@ -30,4 +30,6 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           REDIS_DB_ADDRESS: ${{ secrets.REDIS_DB_ADDRESS }}
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
+          EMAIL_ID: ${{ secrets.EMAIL_ID }}
+          EMAIL_PW: ${{ secrets.EMAIL_PW }}
         run: ./gradlew build
