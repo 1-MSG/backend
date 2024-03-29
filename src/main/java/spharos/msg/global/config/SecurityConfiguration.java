@@ -28,10 +28,10 @@ public class SecurityConfiguration {
         return request -> {
             var cors = new org.springframework.web.cors.CorsConfiguration();
             cors.setAllowedOriginPatterns(List.of("*"));
-            cors.addAllowedHeader("https://sssg.shop:8282");
             cors.addAllowedHeader("*");
             cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
             cors.setAllowedHeaders(List.of("*"));
+            cors.setAllowCredentials(true);
             return cors;
         };
     }
