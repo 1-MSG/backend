@@ -28,7 +28,7 @@ public class SecurityConfiguration {
         return request -> {
             var cors = new org.springframework.web.cors.CorsConfiguration();
             cors.setAllowedOriginPatterns(List.of("*"));
-//            cors.addAllowedHeader("http://localhost:3000");
+            cors.addAllowedHeader("https://sssg.shop:8282");
             cors.addAllowedHeader("*");
             cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
             cors.setAllowedHeaders(List.of("*"));
@@ -37,7 +37,6 @@ public class SecurityConfiguration {
     }
 
     /**
-     *
      * cors 안되면 여기 봐야됨
      */
     @Bean
@@ -48,7 +47,8 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(
                 authorizeHttpRequests -> authorizeHttpRequests
                     // 허용 범위
-                    .requestMatchers("/api/v1/users/**", "/api/v1/oauth/**", "/swagger-ui/**", "/swagger-resources/**", "/api-docs/**")
+                    .requestMatchers("/api/v1/users/**", "/api/v1/oauth/**", "/swagger-ui/**",
+                        "/swagger-resources/**", "/api-docs/**")
                     .permitAll()
                     .requestMatchers("/api/v1/**").permitAll() //테스트용 주석 제거시, 모든 api 호출 가능.
                     .requestMatchers("/api/v1/oauth/**").permitAll() //테스트용 주석 제거시, 모든 api 호출 가능.
