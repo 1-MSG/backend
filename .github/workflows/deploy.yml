@@ -125,12 +125,14 @@ jobs:
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          EMAIL_ID: ${{ secrets.EMAIL_ID }}
+          EMAIL_PW: ${{ secrets.EMAIL_PW }}
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
-          envs: DOCKER_HUB_ACCESS_TOKEN,DOCKER_HUB_USERNAME,REDIS_DB_ADDRESS,REDIS_PORT,DB_ADDRESS,DB_USER,DB_PASSWORD,SECRET_KEY
+          envs: DOCKER_HUB_ACCESS_TOKEN,DOCKER_HUB_USERNAME,REDIS_DB_ADDRESS,REDIS_PORT,DB_ADDRESS,DB_USER,DB_PASSWORD,SECRET_KEY,EMAIL_ID,EMAIL_PW
           script: |
             cd /home/ubuntu
             export DOCKER_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }}
@@ -139,6 +141,8 @@ jobs:
             export DB_ADDRESS=$DB_ADDRESS
             export DB_USER=$DB_USER
             export DB_PASSWORD=$DB_PASSWORD
+            export EMAIL_ID=$EMAIL_ID
+            export EMAIL_PW=$EMAIL_PW
             docker-compose down
             echo $DOCKER_HUB_ACCESS_TOKEN | docker login -u $DOCKER_HUB_USERNAME --password-stdin
             docker pull $DOCKER_HUB_USERNAME/msg_redis:latest

@@ -16,8 +16,6 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    Optional<Product> findById(Long id);
-
     //카테고리 별 상품 반환
 //    @Query("SELECT cp.product FROM CategoryProduct cp WHERE cp.category.categoryName = :categoryName")
     @Query("SELECT cp.product FROM CategoryProduct cp WHERE cp.category.id IN (SELECT c.id FROM Category c WHERE c.categoryName = :categoryName OR c.parent.categoryName = :categoryName)")
