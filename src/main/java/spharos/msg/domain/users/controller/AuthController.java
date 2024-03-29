@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import spharos.msg.domain.users.dto.request.DuplicationCheckRequestDto;
 import spharos.msg.domain.users.dto.request.LoginRequestDto;
 import spharos.msg.domain.users.dto.request.SignUpRequestDto;
+import spharos.msg.domain.users.dto.response.FindIdOutDto;
 import spharos.msg.domain.users.dto.response.LoginOutDto;
 import spharos.msg.domain.users.dto.response.ReissueOutDto;
 import spharos.msg.domain.users.service.AuthService;
@@ -28,7 +30,6 @@ public class AuthController {
 
     private final AuthService authService;
 
-    //회원가입
     @Operation(summary = "통합회원가입", description = "통합회원 회원가입")
     @PostMapping("/signup/union")
     public ApiResponse<?> signUpUnion(@RequestBody SignUpRequestDto signUpRequestDto) {
@@ -36,7 +37,6 @@ public class AuthController {
         return ApiResponse.of(SuccessStatus.SIGN_UP_SUCCESS_UNION, null);
     }
 
-    //로그인
     @Operation(summary = "로그인", description = "통합회원 로그인")
     @PostMapping("/login/union")
     public ApiResponse<LoginOutDto> loginUnion(
@@ -46,7 +46,6 @@ public class AuthController {
         return ApiResponse.of(SuccessStatus.LOGIN_SUCCESS_UNION, login);
     }
 
-    //로그아웃
     @Operation(summary = "로그아웃", description = "로그인 회원 로그아웃")
     @DeleteMapping("/logout")
     public ApiResponse<?> logout(
@@ -56,7 +55,6 @@ public class AuthController {
         return ApiResponse.of(SuccessStatus.LOGOUT_SUCCESS, null);
     }
 
-    //토큰 재발급
     @Operation(summary = "Reissue Token", description = "Access Token 재발급")
     @GetMapping("/reissue")
     public ApiResponse<?> reissueToken(
@@ -66,7 +64,6 @@ public class AuthController {
         return ApiResponse.of(SuccessStatus.TOKEN_REISSUE_COMPLETE, reissueOutDto);
     }
 
-    //아이디 중복 확인
     @Operation(summary = "아이디 중복확인", description = "입력받은 아이디의 중복 여부를 확인합니다.")
     @PostMapping("/check-duplicate-id")
     public ApiResponse<?> duplicateCheckLoginId(
@@ -74,5 +71,12 @@ public class AuthController {
     ) {
         authService.duplicateCheckLoginId(duplicationCheckRequestDto);
         return ApiResponse.of(SuccessStatus.DUPLICATION_CHECK_SUCCESS, null);
+    }
+
+    @Operation(summary = "아이디 찾기", description = "입력받은 이메일로 로그인 아이디를 조회합니다.")
+    @GetMapping("/find-id")
+    public ApiResponse<?> findUserId(@RequestParam String email) {
+        FindIdOutDto loginUnionId = authService.findLoginUnionId(email);
+        return ApiResponse.of(SuccessStatus.FIND_LOGIN_ID_SUCCESS, loginUnionId);
     }
 }
