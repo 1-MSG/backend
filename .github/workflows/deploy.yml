@@ -1,7 +1,7 @@
 name: Deploy Containers
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main" ] 
 
 jobs:
   push-changed-image:
