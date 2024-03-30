@@ -104,7 +104,7 @@ public class OrderService {
     private PriceInfo createPriceInfo(OrderDto o) {
         Product product = findProductByOption(o.getProductOptionId());
         return new PriceInfo(
-            product.getBrand().getMinDeliveryFee(),
+            product.getBrand().getMinDeliveryFee(), //엔티티 변경으로 임의 수정하였습니다.
             product.getProductPrice(),
             getDiscountPrice(product));
     }
