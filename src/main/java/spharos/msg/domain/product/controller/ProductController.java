@@ -56,4 +56,11 @@ public class ProductController {
     public ApiResponse<ProductResponse.ProductImage> getProductImage(@PathVariable("productId") Long product_id) {
         return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductImage(product_id));
     }
+
+    @Operation(summary = "상품 상세 html 조회",
+        description = "특정 상품에 대한 상품 상세 정보 html을 반환합니다")
+    @GetMapping("/product/{productId}/detail")
+    public ApiResponse<String> getProductDetail(@PathVariable("productId") Long product_id) {
+        return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductDetail(product_id));
+    }
 }

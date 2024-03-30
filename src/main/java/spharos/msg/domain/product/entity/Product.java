@@ -65,6 +65,10 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "product_sales_info_id")
     private ProductSalesInfo productSalesInfo;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_info_detail_id")
+    private ProductInfoDetail productInfoDetail;
+
     @Builder.Default
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CategoryProduct> categoryProducts = new ArrayList<>();

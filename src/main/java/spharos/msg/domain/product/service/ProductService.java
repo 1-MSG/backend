@@ -118,47 +118,12 @@ public class ProductService {
             .build();
     }
 
-    //product를 ProductInfo 형식으로 매핑하는 메서드
-//    private ProductResponse.ProductInfo mapToProductInfoDto(Product product) {
-//        return ProductResponse.ProductInfo.builder()
-//            .productId(product.getId())
-//            .productName(product.getProductName())
-//            .productPrice(product.getProductPrice())
-//            .discountRate(product.getDiscountRate())
-//            .build();
-//    }
+    //id로 상품 상세 html 불러오기
+    @Transactional
+    public String getProductDetail(Long productId) {
+        Product product = productRepository.findById(productId).orElseThrow(()-> new NotFoundException(productId+"해당 상품을 찾을 수 없음"));
 
-    private List<ProductDetailReponse.OptionDetail> convertOptions(List<ProductOption> productOptions) {
-        return productOptions.stream().map(productOption -> {
-            String optionColor = productOption.getOptionColor() != null ? productOption.getOptionColor().getProductColor() : null;
-            String optionSize = productOption.getOptionSize() != null ? productOption.getOptionSize().getProductSize() : null;
-            String optionEtc = productOption.getOptionEtc() != null ? productOption.getOptionEtc().getProductEtc() : null;
-
-            return ProductDetailReponse.OptionDetail.builder()
-                .optionId(productOption.getProductOptionId())
-                .optionColor(optionColor)
-                .optionSize(optionSize)
-                .optionEtc(optionEtc)
-                .build();
-        }).toList();
-    }
-
-    private List<ProductDetailReponse.ReviewDetail> convertReviews(List<Review> productReviews) {
-        return productReviews.stream().map(productReview -> {
-                // 상품 리뷰로 상품 리뷰 이미지들 불러와서 리스트로 변환
-                List<ReviewImage> reviewImages = reviewImageRepository.findByReview(productReview);
-                List<String> reviewImageUrls = reviewImages.stream().map(ReviewImage::getReviewImageUrl).toList();
-                // 최종적으로 리뷰 객체 매핑
-                return ProductDetailReponse.ReviewDetail.builder()
-                    .reviewId(productReview.getId())
-                    .reviewStar(productReview.getReviewStar())
-                    .reviewCreated(productReview.getCreatedAt())
-                    .reviewContent(productReview.getReviewComment())
-                    .reviewer(productReview.getUserId().toString())
-                    .reviewImgUrlList(reviewImageUrls)
-                    .build();
-            }
-        ).toList();
+        return product.getProductInfoDetail().getProductInfoDetailContent();
     }
 
     private Integer getDiscountedPrice(Integer price, BigDecimal discountRate){
