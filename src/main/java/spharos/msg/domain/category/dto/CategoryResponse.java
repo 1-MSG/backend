@@ -30,18 +30,18 @@ public class CategoryResponse {
     @Builder
     @Getter
     @ToString
-    public static class CategoryProductDto {
+    public static class CategoryProductDtos {
 
         @JsonProperty("isLast")
         Boolean isLast = false;
-        List<CategoryProductDetail> categoryProducts;
+        List<CategoryProductDto> categoryProducts;
     }
 
     @NoArgsConstructor
     @Getter
     @ToString
     @AllArgsConstructor
-    public static class CategoryProductDetail {
+    public static class CategoryProductDto {
 
         Long productId;
     }
