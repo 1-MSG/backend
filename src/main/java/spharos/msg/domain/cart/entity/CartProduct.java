@@ -26,6 +26,16 @@ public class CartProduct extends BaseEntity {
     @NotNull
     private Boolean cartIsChecked;
 
+    @Column(columnDefinition = "boolean default false")
+    @NotNull
+    private Boolean cartIsPinned;
+
+    @Column(name = "brand_id")
+    private Long brandId;
+
+    @Column(name = "product_id")
+    private Long productId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Users users;
@@ -38,6 +48,7 @@ public class CartProduct extends BaseEntity {
     public CartProduct(Long id, Integer cartProductQuantity, Boolean cartIsChecked, Users users, ProductOption productOption) {
         this.id = id;
         this.cartProductQuantity = cartProductQuantity;
+        this.cartIsPinned = getCartIsPinned();
         this.cartIsChecked = cartIsChecked;
         this.users = users;
         this.productOption = productOption;
