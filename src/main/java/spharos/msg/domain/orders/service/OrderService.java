@@ -104,7 +104,7 @@ public class OrderService {
     private PriceInfo createPriceInfo(OrderDto o) {
         Product product = findProductByOption(o.getProductOptionId());
         return new PriceInfo(
-            product.getMinDeliveryFee(),
+            product.getBrand().getMinDeliveryFee(),
             product.getProductPrice(),
             getDiscountPrice(product));
     }

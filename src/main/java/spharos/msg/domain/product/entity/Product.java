@@ -50,19 +50,8 @@ public class Product extends BaseEntity {
     private Boolean isDeleted;
 
     @NotNull
-    private String productBrand;
-
-    @NotNull
-    @Column(columnDefinition = "integer default 0")
-    private Short defaultImageIndex;
-
-    @NotNull
     @Column(columnDefinition = "integer default 0")
     private Integer deliveryFee;
-
-    @NotNull
-    @Column(columnDefinition = "integer default 0")
-    private Integer minDeliveryFee;
 
     @NotNull
     @Column(columnDefinition = "decimal default 0.0")
