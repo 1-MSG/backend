@@ -42,15 +42,17 @@ public enum ErrorStatus implements BaseErrorCode {
     NOT_EXIST_PRODUCT(HttpStatus.NOT_FOUND, "PRODUCT601", "존재하지 않는 상품입니다."),
 
 
-    ALREADY_HAD_COUPON(HttpStatus.FORBIDDEN,"COUPON701","이미 보유중인 쿠폰입니다."),
-    ALREADY_USED_COUPON(HttpStatus.FORBIDDEN,"COUPON701","이미 사용한 쿠폰입니다."),
-    NOT_CART_OWNER(HttpStatus.FORBIDDEN,"CART801","장바구니 주인이 아닙니다."),
+    ALREADY_HAD_COUPON(HttpStatus.FORBIDDEN, "COUPON701", "이미 보유중인 쿠폰입니다."),
+    ALREADY_USED_COUPON(HttpStatus.FORBIDDEN, "COUPON701", "이미 사용한 쿠폰입니다."),
+    NOT_CART_OWNER(HttpStatus.FORBIDDEN, "CART801", "장바구니 주인이 아닙니다."),
 
-    REVIEW_SAVE_FAIL(HttpStatus.BAD_REQUEST, "REVIEW400","상품 리뷰 작성 실패"),
-    REVIEW_UPDATE_FAIL(HttpStatus.BAD_REQUEST, "REVIEW400","상품 리뷰 수정 실패"),
-    REVIEW_DELETE_FAIL(HttpStatus.BAD_REQUEST,"REVIEW400","상품 리뷰 삭제 실패"),
-    REVIEW_READ_FAIL(HttpStatus.BAD_REQUEST, "REVIEW400","상품 리뷰 조회 실패"),
-    EXAMPLE_EXCEPTION(HttpStatus.BAD_REQUEST, "EXAMPLE400", "샘플 에러 메시지입니다");
+    REVIEW_SAVE_FAIL(HttpStatus.BAD_REQUEST, "REVIEW400", "상품 리뷰 작성 실패"),
+    REVIEW_UPDATE_FAIL(HttpStatus.BAD_REQUEST, "REVIEW400", "상품 리뷰 수정 실패"),
+    REVIEW_DELETE_FAIL(HttpStatus.BAD_REQUEST, "REVIEW400", "상품 리뷰 삭제 실패"),
+    REVIEW_READ_FAIL(HttpStatus.BAD_REQUEST, "REVIEW400", "상품 리뷰 조회 실패"),
+    EXAMPLE_EXCEPTION(HttpStatus.BAD_REQUEST, "EXAMPLE400", "샘플 에러 메시지입니다"),
+
+    CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY404", "하위 카테고리 조회 실패");
 
 
     private final HttpStatus httpStatus;

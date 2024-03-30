@@ -3,8 +3,8 @@ package spharos.msg.domain.product.service;
 import static spharos.msg.global.api.code.status.ErrorStatus.NOT_EXIST_PRODUCT;
 import static spharos.msg.global.api.code.status.SuccessStatus.PRODUCT_DETAIL_READ_SUCCESS;
 
-import jakarta.persistence.criteria.CriteriaBuilder.In;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,20 +15,15 @@ import org.springframework.stereotype.Service;
 import spharos.msg.domain.category.entity.CategoryProduct;
 import spharos.msg.domain.category.repository.CategoryProductRepository;
 import spharos.msg.domain.product.dto.ProductDetailReponse;
-import spharos.msg.domain.product.dto.ProductDetailReponse.ReviewDetail;
 import spharos.msg.domain.product.dto.ProductResponse;
-import spharos.msg.domain.product.entity.DeliveryFeeInfo;
 import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductDetailImage;
 import spharos.msg.domain.product.entity.ProductImage;
 import spharos.msg.domain.product.entity.ProductOption;
-import spharos.msg.domain.product.repository.DeliveryFeeInfoRepository;
 import spharos.msg.domain.product.repository.ProductDetailImageRepository;
 import spharos.msg.domain.product.repository.ProductImageRepository;
 import spharos.msg.domain.product.repository.ProductOptionRepository;
 import spharos.msg.domain.product.repository.ProductRepository;
-import java.util.List;
-import java.util.stream.Collectors;
 import spharos.msg.domain.review.entity.Review;
 import spharos.msg.domain.review.entity.ReviewImage;
 import spharos.msg.domain.review.repository.ReviewImageRepository;
@@ -112,11 +107,14 @@ public class ProductService {
             List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
             List<Review> productReviews = reviewRepository.findByProduct(product);
             List<ProductImage> productImages = productImageRepository.findByProduct(product);
-            List<ProductDetailImage> productDetailImages = productDetailImageRepository.findByProduct(product);
+            List<ProductDetailImage> productDetailImages = productDetailImageRepository.findByProduct(
+                product);
 
             //이미지 및 상세이미지들은 url이 담긴 리스트로 변환
-            List<String> imageUrls = productImages.stream().map(ProductImage::getProductImageUrl).toList();
-            List<String> detailImageUrls = productDetailImages.stream().map(ProductDetailImage::getProductDetailImageUrl).toList();
+            List<String> imageUrls = productImages.stream().map(ProductImage::getProductImageUrl)
+                .toList();
+            List<String> detailImageUrls = productDetailImages.stream()
+                .map(ProductDetailImage::getProductDetailImageUrl).toList();
 
             //옵션은 옵션 객체가 담긴 리스트로 변환
             List<ProductDetailReponse.OptionDetail> options = convertOptions(productOptions);
@@ -136,7 +134,8 @@ public class ProductService {
                     .productReviewCount(product.getProductSalesInfo().getReviewCount())
                     .discountRate(product.getDiscountRate())
                     .productOptions(options)
-                    .ProductCategoryName(categoryProduct.getCategory().getParent().getCategoryName())
+                    .ProductCategoryName(
+                        categoryProduct.getCategory().getParent().getCategoryName())
                     .ProductCategoryNameMid(categoryProduct.getCategory().getCategoryName())
                     .productImgUrlList(imageUrls)
                     .productDetailImgUrlList(detailImageUrls)
@@ -156,11 +155,18 @@ public class ProductService {
             .build();
     }
 
-    private List<ProductDetailReponse.OptionDetail> convertOptions(List<ProductOption> productOptions) {
+    private List<ProductDetailReponse.OptionDetail> convertOptions(
+        List<ProductOption> productOptions) {
         return productOptions.stream().map(productOption -> {
-            String optionColor = productOption.getOptionColor() != null ? productOption.getOptionColor().getProductColor() : null;
-            String optionSize = productOption.getOptionSize() != null ? productOption.getOptionSize().getProductSize() : null;
-            String optionEtc = productOption.getOptionEtc() != null ? productOption.getOptionEtc().getProductEtc() : null;
+            String optionColor =
+                productOption.getOptionColor() != null ? productOption.getOptionColor()
+                    .getProductColor() : null;
+            String optionSize =
+                productOption.getOptionSize() != null ? productOption.getOptionSize()
+                    .getProductSize() : null;
+            String optionEtc =
+                productOption.getOptionEtc() != null ? productOption.getOptionEtc().getProductEtc()
+                    : null;
 
             return ProductDetailReponse.OptionDetail.builder()
                 .optionId(productOption.getProductOptionId())
@@ -175,7 +181,8 @@ public class ProductService {
         return productReviews.stream().map(productReview -> {
                 // 상품 리뷰로 상품 리뷰 이미지들 불러와서 리스트로 변환
                 List<ReviewImage> reviewImages = reviewImageRepository.findByReview(productReview);
-                List<String> reviewImageUrls = reviewImages.stream().map(ReviewImage::getReviewImageUrl).toList();
+                List<String> reviewImageUrls = reviewImages.stream().map(ReviewImage::getReviewImageUrl)
+                    .toList();
                 // 최종적으로 리뷰 객체 매핑
                 return ProductDetailReponse.ReviewDetail.builder()
                     .reviewId(productReview.getId())

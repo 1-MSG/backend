@@ -31,7 +31,7 @@ public enum SuccessStatus implements BaseCode {
     LIKES_SUCCESS(HttpStatus.CREATED, "LIKES201", "좋아요 등록 성공"),
     LIKES_DELETE_SUCCESS(HttpStatus.CREATED, "LIKES200", "좋아요 해제 성공"),
     LIKES_LIST_GET_SUCCESS(HttpStatus.CREATED, "LIKES200", "좋아요 목록 조회 성공"),
-    LIKES_GET_SUCCESS(HttpStatus.OK,"LIKES200","좋아요 유무 조회 성공") ,
+    LIKES_GET_SUCCESS(HttpStatus.OK, "LIKES200", "좋아요 유무 조회 성공"),
 
     COUPON_LIST_GET_SUCCESS(HttpStatus.OK, "COUPON501", "다운 가능 쿠폰 목록 조회 성공"),
     COUPON_DOWNLOAD_SUCCESS(HttpStatus.OK, "COUPON502", "쿠폰 다운로드 성공"),
@@ -46,9 +46,12 @@ public enum SuccessStatus implements BaseCode {
 
     SEARCH_RESULT_SUCCESS(HttpStatus.OK, "SEARCH200", "검색 결과 조회 성공"),
     SEARCH_INPUT_SUCCESS(HttpStatus.OK, "SEARCH201", "키워드 조회 성공"),
-  
-    REVIEW_READ_SUCCESS(HttpStatus.OK, "REVIEW200","상품 리뷰 조회 성공");
-  
+
+    CATEGORY_LIST_SUCCESS(HttpStatus.OK, "CATEGORY200", "카테고리 목록 조회 성공"),
+    CATEGORY_PRODUCT_SUCCESS(HttpStatus.OK, "CATEGORY201", "카테고리별 상품 조회 성공"),
+
+    REVIEW_READ_SUCCESS(HttpStatus.OK, "REVIEW200", "상품 리뷰 조회 성공");
+
     private final HttpStatus httpStatus;
     private final String status;
     private final String message;
