@@ -77,4 +77,21 @@ public class ProductResponse {
             this.productImageUrl = productImageUrl;
         }
     }
+
+    @Getter
+    @Setter
+    public static class ProductCategory {
+
+        @Schema(description = "대카테고리")
+        private String categoryLarge;
+        @Schema(description = "중카테고리")
+        private String categoryMid;
+
+        @Builder
+        private ProductCategory(String categoryLarge, String categoryMid) {
+
+            this.categoryLarge = categoryLarge;
+            this.categoryMid = categoryMid;
+        }
+    }
 }

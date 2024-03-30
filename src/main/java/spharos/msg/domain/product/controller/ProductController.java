@@ -9,12 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import spharos.msg.domain.product.dto.ProductResponse;
 import spharos.msg.domain.product.service.ProductService;
 import spharos.msg.global.api.ApiResponse;
-import spharos.msg.global.api.code.status.ErrorStatus;
 
 @RequiredArgsConstructor
 @RestController
@@ -62,5 +60,12 @@ public class ProductController {
     @GetMapping("/product/{productId}/detail")
     public ApiResponse<String> getProductDetail(@PathVariable("productId") Long product_id) {
         return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductDetail(product_id));
+    }
+
+    @Operation(summary = "상품 카테고리 정보 조회",
+        description = "특정 상품이 속한 카테고리를 반환합니다")
+    @GetMapping("/product/{productId}/category")
+    public ApiResponse<ProductResponse.ProductCategory> getProductCategory(@PathVariable("productId") Long product_id) {
+        return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductCategory(product_id));
     }
 }
