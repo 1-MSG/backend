@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spharos.msg.domain.category.entity.CategoryProduct;
 import spharos.msg.global.entity.BaseEntity;
+import spharos.msg.global.entity.Brand;
 import spharos.msg.global.entity.Vendor;
 
 @Entity
@@ -68,8 +69,8 @@ public class Product extends BaseEntity {
     private BigDecimal discountRate;
 
     @ManyToOne
-    @JoinColumn(name = "vendor_id")
-    private Vendor vendor;
+    @JoinColumn(name = "brand_id")
+    private Brand brand;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_sales_info_id")
