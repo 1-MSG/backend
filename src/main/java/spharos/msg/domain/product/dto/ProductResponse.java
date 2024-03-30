@@ -60,4 +60,21 @@ public class ProductResponse {
             this.discountPrice = discountPrice;
         }
     }
+
+    @Getter
+    @Setter
+    public static class ProductImage {
+
+        @Schema(description = "이미지 설명")
+        private String productImageDescription;
+        @Schema(description = "이미지 url")
+        private String productImageUrl;
+
+        @Builder
+        private ProductImage(String productImageDescription, String productImageUrl) {
+
+            this.productImageDescription = productImageDescription;
+            this.productImageUrl = productImageUrl;
+        }
+    }
 }

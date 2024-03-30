@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import spharos.msg.domain.product.dto.ProductResponse;
 import spharos.msg.domain.product.service.ProductService;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.ErrorStatus;
@@ -45,7 +46,14 @@ public class ProductController {
     @Operation(summary = "상품 상세 조회",
         description = "개별 상품에 대한 상세 정보를 조회합니다")
     @GetMapping("/product/{productId}")
-    public ApiResponse<?> getProductDetails(@PathVariable("productId") Long product_id) {
+    public ApiResponse<ProductResponse.ProductInfo> getProductDetails(@PathVariable("productId") Long product_id) {
         return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductInfo(product_id));
+    }
+
+    @Operation(summary = "상품 이미지 조회",
+        description = "특정 상품에 대한 상품 이미지(썸네일)을 반환합니다")
+    @GetMapping("/product/{productId}/image")
+    public ApiResponse<ProductResponse.ProductImage> getProductImage(@PathVariable("productId") Long product_id) {
+        return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductImage(product_id));
     }
 }

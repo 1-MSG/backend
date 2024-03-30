@@ -2,6 +2,7 @@ package spharos.msg.domain.product.service;
 
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import spharos.msg.domain.category.repository.CategoryProductRepository;
 import spharos.msg.domain.product.dto.ProductDetailReponse;
 import spharos.msg.domain.product.dto.ProductResponse;
 import spharos.msg.domain.product.entity.Product;
+import spharos.msg.domain.product.entity.ProductImage;
 import spharos.msg.domain.product.entity.ProductOption;
 import spharos.msg.domain.product.repository.ProductDetailImageRepository;
 import spharos.msg.domain.product.repository.ProductImageRepository;
@@ -85,7 +87,7 @@ public class ProductService {
 //            .build();
 //    }
 
-    //id로 상품의 상세 정보 불러오기
+    //id로 상품의 기본 정보 불러오기
     @Transactional
     public ProductResponse.ProductInfo getProductInfo(Long productId) {
         Product product = productRepository.findById(productId).orElseThrow(()-> new NotFoundException(productId+"해당 상품을 찾을 수 없음"));
@@ -99,6 +101,20 @@ public class ProductService {
             .productStar(product.getProductSalesInfo().getProductStar())
             .discountRate(product.getDiscountRate())
             .discountPrice(discountPrice)
+            .build();
+    }
+
+    //id로 상품 썸네일 이미지 불러오기
+    @Transactional
+    public ProductResponse.ProductImage getProductImage(Long productId) {
+        Product product = productRepository.findById(productId).orElseThrow(()-> new NotFoundException(productId+"해당 상품을 찾을 수 없음"));
+
+        ProductImage productImage = productImageRepository.findByProductAndImageIndex(product, 0)
+            .orElseThrow(() -> new NotFoundException("해당 상품에 대한 index가 0인 이미지를 찾을 수 없음"));
+
+        return ProductResponse.ProductImage.builder()
+            .productImageUrl(productImage.getProductImageUrl())
+            .productImageDescription(productImage.getProductImageDescription())
             .build();
     }
 
