@@ -2,6 +2,7 @@ package spharos.msg.domain.product.service;
 
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,19 @@ public class ProductService {
             .productImageUrl(productImage.getProductImageUrl())
             .productImageDescription(productImage.getProductImageDescription())
             .build();
+    }
+
+    //id로 상품 이미지들 불러오기
+    @Transactional
+    public List<ProductResponse.ProductImage> getProductImages(Long productId) {
+        Product product = productRepository.findById(productId).orElseThrow(()-> new NotFoundException(productId+"해당 상품을 찾을 수 없음"));
+
+        List<ProductImage> productImages = productImageRepository.findByProduct(product);
+
+        return productImages.stream().map(productImage -> ProductResponse.ProductImage.builder()
+            .productImageUrl(productImage.getProductImageUrl())
+            .productImageDescription(productImage.getProductImageDescription())
+            .build()).toList();
     }
 
     //id로 상품 상세 html 불러오기

@@ -9,4 +9,6 @@ import spharos.msg.domain.product.entity.ProductImage;
 @Repository
 public interface ProductImageRepository extends JpaRepository<ProductImage,Long> {
     Optional<ProductImage> findByProductAndImageIndex(Product product, Integer index);
+
+    List<ProductImage> findByProduct(Product product);
 }

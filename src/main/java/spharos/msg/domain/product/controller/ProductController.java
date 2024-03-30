@@ -4,6 +4,7 @@ import static spharos.msg.global.api.code.status.SuccessStatus.PRODUCT_INFO_SUCC
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,11 +49,18 @@ public class ProductController {
         return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductInfo(product_id));
     }
 
-    @Operation(summary = "상품 이미지 조회",
+    @Operation(summary = "상품 썸네일 조회",
         description = "특정 상품에 대한 상품 이미지(썸네일)을 반환합니다")
     @GetMapping("/product/{productId}/image")
     public ApiResponse<ProductResponse.ProductImage> getProductImage(@PathVariable("productId") Long product_id) {
         return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductImage(product_id));
+    }
+
+    @Operation(summary = "상품 이미지 전체 조회",
+        description = "특정 상품에 대한 상품 이미지 리스트를 반환합니다")
+    @GetMapping("/product/{productId}/images")
+    public ApiResponse<List<ProductResponse.ProductImage>> getProductImages(@PathVariable("productId") Long product_id) {
+        return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductImages(product_id));
     }
 
     @Operation(summary = "상품 상세 html 조회",
