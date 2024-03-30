@@ -15,7 +15,6 @@ public class CartProductResponseDto {
     private Long productOptionId;
     private boolean cartIsChecked;
     private boolean cartIsPinned;
-    private Long userId;
 
     public CartProductResponseDto(CartProduct cartProduct) {
         this.cartId = cartProduct.getId();
@@ -25,7 +24,6 @@ public class CartProductResponseDto {
         this.cartIsPinned = cartProduct.getCartIsPinned();
         this.productOptionId = cartProduct.getProductOption().getProductOptionId();
         this.brandId = cartProduct.getBrandId();
-        this.userId = cartProduct.getUsers().getId();
     }
 
     public void setId(int id) {
