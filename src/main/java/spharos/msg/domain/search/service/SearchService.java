@@ -6,27 +6,36 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.search.dto.SearchResponse.SearchInputDto;
+import spharos.msg.domain.search.dto.SearchResponse.SearchProductDto;
 import spharos.msg.domain.search.dto.SearchResponse.SearchProductDtos;
 import spharos.msg.domain.search.repository.SearchRepository;
+import spharos.msg.domain.search.utils.SearchKeyword.SearchKeywordBuilder;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class SearchService {
 
-    private static final String ONLY_WORD_NUMBER_BLANK = "[^a-zA-Z가-힣0-9\\s]";
     private static final String KEYWORD_DELIMITER = " ";
-    private static final String REMOVE = "";
-    private static final String REMOVE_OVER_TWO_BLANK = "\\s{2,}";
 
     private final SearchRepository searchRepository;
 
-    public SearchProductDtos findMatchProducts(String keyword, int index) {
-        keyword = trimKeyword(keyword);
-        return searchRepository.searchAllProduct(keyword, index);
+    public SearchProductDtos findMatchProducts(String keyword, Pageable pageable) {
+        keyword = getSearchKeyword(keyword);
+
+        Page<SearchProductDto> searched = searchRepository.searchAllProduct(keyword,
+            pageable);
+
+        return SearchProductDtos
+            .builder()
+            .searchProductDtos(searched.getContent())
+            .isLast(searched.isLast())
+            .build();
     }
 
     public List<SearchInputDto> findExpectedKeywords(String keyword) {
@@ -38,12 +47,10 @@ public class SearchService {
             .stream()
             .map(product -> trimKeyword(product.getProductName()))
             .toList();
-
         for (String essentialProductName : essentialProductNames) {
             List<String> searchWords = getSearchWords(essentialProductName, keyword);
             searchInputDtos.addAll(toSearchInputDto(searchWords));
         }
-
         return searchInputDtos
             .stream()
             .distinct()
