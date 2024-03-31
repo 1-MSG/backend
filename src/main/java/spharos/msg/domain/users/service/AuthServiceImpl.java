@@ -121,12 +121,10 @@ public class AuthServiceImpl implements AuthService {
     public void changePassword(ChangePasswordRequestDto changePasswordRequestDto) {
         Users findUser = usersRepository.findByLoginId(changePasswordRequestDto.getLoginId()).orElseThrow();
 
-        //현재 비밀번호와 같을경우 변경 안됨.
         if (validatePassword(findUser.getPassword(), changePasswordRequestDto.getModifyPassword())) {
             throw new UsersException(ErrorStatus.SAME_PASSWORD);
         }
 
-        //신규 비밀번호로 update
         Users newUser = Users
                 .builder()
                 .id(findUser.getId())
@@ -135,7 +133,7 @@ public class AuthServiceImpl implements AuthService {
                 .password(hashPassword(changePasswordRequestDto.getModifyPassword()))
                 .phoneNumber(findUser.getPhoneNumber())
                 .email(findUser.getEmail())
-                .userName(findUser.getUsername())
+                .userName(findUser.readUserName())
                 .address(findUser.getAddress())
                 .build();
 

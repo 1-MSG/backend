@@ -5,12 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.users.dto.request.AddressRequestDto;
+import spharos.msg.domain.users.dto.response.SearchAddressDto;
 import spharos.msg.domain.users.entity.Address;
 import spharos.msg.domain.users.entity.Users;
 import spharos.msg.domain.users.repository.AddressRepository;
 import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.global.api.code.status.ErrorStatus;
 import spharos.msg.global.api.exception.UsersException;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,5 +39,27 @@ public class AddressService {
                 .users(users)
                 .address(addressRequestDto.getAddress())
                 .build());
+    }
+
+    @Transactional(readOnly = true)
+    public List<SearchAddressDto> searchAllAddress(Long userId){
+        List<Address> findAddress = addressRepository.findByUsersId(userId);
+        if(findAddress.isEmpty()){
+            throw new UsersException(ErrorStatus.ADDRESS_NOT_FOUND);
+        }
+
+        return findAddress.stream()
+                .map(this::convertToSearchAddressDto)
+                .collect(Collectors.toList());
+    }
+
+    private SearchAddressDto convertToSearchAddressDto(Address address) {
+        return SearchAddressDto.builder()
+                .addressName(address.getAddressName())
+                .recipient(address.getRecipient())
+                .mobileNumber(address.getMobileNumber())
+                .addressPhoneNumber(address.getAddressPhoneNumber())
+                .address(address.getAddress())
+                .build();
     }
 }
