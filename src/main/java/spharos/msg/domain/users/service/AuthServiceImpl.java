@@ -1,5 +1,6 @@
 package spharos.msg.domain.users.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
@@ -15,8 +16,10 @@ import spharos.msg.domain.users.dto.request.LoginRequestDto;
 import spharos.msg.domain.users.dto.response.LoginOutDto;
 import spharos.msg.domain.users.dto.response.ReissueOutDto;
 import spharos.msg.domain.users.dto.request.SignUpRequestDto;
+import spharos.msg.domain.users.entity.Address;
 import spharos.msg.domain.users.entity.UserOAuthList;
 import spharos.msg.domain.users.entity.Users;
+import spharos.msg.domain.users.repository.AddressRepository;
 import spharos.msg.domain.users.repository.UserOAuthListRepository;
 import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.global.api.code.status.ErrorStatus;
@@ -30,8 +33,9 @@ import spharos.msg.global.security.JwtTokenProvider;
 public class AuthServiceImpl implements AuthService {
 
     private final UsersRepository usersRepository;
-    private final AuthenticationManager authenticationManager;
     private final UserOAuthListRepository userOAuthListRepository;
+    private final AddressRepository addressRepository;
+    private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
 
@@ -113,6 +117,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void withdrawMember(String uuid) {
         Users users = usersRepository.findByUuid(uuid).orElseThrow();
+        List<Address> addressList = addressRepository.findByUsersId(users.getId());
+
+        addressRepository.deleteAll(addressList);
         usersRepository.delete(users);
         userOAuthListRepository.deleteByUuid(uuid);
     }

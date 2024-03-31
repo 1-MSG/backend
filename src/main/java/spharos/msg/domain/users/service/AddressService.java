@@ -42,9 +42,9 @@ public class AddressService {
     }
 
     @Transactional(readOnly = true)
-    public List<SearchAddressOutDto> searchAllAddress(Long userId){
+    public List<SearchAddressOutDto> searchAllAddress(Long userId) {
         List<Address> findAddress = addressRepository.findByUsersId(userId);
-        if(findAddress.isEmpty()){
+        if (findAddress.isEmpty()) {
             throw new UsersException(ErrorStatus.ADDRESS_NOT_FOUND);
         }
 
@@ -65,8 +65,9 @@ public class AddressService {
     }
 
     @Transactional
-    public void deleteAddress(Long userId, Long addressId){
+    public void deleteAddress(Long userId, Long addressId) {
         //주소 있는지 검증 필요?
-        addressRepository.deleteByUsersIdAndId(userId, addressId);
+        Address findAddress = addressRepository.findByUsersIdAndId(userId, addressId).orElseThrow();
+        addressRepository.delete(findAddress);
     }
 }
