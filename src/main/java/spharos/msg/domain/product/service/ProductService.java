@@ -98,53 +98,53 @@ public class ProductService {
     }
 
     //id로 상품의 상세 정보 불러오기
-    @Transactional
-    public ApiResponse<?> getProductDetail(Long productId) {
-
-        //id로 상품 조회
-        Optional<Product> productOptional = productRepository.findById(productId);
-
-        if (productOptional.isPresent()) {
-            //상품 객체 불러오기
-            Product product = productOptional.get();
-            //상품과 대응되는 카테고리, 옵션, 리뷰들, 이미지들, 상세이미지들 불러오기
-            CategoryProduct categoryProduct = categoryProductRepository.findByProduct(product);
-            List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
-            List<Review> productReviews = reviewRepository.findByProduct(product);
-            List<ProductImage> productImages = productImageRepository.findByProduct(product);
-            List<ProductDetailImage> productDetailImages = productDetailImageRepository.findByProduct(product);
-
-            //이미지 및 상세이미지들은 url이 담긴 리스트로 변환
-            List<String> imageUrls = productImages.stream().map(ProductImage::getProductImageUrl).toList();
-            List<String> detailImageUrls = productDetailImages.stream().map(ProductDetailImage::getProductDetailImageUrl).toList();
-
-            //옵션은 옵션 객체가 담긴 리스트로 변환
-            List<ProductDetailReponse.OptionDetail> options = convertOptions(productOptions);
-
-            //리뷰는 리뷰 객체가 담긴 리스트로 변환
-            List<ProductDetailReponse.ReviewDetail> reviews = convertReviews(productReviews);
-
-            return ApiResponse.of(PRODUCT_DETAIL_READ_SUCCESS,
-                ProductDetailReponse.ProductDetailDto.builder()
-                    .productId(product.getId())
-                    .productName(product.getProductName())
-                    .productBrand(product.getProductBrand())
-                    .productPrice(product.getProductPrice())
-                    .productStars(product.getProductSalesInfo().getProductStars())
-                    .productDeliveryFee(product.getDeliveryFee())
-                    .minDeliveryFee(product.getMinDeliveryFee())
-                    .productReviewCount(product.getProductSalesInfo().getReviewCount())
-                    .discountRate(product.getDiscountRate())
-                    .productOptions(options)
-                    .ProductCategoryName(categoryProduct.getCategory().getParent().getCategoryName())
-                    .ProductCategoryNameMid(categoryProduct.getCategory().getCategoryName())
-                    .productImgUrlList(imageUrls)
-                    .productDetailImgUrlList(detailImageUrls)
-                    .productReviewList(reviews)
-                    .build());
-        }
-        return ApiResponse.onFailure(NOT_EXIST_PRODUCT, null);
-    }
+//    @Transactional
+//    public ApiResponse<?> getProductDetail(Long productId) {
+//
+//        //id로 상품 조회
+//        Optional<Product> productOptional = productRepository.findById(productId);
+//
+//        if (productOptional.isPresent()) {
+//            //상품 객체 불러오기
+//            Product product = productOptional.get();
+//            //상품과 대응되는 카테고리, 옵션, 리뷰들, 이미지들, 상세이미지들 불러오기
+//            CategoryProduct categoryProduct = categoryProductRepository.findByProduct(product);
+//            List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
+//            List<Review> productReviews = reviewRepository.findByProduct(product);
+//            List<ProductImage> productImages = productImageRepository.findByProduct(product);
+//            List<ProductDetailImage> productDetailImages = productDetailImageRepository.findByProduct(product);
+//
+//            //이미지 및 상세이미지들은 url이 담긴 리스트로 변환
+//            List<String> imageUrls = productImages.stream().map(ProductImage::getProductImageUrl).toList();
+//            List<String> detailImageUrls = productDetailImages.stream().map(ProductDetailImage::getProductDetailImageUrl).toList();
+//
+//            //옵션은 옵션 객체가 담긴 리스트로 변환
+//            List<ProductDetailReponse.OptionDetail> options = convertOptions(productOptions);
+//
+//            //리뷰는 리뷰 객체가 담긴 리스트로 변환
+//            List<ProductDetailReponse.ReviewDetail> reviews = convertReviews(productReviews);
+//
+//            return ApiResponse.of(PRODUCT_DETAIL_READ_SUCCESS,
+//                ProductDetailReponse.ProductDetailDto.builder()
+//                    .productId(product.getId())
+//                    .productName(product.getProductName())
+//                    .productBrand(product.getProductBrand())
+//                    .productPrice(product.getProductPrice())
+//                    .productStars(product.getProductSalesInfo().getProductStars())
+//                    .productDeliveryFee(product.getDeliveryFee())
+//                    .minDeliveryFee(product.getMinDeliveryFee())
+//                    .productReviewCount(product.getProductSalesInfo().getReviewCount())
+//                    .discountRate(product.getDiscountRate())
+//                    .productOptions(options)
+//                    .ProductCategoryName(categoryProduct.getCategory().getParent().getCategoryName())
+//                    .ProductCategoryNameMid(categoryProduct.getCategory().getCategoryName())
+//                    .productImgUrlList(imageUrls)
+//                    .productDetailImgUrlList(detailImageUrls)
+//                    .productReviewList(reviews)
+//                    .build());
+//        }
+//        return ApiResponse.onFailure(NOT_EXIST_PRODUCT, null);
+//    }
 
     //product를 ProductInfo 형식으로 매핑하는 메서드
     private ProductResponse.ProductInfo mapToProductInfoDto(Product product) {

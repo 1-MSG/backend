@@ -9,6 +9,7 @@ import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_READ_SUCCE
 import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_SAVE_SUCCESS;
 import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_UPDATE_SUCCESS;
 
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,15 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
     private final UsersRepository usersRepository;
+
+    @Transactional
+    public List<ReviewResponse.ReviewDetail> getReviews(Long productId) {
+        Product product = productRepository.findById(productId).orElseThrow(()->new NotFoundException("상품 찾을 수 없음"));
+        List<Review> reviews = reviewRepository.findByProduct(product);
+
+
+        return null;
+    }
 
     @Transactional
     public ApiResponse<?> getReviewDetail(Long reviewId) {
