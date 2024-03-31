@@ -112,7 +112,8 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     @Override
     public void withdrawMember(String uuid) {
-        usersRepository.deleteByUuid(uuid);
+        Users users = usersRepository.findByUuid(uuid).orElseThrow();
+        usersRepository.delete(users);
         userOAuthListRepository.deleteByUuid(uuid);
     }
 
