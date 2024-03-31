@@ -17,4 +17,6 @@ public interface AuthService {
     ReissueOutDto reissueToken(String token);
 
     void duplicateCheckLoginId(DuplicationCheckRequestDto duplicationCheckRequestDto);
+
+    void withdrawMember(String uuid);
 }

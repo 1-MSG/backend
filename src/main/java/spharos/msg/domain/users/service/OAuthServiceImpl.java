@@ -36,14 +36,14 @@ public class OAuthServiceImpl implements OAuthService {
             log.info("기존 가입된 회원이라 바로 로그인 처리");
             return Optional.of(easyLogin(EasyLoginRequestDto
                     .builder()
-                    .OAuthId(easySignUpRequestDto.getOauth_id())
-                    .OAuthName(easySignUpRequestDto.getOauth_name())
+                    .oauthId(easySignUpRequestDto.getOauthId())
+                    .oauthName(easySignUpRequestDto.getOauthName())
                     .build()));
         }
         UserOAuthList userOAuthList = UserOAuthList
                 .builder()
-                .OAuthId(easySignUpRequestDto.getOauth_id())
-                .OAuthName(easySignUpRequestDto.getOauth_name())
+                .OAuthId(easySignUpRequestDto.getOauthId())
+                .OAuthName(easySignUpRequestDto.getOauthName())
                 .uuid(users.getUuid())
                 .build();
 
@@ -55,8 +55,8 @@ public class OAuthServiceImpl implements OAuthService {
     @Override
     public LoginOutDto easyLogin(EasyLoginRequestDto easyLoginRequestDto) {
         UserOAuthList userOAuthList = userOAuthListRepository.findByOAuthIdAndOAuthName(
-                easyLoginRequestDto.getOAuthId(),
-                easyLoginRequestDto.getOAuthName()).orElseThrow(
+                easyLoginRequestDto.getOauthId(),
+                easyLoginRequestDto.getOauthName()).orElseThrow(
                 () -> new UsersException(ErrorStatus.LOG_IN_EASY_FAIL));
 
         Users findUser = userRepository.findByUuid(userOAuthList.getUuid()).orElseThrow(

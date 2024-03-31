@@ -11,7 +11,9 @@ import spharos.msg.domain.users.dto.request.LoginRequestDto;
 import spharos.msg.domain.users.dto.response.LoginOutDto;
 import spharos.msg.domain.users.dto.response.ReissueOutDto;
 import spharos.msg.domain.users.dto.request.SignUpRequestDto;
+import spharos.msg.domain.users.entity.UserOAuthList;
 import spharos.msg.domain.users.entity.Users;
+import spharos.msg.domain.users.repository.UserOAuthListRepository;
 import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.global.api.code.status.ErrorStatus;
 import spharos.msg.global.api.exception.UsersException;
@@ -24,6 +26,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final UsersRepository usersRepository;
     private final AuthenticationManager authenticationManager;
+    private final UserOAuthListRepository userOAuthListRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
 
@@ -99,5 +102,12 @@ public class AuthServiceImpl implements AuthService {
         if (usersRepository.existsByLoginId(duplicationCheckRequestDto.getLoginId())) {
             throw new UsersException(ErrorStatus.DUPLICATION_LOGIN_ID);
         }
+    }
+
+    @Transactional
+    @Override
+    public void withdrawMember(String uuid) {
+        usersRepository.deleteByUuid(uuid);
+        userOAuthListRepository.deleteByUuid(uuid);
     }
 }

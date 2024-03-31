@@ -42,6 +42,4 @@ public class UsersController {
         usersService.authenticateEmail(emailAuthRequestDto);
         return ApiResponse.of(SuccessStatus.EMAIL_AUTH_SUCCESS, null);
     }
-
-    //todo: 회원삭제. 회원 삭제시, OAuth 사용자도 삭제 처리 필요
 }

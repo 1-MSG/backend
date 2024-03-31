@@ -11,4 +11,6 @@ public interface UserOAuthListRepository extends JpaRepository<UserOAuthList, Lo
     Boolean existsByUuid(String uuid);
 
     Optional<UserOAuthList> findByOAuthIdAndOAuthName(String OAuthId, String OAuthOAuthName);
+
+    void deleteByUuid(String uuid);
 }

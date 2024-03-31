@@ -75,4 +75,15 @@ public class AuthController {
         authService.duplicateCheckLoginId(duplicationCheckRequestDto);
         return ApiResponse.of(SuccessStatus.DUPLICATION_CHECK_SUCCESS, null);
     }
+
+
+    //todo: 회원삭제. 회원 삭제시, OAuth 사용자도 삭제 처리 필요
+    @Operation(summary = "회원 탈퇴", description = "회원을 탈퇴 시킵니다.")
+    @DeleteMapping("/withdraw-user")
+    public ApiResponse<?> withdrawMember (
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        authService.withdrawMember(userDetails.getUsername());
+        return ApiResponse.of(SuccessStatus.WITHDRAW_USER_SUCCESS, null);
+    }
 }
