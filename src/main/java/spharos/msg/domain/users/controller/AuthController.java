@@ -5,12 +5,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import spharos.msg.domain.users.dto.request.ChangePasswordRequestDto;
 import spharos.msg.domain.users.dto.request.DuplicationCheckRequestDto;
 import spharos.msg.domain.users.dto.request.LoginRequestDto;
 import spharos.msg.domain.users.dto.request.SignUpRequestDto;
@@ -76,8 +72,6 @@ public class AuthController {
         return ApiResponse.of(SuccessStatus.DUPLICATION_CHECK_SUCCESS, null);
     }
 
-
-    //todo: 회원삭제. 회원 삭제시, OAuth 사용자도 삭제 처리 필요
     @Operation(summary = "회원 탈퇴", description = "회원을 탈퇴 시킵니다.")
     @DeleteMapping("/withdraw-user")
     public ApiResponse<?> withdrawMember (
@@ -85,5 +79,14 @@ public class AuthController {
     ) {
         authService.withdrawMember(userDetails.getUsername());
         return ApiResponse.of(SuccessStatus.WITHDRAW_USER_SUCCESS, null);
+    }
+
+    @Operation(summary = "비밀번호 변경", description = "비밀번호를 변경 합니다")
+    @PatchMapping("/change-password")
+    public ApiResponse<?> changePassword (
+            @RequestBody ChangePasswordRequestDto changePasswordRequestDto
+    ) {
+        authService.changePassword(changePasswordRequestDto);
+        return ApiResponse.of(SuccessStatus.CHANGE_PASSWORD_SUCCESS, null);
     }
 }

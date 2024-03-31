@@ -1,11 +1,15 @@
 package spharos.msg.domain.users.service;
 
 import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spharos.msg.domain.users.dto.request.ChangePasswordRequestDto;
 import spharos.msg.domain.users.dto.request.DuplicationCheckRequestDto;
 import spharos.msg.domain.users.dto.request.LoginRequestDto;
 import spharos.msg.domain.users.dto.response.LoginOutDto;
@@ -22,6 +26,7 @@ import spharos.msg.global.security.JwtTokenProvider;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements AuthService {
 
     private final UsersRepository usersRepository;
@@ -109,5 +114,40 @@ public class AuthServiceImpl implements AuthService {
     public void withdrawMember(String uuid) {
         usersRepository.deleteByUuid(uuid);
         userOAuthListRepository.deleteByUuid(uuid);
+    }
+
+    @Transactional
+    @Override
+    public void changePassword(ChangePasswordRequestDto changePasswordRequestDto) {
+        Users findUser = usersRepository.findByLoginId(changePasswordRequestDto.getLoginId()).orElseThrow();
+
+        //현재 비밀번호와 같을경우 변경 안됨.
+        if (validatePassword(findUser.getPassword(), changePasswordRequestDto.getModifyPassword())) {
+            throw new UsersException(ErrorStatus.SAME_PASSWORD);
+        }
+
+        //신규 비밀번호로 update
+        Users newUser = Users
+                .builder()
+                .id(findUser.getId())
+                .loginId(findUser.getLoginId())
+                .uuid(findUser.getUuid())
+                .password(hashPassword(changePasswordRequestDto.getModifyPassword()))
+                .phoneNumber(findUser.getPhoneNumber())
+                .email(findUser.getEmail())
+                .userName(findUser.getUsername())
+                .address(findUser.getAddress())
+                .build();
+
+        usersRepository.save(newUser);
+    }
+
+    private Boolean validatePassword(String oldPasswordHash, String newPassword) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.matches(newPassword, oldPasswordHash);
+    }
+
+    private String hashPassword(String password){
+        return new BCryptPasswordEncoder().encode(password);
     }
 }

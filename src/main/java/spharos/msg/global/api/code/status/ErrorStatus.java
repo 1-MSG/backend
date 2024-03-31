@@ -34,6 +34,7 @@ public enum ErrorStatus implements BaseErrorCode {
     DUPLICATION_LOGIN_ID(HttpStatus.BAD_REQUEST, "USER411", "중복된 아이디 입니다."),
     DELIVERY_ADDRESS_ADD_FAIL(HttpStatus.BAD_REQUEST, "USER412", "배송지 추가 실패"),
     NOT_USER(HttpStatus.BAD_REQUEST, "USER413", "등록된 회원이 아닙니다."),
+    SAME_PASSWORD(HttpStatus.BAD_REQUEST, "USER414", "현재 사용중인 비밀번호 입니다"),
 
     INVALID_ORDER(HttpStatus.BAD_REQUEST, "ORDER400", "잘못된 주문 요청입니다"),
     ORDER_PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER401", "주문 상품을 찾을 수 없습니다"),
