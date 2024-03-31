@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SearchAddressDto {
+public class SearchAddressOutDto {
+    private Long addressId;
     private String addressName;
     private String recipient;
     private String mobileNumber;

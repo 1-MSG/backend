@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.users.dto.request.AddressRequestDto;
-import spharos.msg.domain.users.dto.response.SearchAddressDto;
+import spharos.msg.domain.users.dto.response.SearchAddressOutDto;
 import spharos.msg.domain.users.entity.Address;
 import spharos.msg.domain.users.entity.Users;
 import spharos.msg.domain.users.repository.AddressRepository;
@@ -42,7 +42,7 @@ public class AddressService {
     }
 
     @Transactional(readOnly = true)
-    public List<SearchAddressDto> searchAllAddress(Long userId){
+    public List<SearchAddressOutDto> searchAllAddress(Long userId){
         List<Address> findAddress = addressRepository.findByUsersId(userId);
         if(findAddress.isEmpty()){
             throw new UsersException(ErrorStatus.ADDRESS_NOT_FOUND);
@@ -53,13 +53,14 @@ public class AddressService {
                 .collect(Collectors.toList());
     }
 
-    private SearchAddressDto convertToSearchAddressDto(Address address) {
-        return SearchAddressDto.builder()
+    private SearchAddressOutDto convertToSearchAddressDto(Address address) {
+        return SearchAddressOutDto.builder()
                 .addressName(address.getAddressName())
                 .recipient(address.getRecipient())
                 .mobileNumber(address.getMobileNumber())
                 .addressPhoneNumber(address.getAddressPhoneNumber())
                 .address(address.getAddress())
+                .addressId(address.getId())
                 .build();
     }
 }

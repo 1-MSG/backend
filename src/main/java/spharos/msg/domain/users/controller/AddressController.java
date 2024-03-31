@@ -8,7 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import spharos.msg.domain.users.dto.request.AddressRequestDto;
-import spharos.msg.domain.users.dto.response.SearchAddressDto;
+import spharos.msg.domain.users.dto.response.SearchAddressOutDto;
 import spharos.msg.domain.users.service.AddressService;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
@@ -36,10 +36,10 @@ public class AddressController {
 
     @Operation(summary = "배송지 정보 조회", description = "Uuid로 해당 회원의 모든 배송지를 조회합니다.")
     @GetMapping("search-all/{userId}")
-    public ApiResponse<List<SearchAddressDto>> searchAllAddress(
+    public ApiResponse<List<SearchAddressOutDto>> searchAllAddress(
             @RequestParam(name = "userId") Long userId
     ) {
-        List<SearchAddressDto> result = addressService.searchAllAddress(userId);
+        List<SearchAddressOutDto> result = addressService.searchAllAddress(userId);
         return ApiResponse.of(SuccessStatus.SEARCH_ALL_ADDRESS_SUCCESS, result);
     }
 }
