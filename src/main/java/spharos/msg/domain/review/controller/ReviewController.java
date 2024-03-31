@@ -1,13 +1,12 @@
 package spharos.msg.domain.review.controller;
 
+import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_READ_SUCCESS;
+
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,16 +31,16 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-//    @Operation(summary = "상품 리뷰 목록 조회",
-//        description = "id로 상품 리뷰 목록를 조회합니다")
-//    @GetMapping("/{productId}/reviews")
-//    public List<ReviewResponse.ReviewDetail> getReviews(
-//        @PathVariable("productId") Long productId
-//        @RequestParam int page,
-//    @RequestParam int size
-//    ){
-//        return reviewService.getReviews(productId);
-//    }
+    @Operation(summary = "상품 리뷰 목록 조회",
+        description = "id로 상품 리뷰 목록를 조회합니다")
+    @GetMapping("/{productId}/reviews")
+    public ApiResponse<ReviewResponse.ReviewsDto> getReviews(
+        @PathVariable("productId") Long productId,
+        @RequestParam("page") int page,
+        @RequestParam("size") int size
+    ){
+        return ApiResponse.of(REVIEW_READ_SUCCESS,reviewService.getReviews(productId,page,size));
+    }
 
     @Operation(summary = "상품 리뷰 상세 조회",
     description = "id로 특정 리뷰를 조회합니다")

@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
@@ -35,15 +38,26 @@ public class ReviewService {
     private final ProductRepository productRepository;
     private final UsersRepository usersRepository;
 
+    //리뷰 목록 가져 오기
     @Transactional
-    public List<ReviewResponse.ReviewDetail> getReviews(Long productId) {
+    public ReviewResponse.ReviewsDto getReviews(Long productId, int page, int size) {
+        //상품 가져오기
         Product product = productRepository.findById(productId).orElseThrow(()->new NotFoundException("상품 찾을 수 없음"));
-        List<Review> reviews = reviewRepository.findByProduct(product);
+        //페이저블 객체 생성(page와 size 지정)
+        Pageable pageable = PageRequest.of(page,size);
+        Page<Review> reviewPage = reviewRepository.findByProduct(product,pageable);
+        //리스트로 변환
+        List<ReviewResponse.ReviewDetailDto> reviews = convertToReviewList(reviewPage);
+        //다음 페이지가 있는지 확인
+        boolean isLast = !reviewPage.hasNext();
 
-
-        return null;
+        return ReviewResponse.ReviewsDto.builder()
+            .productReviews(reviews)
+            .isLast(isLast)
+            .build();
     }
 
+    //특정 리뷰 가져 오기
     @Transactional
     public ApiResponse<?> getReviewDetail(Long reviewId) {
         try {
@@ -55,7 +69,7 @@ public class ReviewService {
                 .map(Users::getUsername)
                 .orElse("탈퇴한 회원입니다");
 
-            return ApiResponse.of(REVIEW_READ_SUCCESS, ReviewResponse.ReviewDetail.builder()
+            return ApiResponse.of(REVIEW_READ_SUCCESS, ReviewResponse.ReviewDetailDto.builder()
                 .reviewId(review.getId())
                 .reviewStar(review.getReviewStar())
                 .reviewCreatedat(review.getCreatedAt())
@@ -126,5 +140,25 @@ public class ReviewService {
         } catch (Exception e) {
             return ApiResponse.onFailure(REVIEW_DELETE_FAIL, null);
         }
+    }
+
+    private List<ReviewResponse.ReviewDetailDto> convertToReviewList(Page<Review> reviewPage) {
+        return reviewPage.getContent().stream()
+            .map(review ->{
+
+                //사용자 이름 가져 오기
+                String userName = usersRepository.findById(review.getUserId())
+                    .map(Users::getUsername)
+                    .orElse("탈퇴한 회원입니다");
+
+                return ReviewResponse.ReviewDetailDto.builder()
+                    .reviewId(review.getId())
+                    .reviewStar(review.getReviewStar())
+                    .reviewCreatedat(review.getCreatedAt())
+                    .reviewContent(review.getReviewComment())
+                    .reviewer(userName)
+                    .build();
+            })
+            .toList();
     }
 }
