@@ -34,12 +34,22 @@ public class AddressController {
         return ApiResponse.of(SuccessStatus.DELIVERY_ADDRESS_ADD_SUCCESS, null);
     }
 
-    @Operation(summary = "배송지 정보 조회", description = "Uuid로 해당 회원의 모든 배송지를 조회합니다.")
+    @Operation(summary = "배송지 정보 조회", description = "해당 회원의 모든 배송지를 조회합니다.")
     @GetMapping("search-all/{userId}")
     public ApiResponse<List<SearchAddressOutDto>> searchAllAddress(
             @RequestParam(name = "userId") Long userId
     ) {
         List<SearchAddressOutDto> result = addressService.searchAllAddress(userId);
         return ApiResponse.of(SuccessStatus.SEARCH_ALL_ADDRESS_SUCCESS, result);
+    }
+
+    @Operation(summary = "배송지 삭제", description = "해당 회원의 선택된 배송지를 삭제합니다.")
+    @DeleteMapping("delete-address")
+    public ApiResponse<?> deleteAddress(
+            @RequestParam("userId") Long userId,
+            @RequestParam("addressId") Long addressId
+    ) {
+        addressService.deleteAddress(userId, addressId);
+        return ApiResponse.of(SuccessStatus.DELETE_ADDRESS_SUCCESS, null);
     }
 }

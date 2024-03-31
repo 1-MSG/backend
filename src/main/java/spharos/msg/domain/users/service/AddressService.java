@@ -63,4 +63,10 @@ public class AddressService {
                 .addressId(address.getId())
                 .build();
     }
+
+    @Transactional
+    public void deleteAddress(Long userId, Long addressId){
+        //주소 있는지 검증 필요?
+        addressRepository.deleteByUsersIdAndId(userId, addressId);
+    }
 }
