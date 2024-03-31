@@ -2,6 +2,7 @@ package spharos.msg.domain.search.service;
 
 import static java.util.Comparator.comparingInt;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import java.util.HashSet;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.product.repository.ProductRepository;
 import spharos.msg.domain.search.dto.SearchResponse.SearchInputDto;
 import spharos.msg.domain.search.dto.SearchResponse.SearchProductDtos;
+import spharos.msg.global.api.exception.SearchException;
 
 @SpringBootTest
 @Transactional
@@ -149,8 +151,9 @@ class SearchServiceTest {
     @Test
     @DisplayName("존재하지 않는 상품이면, 빈 리스트를 반환한다.")
     void 빈_리스트_반환() {
-        SearchProductDtos result = searchService.findMatchProducts("존재하지 않는 상품 ", DEFAULT_PAGEABLE);
-        assertThat(result.getSearchProductDtos()).isEmpty();
+        assertThatThrownBy(
+            () -> searchService.findMatchProducts("존재하지 않는 상품 ", DEFAULT_PAGEABLE))
+            .isInstanceOf(SearchException.class);
     }
 
     @Test
@@ -167,5 +170,14 @@ class SearchServiceTest {
         SearchProductDtos result = searchService.findMatchProducts("여성", PageRequest.of(index, 10));
         boolean expected = result.getSearchProductDtos().isEmpty();
         assertThat(result.getIsLast()).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"  ", " ", "[]", "ㄱ", "ㅏ", "."})
+    @DisplayName("유효하지 않은 검색어가 들어오면 SearchException이 발생한다")
+    void searchException_발생_테스트(String keyword) {
+        assertThatThrownBy(
+            () -> searchService.findExpectedKeywords(keyword))
+            .isInstanceOf(SearchException.class);
     }
 }
