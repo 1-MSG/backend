@@ -51,6 +51,9 @@ public enum ErrorStatus implements BaseErrorCode {
     REVIEW_UPDATE_FAIL(HttpStatus.BAD_REQUEST, "REVIEW400", "상품 리뷰 수정 실패"),
     REVIEW_DELETE_FAIL(HttpStatus.BAD_REQUEST, "REVIEW400", "상품 리뷰 삭제 실패"),
     REVIEW_READ_FAIL(HttpStatus.BAD_REQUEST, "REVIEW400", "상품 리뷰 조회 실패"),
+
+    INVALID_SEARCH_KEYWORD(HttpStatus.BAD_REQUEST, "SEARCH400", "잘못된 검색어입니다."),
+    SEARCH_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH404", "해당 검색어의 결과가 존재하지 않습니다."),
     EXAMPLE_EXCEPTION(HttpStatus.BAD_REQUEST, "EXAMPLE400", "샘플 에러 메시지입니다"),
 
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY404", "하위 카테고리 조회 실패");
