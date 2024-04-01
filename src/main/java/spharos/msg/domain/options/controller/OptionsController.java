@@ -10,17 +10,24 @@ import spharos.msg.global.api.ApiResponse;
 @RequestMapping("/api/v1/option")
 public class OptionsController {
     private final OptionsService optionsService;
-    @GetMapping("/type/{optionId}")
-    public ApiResponse<?> getOptionType(
-            @PathVariable Long optionId
-    ){
-        return optionsService.getOptionType(optionId);
-    }
+
     @GetMapping
-    public ApiResponse<?> getOption(
+    public ApiResponse<?> getOptionType(
             @RequestParam(value = "optionIds") Long[] optionIds
     ){
-        return optionsService.getOption(optionIds);
+        return optionsService.getOptionType(optionIds);
     }
 
+    @GetMapping("/first-option")
+    public ApiResponse<?> getFirstOption(
+            @RequestParam(value = "optionIds") Long[] optionIds
+    ){
+        return optionsService.getFirstOption(optionIds);
+    }
+    @GetMapping("/optionName/{optionId}")
+    public ApiResponse<?> getOptionChild(
+            @PathVariable Long optionId)
+    {
+        return optionsService.getOptionChild(optionId);
+    }
 }
