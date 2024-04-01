@@ -55,7 +55,11 @@ public enum SuccessStatus implements BaseCode {
     PRODUCT_INFO_SUCCESS(HttpStatus.OK,"",""),
     OPTION_TYPE_SUCCESS(HttpStatus.OK,"OPTION200","옵션 타입 조회 성공"),
     OPTION_ID_SUCCESS(HttpStatus.OK,"OPTION202","옵션 ID 조회 성공"),
-    OPTION_DETAIL_SUCCESS(HttpStatus.OK,"OPTION203","옵션 상세 조회 성공");
+    OPTION_DETAIL_SUCCESS(HttpStatus.OK,"OPTION203","옵션 상세 조회 성공"),
+
+    BRAND_GET_SUCCESS(HttpStatus.OK,"BRAND200","전체 브랜드 조회 성공");
+
+
 
     private final HttpStatus httpStatus;
     private final String status;
