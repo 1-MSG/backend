@@ -39,7 +39,7 @@ public enum SuccessStatus implements BaseCode {
     COUPON_GET_USERS_SUCCESS(HttpStatus.OK, "COUPON202", "보유 쿠폰 목록 조회 성공"),
     TOKEN_REISSUE_COMPLETE(HttpStatus.ACCEPTED, "USER204", "토큰 재발급 성공"),
 
-    PRODUCT_INFO_SUCCESS(HttpStatus.OK, "PRODUCT200", "상품 정보 조회 성공"),
+    PRODUCT_DETAIL_READ_SUCCESS(HttpStatus.OK, "PRODUCT200", "상품 상세 조회 성공"),
 
     REVIEW_SAVE_SUCCESS(HttpStatus.CREATED, "REVIEW200", "상품 리뷰 작성 성공"),
     REVIEW_UPDATE_SUCCESS(HttpStatus.OK, "REVIEW200", "상품 리뷰 수정 성공"),
@@ -51,7 +51,11 @@ public enum SuccessStatus implements BaseCode {
     CATEGORY_LIST_SUCCESS(HttpStatus.OK, "CATEGORY200", "카테고리 목록 조회 성공"),
     CATEGORY_PRODUCT_SUCCESS(HttpStatus.OK, "CATEGORY201", "카테고리별 상품 조회 성공"),
 
-    REVIEW_READ_SUCCESS(HttpStatus.OK, "REVIEW200", "상품 리뷰 조회 성공");
+    REVIEW_READ_SUCCESS(HttpStatus.OK, "REVIEW200", "상품 리뷰 조회 성공"),
+    PRODUCT_INFO_SUCCESS(HttpStatus.OK,"",""),
+    OPTION_TYPE_SUCCESS(HttpStatus.OK,"OPTION200","옵션 타입 조회 성공"),
+    OPTION_ID_SUCCESS(HttpStatus.OK,"OPTION202","옵션 ID 조회 성공"),
+    OPTION_DETAIL_SUCCESS(HttpStatus.OK,"OPTION203","옵션 상세 조회 성공");
 
     private final HttpStatus httpStatus;
     private final String status;
