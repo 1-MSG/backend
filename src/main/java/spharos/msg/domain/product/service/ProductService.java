@@ -28,12 +28,12 @@ public class ProductService {
 
     //id로 상품의 기본 정보 불러오기
     @Transactional
-    public ProductResponse.ProductInfo getProductInfo(Long productId) {
+    public ProductResponse.ProductInfoDto getProductInfo(Long productId) {
         Product product = productRepository.findById(productId).orElseThrow(()-> new NotFoundException(productId+"해당 상품을 찾을 수 없음"));
 
         Integer discountPrice = getDiscountedPrice(product.getProductPrice(), product.getDiscountRate());
 
-        return ProductResponse.ProductInfo.builder()
+        return ProductResponse.ProductInfoDto.builder()
             .productBrand(product.getBrand().getBrandName())
             .productName(product.getProductName())
             .productPrice(product.getProductPrice())
@@ -88,6 +88,13 @@ public class ProductService {
             .categoryMid(categoryProduct.getCategory().getCategoryName())
             .categoryLarge(categoryProduct.getCategory().getParent().getCategoryName())
             .build();
+    }
+
+    //id리스트로 상품 객체 불러오기
+    @Transactional
+    public List<ProductResponse.ProductInfoDto> getProductsDetails(List<Long> idList) {
+
+        return null;
     }
 
     //할인가 계산하는 method

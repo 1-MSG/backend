@@ -2,6 +2,7 @@ package spharos.msg.domain.product.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -17,20 +18,20 @@ public class ProductResponse {
     @Builder
     public static class HomeCosmeRandomFoodDto {
 
-        private List<ProductInfo> cosmeticList;
-        private List<ProductInfo> randomList;
-        private List<ProductInfo> foodList;
+        private List<ProductInfoDto> cosmeticList;
+        private List<ProductInfoDto> randomList;
+        private List<ProductInfoDto> foodList;
     }
     @Data
     @Builder
     public static class HomeFashionDto {
 
-        private List<ProductInfo> fashionList;
+        private List<ProductInfoDto> fashionList;
     }
 
     @Getter
     @Setter
-    public static class ProductInfo {
+    public static class ProductInfoDto {
 
         @Schema(description = "상품 브랜드")
         private String productBrand;
@@ -46,9 +47,11 @@ public class ProductResponse {
         private BigDecimal productStar;
         @Schema(description = "상품 리뷰 개수")
         private Integer reviewCount;
+        @Schema(description = "상품 이미지")
+        private String productImage;
 
         @Builder
-        private ProductInfo(String productBrand, String productName, Integer productPrice, String image,
+        private ProductInfoDto(String productBrand, String productName, Integer productPrice, String productImage,
             BigDecimal productStar, Integer discountPrice, BigDecimal discountRate, Integer reviewCount) {
 
             this.productBrand = productBrand;
@@ -58,6 +61,7 @@ public class ProductResponse {
             this.productStar = productStar;
             this.discountRate = discountRate;
             this.discountPrice = discountPrice;
+            this.productImage = productImage;
         }
     }
 
