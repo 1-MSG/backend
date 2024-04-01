@@ -1,39 +1,21 @@
 package spharos.msg.domain.product.service;
 
-import static spharos.msg.global.api.code.status.ErrorStatus.NOT_EXIST_PRODUCT;
-import static spharos.msg.global.api.code.status.SuccessStatus.PRODUCT_DETAIL_READ_SUCCESS;
-
-import jakarta.persistence.criteria.CriteriaBuilder.In;
 import jakarta.transaction.Transactional;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 import spharos.msg.domain.category.entity.CategoryProduct;
 import spharos.msg.domain.category.repository.CategoryProductRepository;
-import spharos.msg.domain.product.dto.ProductDetailReponse;
-import spharos.msg.domain.product.dto.ProductDetailReponse.ReviewDetail;
+
 import spharos.msg.domain.product.dto.ProductResponse;
-import spharos.msg.domain.product.entity.DeliveryFeeInfo;
 import spharos.msg.domain.product.entity.Product;
-import spharos.msg.domain.product.entity.ProductDetailImage;
 import spharos.msg.domain.product.entity.ProductImage;
-import spharos.msg.domain.product.entity.ProductOption;
-import spharos.msg.domain.product.repository.DeliveryFeeInfoRepository;
-import spharos.msg.domain.product.repository.ProductDetailImageRepository;
+
 import spharos.msg.domain.product.repository.ProductImageRepository;
-import spharos.msg.domain.product.repository.ProductOptionRepository;
 import spharos.msg.domain.product.repository.ProductRepository;
-import java.util.List;
-import java.util.stream.Collectors;
-import spharos.msg.domain.review.entity.Review;
-import spharos.msg.domain.review.entity.ReviewImage;
-import spharos.msg.domain.review.repository.ReviewImageRepository;
-import spharos.msg.domain.review.repository.ReviewRepository;
-import spharos.msg.global.api.ApiResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -41,151 +23,84 @@ import spharos.msg.global.api.ApiResponse;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final ProductOptionRepository productOptionRepository;
     private final CategoryProductRepository categoryProductRepository;
-    private final ReviewRepository reviewRepository;
     private final ProductImageRepository productImageRepository;
-    private final ProductDetailImageRepository productDetailImageRepository;
-    private final ReviewImageRepository reviewImageRepository;
 
-    //Home화면 상품 조회 중 뷰티,랜덤,음식 상품 불러오기
-    public ProductResponse.HomeCosmeRandomFoodDto getHomeCosmeRandomFood() {
-
-        List<Product> beautyProducts = productRepository.findProductsByCategoryName("뷰티");
-        List<Product> foodProducts = productRepository.findProductsByCategoryName("신선식품");
-        List<Product> randomProducts = productRepository.findRandomProducts();
-
-        List<ProductResponse.ProductInfo> beautys = beautyProducts.stream()
-            .limit(6)
-            .map(this::mapToProductInfoDto)
-            .toList();
-
-        List<ProductResponse.ProductInfo> randoms = randomProducts.stream()
-            .limit(12)
-            .map(this::mapToProductInfoDto)
-            .toList();
-
-        List<ProductResponse.ProductInfo> foods = foodProducts.stream()
-            .limit(12)
-            .map(this::mapToProductInfoDto)
-            .toList();
-
-        return ProductResponse.HomeCosmeRandomFoodDto.builder()
-            .cosmeticList(beautys)
-            .randomList(randoms)
-            .foodList(foods)
-            .build();
-    }
-
-    //Home화면 상품 조회 중 패션 상품 불러오기
-    public ProductResponse.HomeFashionDto getHomeFashion(int index) {
-        // 한 페이지에 들어갈 상품의 개수
-        int SIZE = 16;
-        //pageble 객체 생성
-        Pageable pageable = PageRequest.of(index, SIZE);
-        //index 기반 패션 상품들 조회
-        Page<Product> fashionProductsPage = productRepository.findFashionProducts(pageable);
-        List<Product> fashionProducts = fashionProductsPage.getContent();
-
-        // 조회된 상품들 ProductInfoDto 리스트로 변환
-        List<ProductResponse.ProductInfo> fashions = fashionProducts.stream()
-            .map(this::mapToProductInfoDto)
-            .toList();
-
-        return ProductResponse.HomeFashionDto.builder()
-            .fashionList(fashions)
-            .build();
-    }
-
-    //id로 상품의 상세 정보 불러오기
+    //id로 상품의 기본 정보 불러오기
     @Transactional
-    public ApiResponse<?> getProductDetail(Long productId) {
+    public ProductResponse.ProductInfo getProductInfo(Long productId) {
+        Product product = productRepository.findById(productId).orElseThrow(()-> new NotFoundException(productId+"해당 상품을 찾을 수 없음"));
 
-        //id로 상품 조회
-        Optional<Product> productOptional = productRepository.findById(productId);
+        Integer discountPrice = getDiscountedPrice(product.getProductPrice(), product.getDiscountRate());
 
-        if (productOptional.isPresent()) {
-            //상품 객체 불러오기
-            Product product = productOptional.get();
-            //상품과 대응되는 카테고리, 옵션, 리뷰들, 이미지들, 상세이미지들 불러오기
-            CategoryProduct categoryProduct = categoryProductRepository.findByProduct(product);
-            List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
-            List<Review> productReviews = reviewRepository.findByProduct(product);
-            List<ProductImage> productImages = productImageRepository.findByProduct(product);
-            List<ProductDetailImage> productDetailImages = productDetailImageRepository.findByProduct(product);
-
-            //이미지 및 상세이미지들은 url이 담긴 리스트로 변환
-            List<String> imageUrls = productImages.stream().map(ProductImage::getProductImageUrl).toList();
-            List<String> detailImageUrls = productDetailImages.stream().map(ProductDetailImage::getProductDetailImageUrl).toList();
-
-            //옵션은 옵션 객체가 담긴 리스트로 변환
-            List<ProductDetailReponse.OptionDetail> options = convertOptions(productOptions);
-
-            //리뷰는 리뷰 객체가 담긴 리스트로 변환
-            List<ProductDetailReponse.ReviewDetail> reviews = convertReviews(productReviews);
-
-            return ApiResponse.of(PRODUCT_DETAIL_READ_SUCCESS,
-                ProductDetailReponse.ProductDetailDto.builder()
-                    .productId(product.getId())
-                    .productName(product.getProductName())
-                    .productBrand(product.getProductBrand())
-                    .productPrice(product.getProductPrice())
-                    .productStars(product.getProductSalesInfo().getProductStars())
-                    .productDeliveryFee(product.getDeliveryFee())
-                    .minDeliveryFee(product.getMinDeliveryFee())
-                    .productReviewCount(product.getProductSalesInfo().getReviewCount())
-                    .discountRate(product.getDiscountRate())
-                    .productOptions(options)
-                    .ProductCategoryName(categoryProduct.getCategory().getParent().getCategoryName())
-                    .ProductCategoryNameMid(categoryProduct.getCategory().getCategoryName())
-                    .productImgUrlList(imageUrls)
-                    .productDetailImgUrlList(detailImageUrls)
-                    .productReviewList(reviews)
-                    .build());
-        }
-        return ApiResponse.onFailure(NOT_EXIST_PRODUCT, null);
-    }
-
-    //product를 ProductInfo 형식으로 매핑하는 메서드
-    private ProductResponse.ProductInfo mapToProductInfoDto(Product product) {
         return ProductResponse.ProductInfo.builder()
-            .productId(product.getId())
+            .productBrand(product.getBrand().getBrandName())
             .productName(product.getProductName())
             .productPrice(product.getProductPrice())
+            .productStar(product.getProductSalesInfo().getProductStar())
             .discountRate(product.getDiscountRate())
+            .discountPrice(discountPrice)
             .build();
     }
 
-    private List<ProductDetailReponse.OptionDetail> convertOptions(List<ProductOption> productOptions) {
-        return productOptions.stream().map(productOption -> {
-//            String optionColor = productOption.getOptionColor() != null ? productOption.getOptionColor().getProductColor() : null;
-//            String optionSize = productOption.getOptionSize() != null ? productOption.getOptionSize().getProductSize() : null;
-//            String optionEtc = productOption.getOptionEtc() != null ? productOption.getOptionEtc().getProductEtc() : null;
+    //id로 상품 썸네일 이미지 불러오기
+    @Transactional
+    public ProductResponse.ProductImage getProductImage(Long productId) {
+        Product product = productRepository.findById(productId).orElseThrow(()-> new NotFoundException(productId+"해당 상품을 찾을 수 없음"));
 
-            return ProductDetailReponse.OptionDetail.builder()
-                .optionId(productOption.getProductOptionId())
-//                .optionColor(optionColor)
-//                .optionSize(optionSize)
-//                .optionEtc(optionEtc)
-                .build();
-        }).toList();
+        ProductImage productImage = productImageRepository.findByProductAndImageIndex(product, 0)
+            .orElseThrow(() -> new NotFoundException("해당 상품에 대한 index가 0인 이미지를 찾을 수 없음"));
+
+        return ProductResponse.ProductImage.builder()
+            .productImageUrl(productImage.getProductImageUrl())
+            .productImageDescription(productImage.getProductImageDescription())
+            .build();
     }
 
-    private List<ProductDetailReponse.ReviewDetail> convertReviews(List<Review> productReviews) {
-        return productReviews.stream().map(productReview -> {
-                // 상품 리뷰로 상품 리뷰 이미지들 불러와서 리스트로 변환
-                List<ReviewImage> reviewImages = reviewImageRepository.findByReview(productReview);
-                List<String> reviewImageUrls = reviewImages.stream().map(ReviewImage::getReviewImageUrl).toList();
-                // 최종적으로 리뷰 객체 매핑
-                return ProductDetailReponse.ReviewDetail.builder()
-                    .reviewId(productReview.getId())
-                    .reviewStar(productReview.getReviewStar())
-                    .reviewCreated(productReview.getCreatedAt())
-                    .reviewContent(productReview.getReviewComment())
-                    .reviewer(productReview.getUserId().toString())
-                    .reviewImgUrlList(reviewImageUrls)
-                    .build();
-            }
-        ).toList();
+    //id로 상품 이미지들 불러오기
+    @Transactional
+    public List<ProductResponse.ProductImage> getProductImages(Long productId) {
+        Product product = productRepository.findById(productId).orElseThrow(()-> new NotFoundException(productId+"해당 상품을 찾을 수 없음"));
+
+        List<ProductImage> productImages = productImageRepository.findByProduct(product);
+
+        return productImages.stream().map(productImage -> ProductResponse.ProductImage.builder()
+            .productImageUrl(productImage.getProductImageUrl())
+            .productImageDescription(productImage.getProductImageDescription())
+            .build()).toList();
+    }
+
+    //id로 상품 상세 html 불러오기
+    @Transactional
+    public String getProductDetail(Long productId) {
+        Product product = productRepository.findById(productId).orElseThrow(()-> new NotFoundException(productId+"해당 상품을 찾을 수 없음"));
+
+        return product.getProductInfoDetail().getProductInfoDetailContent();
+    }
+
+    //id로 상품 상세 카테고리 정보 불러오기
+    @Transactional
+    public ProductResponse.ProductCategory getProductCategory(Long productId) {
+        Product product = productRepository.findById(productId).orElseThrow(()-> new NotFoundException(productId+"해당 상품을 찾을 수 없음"));
+        CategoryProduct categoryProduct = categoryProductRepository.findByProduct(product);
+
+        return ProductResponse.ProductCategory.builder()
+            .categoryMid(categoryProduct.getCategory().getCategoryName())
+            .categoryLarge(categoryProduct.getCategory().getParent().getCategoryName())
+            .build();
+    }
+
+    //할인가 계산하는 method
+    private Integer getDiscountedPrice(Integer price, BigDecimal discountRate){
+
+        if (price == null || discountRate == null) {
+            return price;
+        }
+
+        BigDecimal normalPrice = new BigDecimal(price);
+        BigDecimal discount = discountRate.divide(BigDecimal.valueOf(100)); //할인율을 백분율로 변환
+        BigDecimal discountedPrice = normalPrice.multiply(BigDecimal.ONE.subtract(discount)); // 할인 적용 가격 계산
+
+        return discountedPrice.intValue();
     }
 }
