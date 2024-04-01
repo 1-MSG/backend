@@ -15,7 +15,7 @@ public class Option extends BaseEntity {
     private Long id;
     private String optionType;
     private String optionName;
-    private String optionLevel;
+    private Integer optionLevel;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "option_parent_id")
     private Option parent;

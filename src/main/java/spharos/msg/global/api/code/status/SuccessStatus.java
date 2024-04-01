@@ -47,8 +47,9 @@ public enum SuccessStatus implements BaseCode {
     SEARCH_RESULT_SUCCESS(HttpStatus.OK, "SEARCH200", "검색 결과 조회 성공"),
     SEARCH_INPUT_SUCCESS(HttpStatus.OK, "SEARCH201", "키워드 조회 성공"),
   
-    REVIEW_READ_SUCCESS(HttpStatus.OK, "REVIEW200","상품 리뷰 조회 성공");
-  
+    REVIEW_READ_SUCCESS(HttpStatus.OK, "REVIEW200","상품 리뷰 조회 성공"),
+    OPTION_TYPE_SUCCESS(HttpStatus.OK,"OPTION200","옵션 타입 조회 성공");
+
     private final HttpStatus httpStatus;
     private final String status;
     private final String message;
