@@ -17,7 +17,6 @@ import spharos.msg.domain.users.dto.response.LoginOutDto;
 import spharos.msg.domain.users.dto.response.ReissueOutDto;
 import spharos.msg.domain.users.dto.request.SignUpRequestDto;
 import spharos.msg.domain.users.entity.Address;
-import spharos.msg.domain.users.entity.UserOAuthList;
 import spharos.msg.domain.users.entity.Users;
 import spharos.msg.domain.users.repository.AddressRepository;
 import spharos.msg.domain.users.repository.UserOAuthListRepository;
@@ -127,9 +126,11 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     @Override
     public void changePassword(ChangePasswordRequestDto changePasswordRequestDto) {
-        Users findUser = usersRepository.findByLoginId(changePasswordRequestDto.getLoginId()).orElseThrow();
+        Users findUser = usersRepository.findByLoginId(changePasswordRequestDto.getLoginId())
+                .orElseThrow();
 
-        if (validatePassword(findUser.getPassword(), changePasswordRequestDto.getModifyPassword())) {
+        if (validatePassword(findUser.getPassword(),
+                changePasswordRequestDto.getModifyPassword())) {
             throw new UsersException(ErrorStatus.SAME_PASSWORD);
         }
 
@@ -153,7 +154,7 @@ public class AuthServiceImpl implements AuthService {
         return encoder.matches(newPassword, oldPasswordHash);
     }
 
-    private String hashPassword(String password){
+    private String hashPassword(String password) {
         return new BCryptPasswordEncoder().encode(password);
     }
 }

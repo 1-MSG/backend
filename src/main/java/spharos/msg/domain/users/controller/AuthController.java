@@ -74,7 +74,7 @@ public class AuthController {
 
     @Operation(summary = "회원 탈퇴", description = "회원을 탈퇴 시킵니다.")
     @DeleteMapping("/withdraw-user")
-    public ApiResponse<?> withdrawMember (
+    public ApiResponse<?> withdrawMember(
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         authService.withdrawMember(userDetails.getUsername());
@@ -83,7 +83,7 @@ public class AuthController {
 
     @Operation(summary = "비밀번호 변경", description = "비밀번호를 변경 합니다")
     @PatchMapping("/change-password")
-    public ApiResponse<?> changePassword (
+    public ApiResponse<?> changePassword(
             @RequestBody ChangePasswordRequestDto changePasswordRequestDto
     ) {
         authService.changePassword(changePasswordRequestDto);
