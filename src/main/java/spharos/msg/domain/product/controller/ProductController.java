@@ -23,24 +23,6 @@ import spharos.msg.global.api.ApiResponse;
 public class ProductController {
 
     private final ProductService productService;
-    private final String FIRST_STATE = "HOME";
-    private final String SECOND_STATE = "HOME2";
-
-//    @Operation(summary = "홈화면 상품 조회",
-//        description = "홈화면 3가지 섹션(뷰티/랜덤/음식)의 상품,패션카테고리 상품을 조회합니다")
-//    @GetMapping("/product-list")
-//    public ApiResponse<?> getHomeProducts(
-//        @RequestParam("param") String state,
-//        @RequestParam("index") int index
-//    ) {
-//        if (FIRST_STATE.equals(state) && index == 0) {
-//            return ApiResponse.onSuccess(productService.getHomeCosmeRandomFood());
-//        } else if (SECOND_STATE.equals(state)) {
-//            return ApiResponse.onSuccess(productService.getHomeFashion(index));
-//        }
-//        return ApiResponse.onFailure(ErrorStatus.PRODUCT_ERROR.getStatus(),
-//            ErrorStatus.PRODUCT_ERROR.getMessage(), null);
-//    }
 
     @Operation(summary = "상품 상세 조회",
         description = "개별 상품에 대한 상세 정보를 조회합니다")
