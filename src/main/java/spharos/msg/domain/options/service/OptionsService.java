@@ -1,27 +1,27 @@
-package spharos.msg.domain.option.service;
+package spharos.msg.domain.options.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import spharos.msg.domain.option.dto.OptionTypeDto;
-import spharos.msg.domain.option.entity.Options;
-import spharos.msg.domain.option.repository.OptionRepository;
+import spharos.msg.domain.options.dto.OptionsTypeDto;
+import spharos.msg.domain.options.entity.Options;
+import spharos.msg.domain.options.repository.OptionsRepository;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
 @Service
 @RequiredArgsConstructor
-public class OptionService {
-    private final OptionRepository optionRepository;
+public class OptionsService {
+    private final OptionsRepository optionsRepository;
 
     public ApiResponse<?> getOptionType(Long optionId) {
-        Options option = optionRepository.findById(optionId).orElseThrow();
+        Options option = optionsRepository.findById(optionId).orElseThrow();
 
-        return ApiResponse.of(SuccessStatus.OPTION_TYPE_SUCCESS, new OptionTypeDto(option));
+        return ApiResponse.of(SuccessStatus.OPTION_TYPE_SUCCESS, new OptionsTypeDto(option));
     }
 
     public ApiResponse<?> getOption(Long[] optionIds) {
         for(Long optionId:optionIds){
-            Options option = optionRepository.findById(optionId).orElseThrow();
+            Options option = optionsRepository.findById(optionId).orElseThrow();
             if(option.getOptionLevel().equals(1)){
                 //고민중
             }

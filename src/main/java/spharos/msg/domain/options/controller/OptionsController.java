@@ -1,26 +1,26 @@
-package spharos.msg.domain.option.controller;
+package spharos.msg.domain.options.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import spharos.msg.domain.option.service.OptionService;
+import spharos.msg.domain.options.service.OptionsService;
 import spharos.msg.global.api.ApiResponse;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/option")
-public class OptionController {
-    private final OptionService optionService;
+public class OptionsController {
+    private final OptionsService optionsService;
     @GetMapping("/type/{optionId}")
     public ApiResponse<?> getOptionType(
             @PathVariable Long optionId
     ){
-        return optionService.getOptionType(optionId);
+        return optionsService.getOptionType(optionId);
     }
     @GetMapping
     public ApiResponse<?> getOption(
             @RequestParam(value = "optionIds") Long[] optionIds
     ){
-        return optionService.getOption(optionIds);
+        return optionsService.getOption(optionIds);
     }
 
 }
