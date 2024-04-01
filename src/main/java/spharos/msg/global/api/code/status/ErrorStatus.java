@@ -33,6 +33,10 @@ public enum ErrorStatus implements BaseErrorCode {
     NOT_UNION_USER(HttpStatus.BAD_REQUEST, "USER410", "통합 회원이 아닙니다."),
     DUPLICATION_LOGIN_ID(HttpStatus.BAD_REQUEST, "USER411", "중복된 아이디 입니다."),
     DELIVERY_ADDRESS_ADD_FAIL(HttpStatus.BAD_REQUEST, "USER412", "배송지 추가 실패"),
+    NOT_USER(HttpStatus.BAD_REQUEST, "USER413", "등록된 회원이 아닙니다."),
+    SAME_PASSWORD(HttpStatus.BAD_REQUEST, "USER414", "현재 사용중인 비밀번호 입니다"),
+    ADDRESS_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER415", "등록된 주소가 없습니다"),
+    FIND_LOGIN_ID_FAIL(HttpStatus.BAD_REQUEST, "USER416", "가입된 아이디가 없습니다."),
 
     INVALID_ORDER(HttpStatus.BAD_REQUEST, "ORDER400", "잘못된 주문 요청입니다"),
     ORDER_PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER401", "주문 상품을 찾을 수 없습니다"),
@@ -42,15 +46,20 @@ public enum ErrorStatus implements BaseErrorCode {
     NOT_EXIST_PRODUCT(HttpStatus.NOT_FOUND, "PRODUCT601", "존재하지 않는 상품입니다."),
 
 
-    ALREADY_HAD_COUPON(HttpStatus.FORBIDDEN,"COUPON701","이미 보유중인 쿠폰입니다."),
-    ALREADY_USED_COUPON(HttpStatus.FORBIDDEN,"COUPON701","이미 사용한 쿠폰입니다."),
-    NOT_CART_OWNER(HttpStatus.FORBIDDEN,"CART801","장바구니 주인이 아닙니다."),
+    ALREADY_HAD_COUPON(HttpStatus.FORBIDDEN, "COUPON701", "이미 보유중인 쿠폰입니다."),
+    ALREADY_USED_COUPON(HttpStatus.FORBIDDEN, "COUPON701", "이미 사용한 쿠폰입니다."),
+    NOT_CART_OWNER(HttpStatus.FORBIDDEN, "CART801", "장바구니 주인이 아닙니다."),
 
-    REVIEW_SAVE_FAIL(HttpStatus.BAD_REQUEST, "REVIEW400","상품 리뷰 작성 실패"),
-    REVIEW_UPDATE_FAIL(HttpStatus.BAD_REQUEST, "REVIEW400","상품 리뷰 수정 실패"),
-    REVIEW_DELETE_FAIL(HttpStatus.BAD_REQUEST,"REVIEW400","상품 리뷰 삭제 실패"),
-    REVIEW_READ_FAIL(HttpStatus.BAD_REQUEST, "REVIEW400","상품 리뷰 조회 실패"),
-    EXAMPLE_EXCEPTION(HttpStatus.BAD_REQUEST, "EXAMPLE400", "샘플 에러 메시지입니다");
+    REVIEW_SAVE_FAIL(HttpStatus.BAD_REQUEST, "REVIEW400", "상품 리뷰 작성 실패"),
+    REVIEW_UPDATE_FAIL(HttpStatus.BAD_REQUEST, "REVIEW400", "상품 리뷰 수정 실패"),
+    REVIEW_DELETE_FAIL(HttpStatus.BAD_REQUEST, "REVIEW400", "상품 리뷰 삭제 실패"),
+    REVIEW_READ_FAIL(HttpStatus.BAD_REQUEST, "REVIEW400", "상품 리뷰 조회 실패"),
+
+    INVALID_SEARCH_KEYWORD(HttpStatus.BAD_REQUEST, "SEARCH400", "잘못된 검색어입니다."),
+    SEARCH_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH404", "해당 검색어의 결과가 존재하지 않습니다."),
+    EXAMPLE_EXCEPTION(HttpStatus.BAD_REQUEST, "EXAMPLE400", "샘플 에러 메시지입니다"),
+
+    CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY404", "하위 카테고리 조회 실패");
 
 
     private final HttpStatus httpStatus;

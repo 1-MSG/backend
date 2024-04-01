@@ -5,15 +5,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import spharos.msg.domain.users.dto.request.ChangePasswordRequestDto;
 import spharos.msg.domain.users.dto.request.DuplicationCheckRequestDto;
 import spharos.msg.domain.users.dto.request.LoginRequestDto;
 import spharos.msg.domain.users.dto.request.SignUpRequestDto;
+import spharos.msg.domain.users.dto.response.FindIdOutDto;
 import spharos.msg.domain.users.dto.response.LoginOutDto;
 import spharos.msg.domain.users.dto.response.ReissueOutDto;
 import spharos.msg.domain.users.service.AuthService;
@@ -30,15 +27,16 @@ public class AuthController {
 
     //회원가입
     @Operation(summary = "통합회원가입", description = "통합회원 회원가입")
-    @PostMapping("/signup/union")
-    public ApiResponse<?> signUpUnion(@RequestBody SignUpRequestDto signUpRequestDto) {
+    @PostMapping("/signup")
+    public ApiResponse<?> signUpUnion(
+            @RequestBody SignUpRequestDto signUpRequestDto) {
         authService.signUp(signUpRequestDto);
         return ApiResponse.of(SuccessStatus.SIGN_UP_SUCCESS_UNION, null);
     }
 
     //로그인
     @Operation(summary = "로그인", description = "통합회원 로그인")
-    @PostMapping("/login/union")
+    @PostMapping("/login")
     public ApiResponse<LoginOutDto> loginUnion(
             @RequestBody LoginRequestDto loginRequestDto
     ) {
@@ -48,11 +46,11 @@ public class AuthController {
 
     //로그아웃
     @Operation(summary = "로그아웃", description = "로그인 회원 로그아웃")
-    @DeleteMapping("/logout")
+    @DeleteMapping("/logout/{userId}")
     public ApiResponse<?> logout(
-            @AuthenticationPrincipal UserDetails userDetails
+            @PathVariable(name = "userId") Long userId
     ) {
-        authService.logout(userDetails.getUsername());
+        authService.logout(userId);
         return ApiResponse.of(SuccessStatus.LOGOUT_SUCCESS, null);
     }
 
@@ -74,5 +72,32 @@ public class AuthController {
     ) {
         authService.duplicateCheckLoginId(duplicationCheckRequestDto);
         return ApiResponse.of(SuccessStatus.DUPLICATION_CHECK_SUCCESS, null);
+    }
+
+    @Operation(summary = "회원 탈퇴", description = "회원을 탈퇴 시킵니다.")
+    @DeleteMapping("/secession/{userId}")
+    public ApiResponse<?> withdrawMember(
+            @PathVariable(name = "userId") Long userId
+    ) {
+        authService.withdrawMember(userId);
+        return ApiResponse.of(SuccessStatus.WITHDRAW_USER_SUCCESS, null);
+    }
+
+    @Operation(summary = "비밀번호 변경", description = "비밀번호를 변경 합니다")
+    @PatchMapping("/change-password")
+    public ApiResponse<?> changePassword(
+            @RequestBody ChangePasswordRequestDto changePasswordRequestDto
+    ) {
+        authService.changePassword(changePasswordRequestDto);
+        return ApiResponse.of(SuccessStatus.CHANGE_PASSWORD_SUCCESS, null);
+    }
+
+
+    @Operation(summary = "아이디 찾기", description = "입력받은 이메일로 로그인 아이디를 조회합니다.")
+    @GetMapping("/find-id/{email}")
+    public ApiResponse<FindIdOutDto> findUserId(
+            @PathVariable(name = "email") String email) {
+        FindIdOutDto loginUnionId = authService.findLoginUnionId(email);
+        return ApiResponse.of(SuccessStatus.FIND_LOGIN_ID_SUCCESS, loginUnionId);
     }
 }

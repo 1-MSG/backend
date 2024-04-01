@@ -1,11 +1,12 @@
 package spharos.msg.domain.review.controller;
 
+import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_READ_SUCCESS;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +15,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import spharos.msg.domain.review.dto.ReviewRequest;
+import spharos.msg.domain.review.dto.ReviewResponse;
 import spharos.msg.domain.review.service.ReviewService;
 import spharos.msg.global.api.ApiResponse;
 
@@ -28,13 +31,24 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
+    @Operation(summary = "상품 리뷰 목록 조회",
+        description = "id로 상품 리뷰 목록를 조회합니다")
+    @GetMapping("/{productId}/reviews")
+    public ApiResponse<ReviewResponse.ReviewsDto> getReviews(
+        @PathVariable("productId") Long productId,
+        @RequestParam("page") int page,
+        @RequestParam("size") int size
+    ){
+        return ApiResponse.of(REVIEW_READ_SUCCESS,reviewService.getReviews(productId,page,size));
+    }
+
     @Operation(summary = "상품 리뷰 상세 조회",
-    description = "id로 상품 리뷰를 조회합니다")
+    description = "id로 특정 리뷰를 조회합니다")
     @GetMapping("/{reviewId}")
     public ApiResponse<?> getReviewDetail(
         @PathVariable("reviewId") Long reviewId
     ){
-     return   reviewService.getReviewDetail(reviewId);
+     return reviewService.getReviewDetail(reviewId);
     }
     @Operation(summary = "상품 리뷰 등록",
         description = "리뷰가 가능한 주문상세에 대해 상품 리뷰를 등록합니다")

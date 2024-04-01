@@ -2,14 +2,14 @@ package spharos.msg.domain.users.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import spharos.msg.domain.users.dto.request.EasyLoginRequestDto;
 import spharos.msg.domain.users.dto.request.EasySignUpRequestDto;
+import spharos.msg.domain.users.dto.response.FindIdOutDto;
 import spharos.msg.domain.users.dto.response.LoginOutDto;
 import spharos.msg.domain.users.service.OAuthServiceImpl;
 import spharos.msg.global.api.ApiResponse;
@@ -25,7 +25,7 @@ public class OAuthController {
     private final OAuthServiceImpl oAuthService;
 
     @Operation(summary = "간편 회원가입", description = "간편회원 회원가입")
-    @PostMapping("/signup/easy")
+    @PostMapping("/signup")
     public ApiResponse<?> signUpEasy(
             @RequestBody EasySignUpRequestDto easySignUpRequestDto
     ) {
@@ -34,11 +34,19 @@ public class OAuthController {
     }
 
     @Operation(summary = "간편 회원로그인", description = "간편회원 로그인")
-    @PostMapping("/login/easy")
+    @PostMapping("/login")
     public ApiResponse<?> loginEasy(
             @RequestBody EasyLoginRequestDto easyLoginRequestDto
     ) {
         LoginOutDto login = oAuthService.easyLogin(easyLoginRequestDto);
         return ApiResponse.of(SuccessStatus.LOGIN_SUCCESS_EASY, login);
+    }
+
+    @Operation(summary = "간편 회원 아이디 찾기", description = "입력받은 이메일로 간편회원의 로그인 아이디를 조회합니다.")
+    @GetMapping("/find-id/{email}")
+    public ApiResponse<FindIdOutDto> findUserId(
+            @PathVariable("email") String email) {
+        FindIdOutDto loginUnionId = oAuthService.findLoginEasyId(email);
+        return ApiResponse.of(SuccessStatus.FIND_LOGIN_ID_SUCCESS, loginUnionId);
     }
 }

@@ -9,17 +9,11 @@ import spharos.msg.global.entity.BaseEntity;
 @Getter
 public class ProductInfoDetail extends BaseEntity {
     @Id
+    @Column(name = "product_info_detail_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long productInfoItemsId;
-
-
-    @NotBlank
-    private String productInfoDetailTitle;
+    private Long Id;
 
     @NotBlank
     private String productInfoDetailContent;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
 
 }

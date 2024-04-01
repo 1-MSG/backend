@@ -2,6 +2,7 @@ package spharos.msg.domain.product.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import spharos.msg.global.entity.BaseEntity;
 
@@ -9,8 +10,12 @@ import spharos.msg.global.entity.BaseEntity;
 @Getter
 public class ProductImage extends BaseEntity {
     @Id
+    @Column(name="product_image_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long productImageId;
+    private Long Id;
+
+    @NotNull
+    private Integer imageIndex;
 
     @NotBlank
     private String productImageUrl;
