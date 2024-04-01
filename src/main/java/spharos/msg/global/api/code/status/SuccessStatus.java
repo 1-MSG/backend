@@ -21,7 +21,8 @@ public enum SuccessStatus implements BaseCode {
     WITHDRAW_USER_SUCCESS(HttpStatus.ACCEPTED, "USER212", "회원 탈퇴 성공"),
     CHANGE_PASSWORD_SUCCESS(HttpStatus.ACCEPTED, "USER213", "비밀번호 재설정 성공"),
     SEARCH_ALL_ADDRESS_SUCCESS(HttpStatus.ACCEPTED, "USER214", "전체 배송지 조회 성공"),
-    DELETE_ADDRESS_SUCCESS(HttpStatus.ACCEPTED, "USER214", "배송지 삭제 성공"),
+    DELETE_ADDRESS_SUCCESS(HttpStatus.ACCEPTED, "USER215", "배송지 삭제 성공"),
+    FIND_LOGIN_ID_SUCCESS(HttpStatus.ACCEPTED, "USER216", "아이디 찾기 성공"),
 
 
     ORDER_SUCCESS(HttpStatus.CREATED, "ORDER201", "상품 주문 성공"),
@@ -42,7 +43,7 @@ public enum SuccessStatus implements BaseCode {
     COUPON_GET_USERS_SUCCESS(HttpStatus.OK, "COUPON202", "보유 쿠폰 목록 조회 성공"),
     TOKEN_REISSUE_COMPLETE(HttpStatus.ACCEPTED, "USER204", "토큰 재발급 성공"),
 
-    PRODUCT_DETAIL_READ_SUCCESS(HttpStatus.OK, "PRODUCT200", "상품 상세 조회 성공"),
+    PRODUCT_INFO_SUCCESS(HttpStatus.OK, "PRODUCT200", "상품 정보 조회 성공"),
 
     REVIEW_SAVE_SUCCESS(HttpStatus.CREATED, "REVIEW200", "상품 리뷰 작성 성공"),
     REVIEW_UPDATE_SUCCESS(HttpStatus.OK, "REVIEW200", "상품 리뷰 수정 성공"),
@@ -50,9 +51,12 @@ public enum SuccessStatus implements BaseCode {
 
     SEARCH_RESULT_SUCCESS(HttpStatus.OK, "SEARCH200", "검색 결과 조회 성공"),
     SEARCH_INPUT_SUCCESS(HttpStatus.OK, "SEARCH201", "키워드 조회 성공"),
-  
-    REVIEW_READ_SUCCESS(HttpStatus.OK, "REVIEW200","상품 리뷰 조회 성공");
-  
+
+    CATEGORY_LIST_SUCCESS(HttpStatus.OK, "CATEGORY200", "카테고리 목록 조회 성공"),
+    CATEGORY_PRODUCT_SUCCESS(HttpStatus.OK, "CATEGORY201", "카테고리별 상품 조회 성공"),
+
+    REVIEW_READ_SUCCESS(HttpStatus.OK, "REVIEW200", "상품 리뷰 조회 성공");
+
     private final HttpStatus httpStatus;
     private final String status;
     private final String message;

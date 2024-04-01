@@ -46,7 +46,7 @@ public class UsersService {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true, "UTF-8");
             mimeMessageHelper.setFrom(username);
             mimeMessageHelper.setTo(email);
-            mimeMessageHelper.setSubject("MSG.COM 회원 가입 인증 메일 입니다");
+            mimeMessageHelper.setSubject("MSG.COM 인증 메일 입니다");
             mimeMessageHelper.setText("인증번호 : " + secretKey);
             mailSender.send(message);
 

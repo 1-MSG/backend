@@ -2,7 +2,6 @@ package spharos.msg.domain.users.service;
 
 import java.util.List;
 import java.util.UUID;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.users.dto.request.ChangePasswordRequestDto;
 import spharos.msg.domain.users.dto.request.DuplicationCheckRequestDto;
 import spharos.msg.domain.users.dto.request.LoginRequestDto;
+import spharos.msg.domain.users.dto.response.FindIdOutDto;
 import spharos.msg.domain.users.dto.response.LoginOutDto;
 import spharos.msg.domain.users.dto.response.ReissueOutDto;
 import spharos.msg.domain.users.dto.request.SignUpRequestDto;
@@ -158,5 +158,18 @@ public class AuthServiceImpl implements AuthService {
 
     private String hashPassword(String password) {
         return new BCryptPasswordEncoder().encode(password);
+    }
+
+
+    @Transactional(readOnly = true)
+    @Override
+    public FindIdOutDto findLoginUnionId(String email) {
+        Users user = usersRepository.findByEmail(email).orElseThrow(
+                () -> new UsersException(ErrorStatus.FIND_LOGIN_ID_FAIL));
+
+        return FindIdOutDto
+                .builder()
+                .loginId(user.getLoginId())
+                .build();
     }
 }

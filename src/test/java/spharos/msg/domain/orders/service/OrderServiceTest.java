@@ -19,9 +19,10 @@ import spharos.msg.domain.users.entity.Users;
 import spharos.msg.domain.users.repository.AddressRepository;
 import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.global.api.exception.OrderException;
+import spharos.msg.global.config.QueryDslConfig;
 
 @DataJpaTest
-@Import(OrderService.class)
+@Import({OrderService.class, QueryDslConfig.class})
 class OrderServiceTest {
 
     @Autowired

@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spharos.msg.domain.category.entity.CategoryProduct;
 import spharos.msg.global.entity.BaseEntity;
+import spharos.msg.global.entity.Brand;
 import spharos.msg.global.entity.Vendor;
 
 @Entity
@@ -49,31 +50,24 @@ public class Product extends BaseEntity {
     private Boolean isDeleted;
 
     @NotNull
-    private String productBrand;
-
-    @NotNull
-    @Column(columnDefinition = "integer default 0")
-    private Short defaultImageIndex;
-
-    @NotNull
     @Column(columnDefinition = "integer default 0")
     private Integer deliveryFee;
-
-    @NotNull
-    @Column(columnDefinition = "integer default 0")
-    private Integer minDeliveryFee;
 
     @NotNull
     @Column(columnDefinition = "decimal default 0.0")
     private BigDecimal discountRate;
 
     @ManyToOne
-    @JoinColumn(name = "vendor_id")
-    private Vendor vendor;
+    @JoinColumn(name = "brand_id")
+    private Brand brand;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_sales_info_id")
     private ProductSalesInfo productSalesInfo;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_info_detail_id")
+    private ProductInfoDetail productInfoDetail;
 
     @Builder.Default
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)

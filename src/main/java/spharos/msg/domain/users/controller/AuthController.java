@@ -10,6 +10,7 @@ import spharos.msg.domain.users.dto.request.ChangePasswordRequestDto;
 import spharos.msg.domain.users.dto.request.DuplicationCheckRequestDto;
 import spharos.msg.domain.users.dto.request.LoginRequestDto;
 import spharos.msg.domain.users.dto.request.SignUpRequestDto;
+import spharos.msg.domain.users.dto.response.FindIdOutDto;
 import spharos.msg.domain.users.dto.response.LoginOutDto;
 import spharos.msg.domain.users.dto.response.ReissueOutDto;
 import spharos.msg.domain.users.service.AuthService;
@@ -89,5 +90,13 @@ public class AuthController {
     ) {
         authService.changePassword(changePasswordRequestDto);
         return ApiResponse.of(SuccessStatus.CHANGE_PASSWORD_SUCCESS, null);
+    }
+
+
+    @Operation(summary = "아이디 찾기", description = "입력받은 이메일로 로그인 아이디를 조회합니다.")
+    @GetMapping("/find-id")
+    public ApiResponse<FindIdOutDto> findUserId(@RequestParam(name = "email") String email) {
+        FindIdOutDto loginUnionId = authService.findLoginUnionId(email);
+        return ApiResponse.of(SuccessStatus.FIND_LOGIN_ID_SUCCESS, loginUnionId);
     }
 }
