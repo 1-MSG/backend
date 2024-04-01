@@ -1,12 +1,11 @@
 package spharos.msg.domain.bundle.service;
 
-import java.awt.print.Pageable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.bundle.dto.BundleResponse;
@@ -23,13 +22,13 @@ public class BundleService {
     @Transactional
     public BundleResponse.BundlesDto getBundles(int page, int size) {
         //페이저블 객체 만들기
-        Pageable pageable = (Pageable) PageRequest.of(page,size);
+        PageRequest pageRequest = PageRequest.of(page,size);
         //번들이 담긴 페이지 불러오기
-        Page<Bundle> bundlePage = bundleRepository.findAll(pageable);
+        Slice<Bundle> bundleSlice = bundleRepository.findAll(pageRequest);
         //Dto 리스트로 변환
-        List<BundleResponse.BundleDto> bundles = getBundleList(bundlePage);
+        List<BundleResponse.BundleDto> bundles = getBundleList(bundleSlice);
         //다음 페이지가 있는지 확인
-        boolean isLast = !bundlePage.hasNext();
+        boolean isLast = !bundleSlice.hasNext();
 
         return BundleResponse.BundlesDto.builder()
             .bundles(bundles)
@@ -37,8 +36,8 @@ public class BundleService {
             .build();
     }
 
-    private List<BundleResponse.BundleDto> getBundleList(Page<Bundle> bundlePage) {
-        return bundlePage.getContent().stream().map(bundle -> BundleResponse.BundleDto.builder()
+    private List<BundleResponse.BundleDto> getBundleList(Slice<Bundle> bundleSlice) {
+        return bundleSlice.getContent().stream().map(bundle -> BundleResponse.BundleDto.builder()
             .bundleId(bundle.getId())
             .bundleName(bundle.getBundleName())
             .brandName(bundle.getBrandName())
@@ -49,7 +48,7 @@ public class BundleService {
 
     private Integer getBundlePrice(Bundle bundle) {
 
-        List<BundleProduct> bundleProducts = bundleProductRepository.findAll(bundle);
+        List<BundleProduct> bundleProducts = bundleProductRepository.findAllByBundle(bundle);
 
         return bundleProducts.stream()
             .mapToInt(bundleProduct -> {

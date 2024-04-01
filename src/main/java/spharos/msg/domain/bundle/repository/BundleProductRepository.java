@@ -8,5 +8,5 @@ import spharos.msg.domain.bundle.entity.BundleProduct;
 
 @Repository
 public interface BundleProductRepository extends JpaRepository<BundleProduct, Long> {
-    List<BundleProduct> findAll(Bundle bundle);
+    List<BundleProduct> findAllByBundle(Bundle bundle);
 }
