@@ -75,7 +75,7 @@ public class AuthController {
     }
 
     @Operation(summary = "회원 탈퇴", description = "회원을 탈퇴 시킵니다.")
-    @DeleteMapping("/withdraw/{userId}")
+    @DeleteMapping("/secession/{userId}")
     public ApiResponse<?> withdrawMember(
             @RequestParam(name = "userId") Long userId
     ) {
