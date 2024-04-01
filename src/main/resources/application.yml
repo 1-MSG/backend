@@ -15,8 +15,6 @@ spring:
     redis:
       host: ${REDIS_DB_ADDRESS}
       port: ${REDIS_PORT}
-      repository:
-        enabled: false
   mail:
     host: smtp.naver.com
     port: 465
