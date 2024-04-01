@@ -6,15 +6,13 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import spharos.msg.domain.category.entity.QCategory;
 import spharos.msg.domain.category.entity.QCategoryProduct;
 import spharos.msg.domain.product.entity.QProduct;
 import spharos.msg.domain.search.dto.SearchResponse.SearchInputDto;
 import spharos.msg.domain.search.dto.SearchResponse.SearchProductDto;
+import spharos.msg.domain.search.dto.SearchResponse.SearchProductDtos;
 
 @Repository
 @RequiredArgsConstructor
@@ -25,51 +23,55 @@ public class SearchRepositoryImpl implements SearchRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<SearchProductDto> searchAllProduct(String keyword, Pageable pageable) {
+    public SearchProductDtos searchAllProduct(String keyword, int index) {
         QCategoryProduct categoryProduct = QCategoryProduct.categoryProduct;
         QProduct product = QProduct.product;
         QCategory category = QCategory.category;
 
-        Long total = getTotal(keyword, categoryProduct, product, category);
+        Long totalSize = getTotalSize(keyword, categoryProduct, product, category);
         List<SearchProductDto> searchProductDtos = getSearchProductIds(
-            keyword, pageable, categoryProduct, product, category);
+            keyword, index, categoryProduct, product, category);
 
-        return new PageImpl<>(searchProductDtos, pageable, total);
+        boolean isLast = (index + 1) * SEARCH_PRODUCT_SIZE >= totalSize;
+
+        return new SearchProductDtos(isLast, searchProductDtos);
     }
 
-    private Long getTotal(String keyword, QCategoryProduct categoryProduct, QProduct product,
+    private Long getTotalSize(String keyword, QCategoryProduct categoryProduct, QProduct product,
         QCategory category) {
         return jpaQueryFactory
             .select(categoryProduct.countDistinct())
             .from(categoryProduct)
             .innerJoin(categoryProduct.product, product)
             .innerJoin(categoryProduct.category, category)
-            .where(validateContainsKeyword(keyword, product, category))
+            .where(isContainsNameOrBrandOrCategory(keyword, product, category))
             .fetchOne();
     }
 
-    private List<SearchProductDto> getSearchProductIds(String keyword, Pageable pageable,
+    private List<SearchProductDto> getSearchProductIds(String keyword, long index,
         QCategoryProduct categoryProduct, QProduct product, QCategory category) {
-
-        return jpaQueryFactory
+        List<SearchProductDto> searchProductDtos = jpaQueryFactory
             .select(Projections.constructor(
                 SearchProductDto.class, product.id))
             .from(categoryProduct)
             .innerJoin(categoryProduct.product, product)
             .innerJoin(categoryProduct.category, category)
-            .where(validateContainsKeyword(keyword, product, category))
-            .orderBy(product.id.desc())
+            .where(isContainsNameOrBrandOrCategory(keyword, product, category))
             .distinct()
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
+            .offset(index * SEARCH_PRODUCT_SIZE)
+            .limit(SEARCH_PRODUCT_SIZE)
             .fetch();
+
+        searchProductDtos.sort((p1, p2) ->
+            p1.getProductId().compareTo(p2.getProductId()));
+        return searchProductDtos;
     }
 
-    private BooleanExpression validateContainsKeyword(String keyword, QProduct product,
+    private BooleanExpression isContainsNameOrBrandOrCategory(String keyword, QProduct product,
         QCategory category) {
-
-        return product.productName.containsIgnoreCase(keyword)
-            .or(product.productBrand.containsIgnoreCase(keyword))
+        return product.productName.contains(keyword)
+//            .or(product.productBrand.contains(keyword)) Brand엔티티 생성으로 brand 필드가 없어 에러나서 주석처리
+            .or(category.categoryName.contains(keyword));
     }
 
     @Override
@@ -85,11 +87,12 @@ public class SearchRepositoryImpl implements SearchRepository {
             .innerJoin(categoryProduct.category, category)
             .where(
                 product.productName.eq(keyword)
-                    .or(product.productName.containsIgnoreCase(keyword))
+                    .or(product.productName.contains(keyword))
                     .or(category.categoryName.contains(keyword))
             )
             .distinct()
             .limit(SEARCH_PRODUCT_SIZE)
             .fetch();
     }
+
 }
