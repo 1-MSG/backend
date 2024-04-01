@@ -6,59 +6,37 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.search.dto.SearchResponse.SearchInputDto;
-import spharos.msg.domain.search.dto.SearchResponse.SearchProductDto;
 import spharos.msg.domain.search.dto.SearchResponse.SearchProductDtos;
 import spharos.msg.domain.search.repository.SearchRepository;
-import spharos.msg.domain.search.utils.SearchKeywordFinder.SearchKeywordBuilder;
-import spharos.msg.global.api.code.status.ErrorStatus;
-import spharos.msg.global.api.exception.SearchException;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class SearchService {
 
+    private static final String ONLY_WORD_NUMBER_BLANK = "[^a-zA-Z가-힣0-9\\s]";
     private static final String KEYWORD_DELIMITER = " ";
+    private static final String REMOVE = "";
+    private static final String REMOVE_OVER_TWO_BLANK = "\\s{2,}";
 
     private final SearchRepository searchRepository;
 
-    public SearchProductDtos findMatchProducts(String keyword, Pageable pageable) {
-        keyword = getSearchKeyword(keyword);
-
-        if (keyword.isEmpty() || keyword.isBlank()) {
-            throw new SearchException(ErrorStatus.INVALID_SEARCH_KEYWORD);
-        }
-
-        Page<SearchProductDto> searched = searchRepository.searchAllProduct(keyword, pageable);
-
-        if (searched.isEmpty()) {
-            throw new SearchException(ErrorStatus.SEARCH_NOT_FOUND);
-        }
-        return SearchProductDtos
-            .builder()
-            .searchProductDtos(searched.getContent())
-            .isLast(searched.isLast())
-            .build();
+    public SearchProductDtos findMatchProducts(String keyword, int index) {
+        keyword = trimKeyword(keyword);
+        return searchRepository.searchAllProduct(keyword, index);
     }
 
     public List<SearchInputDto> findExpectedKeywords(String keyword) {
-        keyword = getSearchKeyword(keyword);
-
-        if (keyword.isEmpty() || keyword.isBlank()) {
-            throw new SearchException(ErrorStatus.INVALID_SEARCH_KEYWORD);
-        }
+        keyword = trimKeyword(keyword);
 
         List<SearchInputDto> searchInputDtos = new ArrayList<>();
         List<String> essentialProductNames = searchRepository
             .searchAllKeyword(keyword)
             .stream()
-            .map(product ->
-                getSearchKeyword(product.getProductName()))
+            .map(product -> trimKeyword(product.getProductName()))
             .toList();
 
         for (String essentialProductName : essentialProductNames) {
@@ -66,9 +44,6 @@ public class SearchService {
             searchInputDtos.addAll(toSearchInputDto(searchWords));
         }
 
-        if (searchInputDtos.isEmpty()) {
-            throw new SearchException(ErrorStatus.SEARCH_NOT_FOUND);
-        }
         return searchInputDtos
             .stream()
             .distinct()
@@ -76,16 +51,11 @@ public class SearchService {
             .toList();
     }
 
-    private String getSearchKeyword(String keyword) {
-        return SearchKeywordBuilder
-            .withKeyword(keyword)
-            .removeDuplicatedSpaces()
-            .removeUnnecessary()
-            .trimSpaces()
-            .removeUnCompletedKorean()
-            .toLowerCase()
-            .build()
-            .getKeyword();
+    private String trimKeyword(String keyword) {
+        return keyword
+            .replaceAll(REMOVE_OVER_TWO_BLANK, KEYWORD_DELIMITER)
+            .replaceAll(ONLY_WORD_NUMBER_BLANK, REMOVE)
+            .trim();
     }
 
     private List<String> getSearchWords(String essentialName, String keyword) {
@@ -102,9 +72,8 @@ public class SearchService {
         List<String> resultWords = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();
 
-        resultWords.add(essentialName);
         splitWords.stream()
-            .filter(word -> essentialName.indexOf(word) > startIndex)
+            .filter(word -> essentialName.indexOf(word) >= startIndex)
             .forEach(word -> addToResultWord(resultWords, stringBuilder, word));
 
         return resultWords;
