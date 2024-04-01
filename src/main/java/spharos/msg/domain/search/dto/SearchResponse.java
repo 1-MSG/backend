@@ -17,7 +17,6 @@ public class SearchResponse {
     @Getter
     @ToString
     @AllArgsConstructor
-    @Builder
     public static class SearchProductDtos {
 
         @JsonProperty("isLast")

@@ -33,6 +33,7 @@ public enum ErrorStatus implements BaseErrorCode {
     NOT_UNION_USER(HttpStatus.BAD_REQUEST, "USER410", "통합 회원이 아닙니다."),
     DUPLICATION_LOGIN_ID(HttpStatus.BAD_REQUEST, "USER411", "중복된 아이디 입니다."),
     DELIVERY_ADDRESS_ADD_FAIL(HttpStatus.BAD_REQUEST, "USER412", "배송지 추가 실패"),
+    FIND_LOGIN_ID_FAIL(HttpStatus.BAD_REQUEST, "USER413", "가입된 아이디가 없습니다."),
 
     INVALID_ORDER(HttpStatus.BAD_REQUEST, "ORDER400", "잘못된 주문 요청입니다"),
     ORDER_PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER401", "주문 상품을 찾을 수 없습니다"),
@@ -56,6 +57,7 @@ public enum ErrorStatus implements BaseErrorCode {
     EXAMPLE_EXCEPTION(HttpStatus.BAD_REQUEST, "EXAMPLE400", "샘플 에러 메시지입니다"),
 
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY404", "하위 카테고리 조회 실패");
+
 
     private final HttpStatus httpStatus;
     private final String status;
