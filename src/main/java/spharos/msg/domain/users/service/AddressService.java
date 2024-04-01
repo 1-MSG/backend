@@ -25,8 +25,8 @@ public class AddressService {
     private final UsersRepository usersRepository;
 
     @Transactional
-    public void createAddress(AddressRequestDto addressRequestDto, String uuid) {
-        Users users = usersRepository.findByUuid(uuid).orElseThrow(
+    public void createAddress(AddressRequestDto addressRequestDto, Long userId) {
+        Users users = usersRepository.findById(userId).orElseThrow(
                 () -> new UsersException(ErrorStatus.DELIVERY_ADDRESS_ADD_FAIL)
         );
 

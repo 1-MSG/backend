@@ -4,8 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import spharos.msg.domain.users.dto.request.AddressRequestDto;
 import spharos.msg.domain.users.dto.response.SearchAddressOutDto;
@@ -25,17 +23,17 @@ public class AddressController {
     private final AddressService addressService;
 
     @Operation(summary = "배송지 추가", description = "해당 회원의 배송지를 추가 합니다.")
-    @PostMapping("add")
+    @PostMapping("/{userId}")
     public ApiResponse<?> addAddress(
             @RequestBody AddressRequestDto addressRequestDto,
-            @AuthenticationPrincipal UserDetails userDetails
+            @RequestParam(name = "userId") Long userId
     ) {
-        addressService.createAddress(addressRequestDto, userDetails.getUsername());
+        addressService.createAddress(addressRequestDto, userId);
         return ApiResponse.of(SuccessStatus.DELIVERY_ADDRESS_ADD_SUCCESS, null);
     }
 
     @Operation(summary = "배송지 정보 조회", description = "해당 회원의 모든 배송지를 조회합니다.")
-    @GetMapping("search-all/{userId}")
+    @GetMapping("/{userId}")
     public ApiResponse<List<SearchAddressOutDto>> searchAllAddress(
             @RequestParam(name = "userId") Long userId
     ) {
@@ -44,7 +42,7 @@ public class AddressController {
     }
 
     @Operation(summary = "배송지 삭제", description = "해당 회원의 선택된 배송지를 삭제합니다.")
-    @DeleteMapping("delete-address")
+    @DeleteMapping("/{userId}/{addressId}")
     public ApiResponse<?> deleteAddress(
             @RequestParam("userId") Long userId,
             @RequestParam("addressId") Long addressId
