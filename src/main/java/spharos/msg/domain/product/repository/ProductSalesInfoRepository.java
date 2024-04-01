@@ -7,5 +7,5 @@ import spharos.msg.domain.product.entity.ProductSalesInfo;
 
 @Repository
 public interface ProductSalesInfoRepository extends JpaRepository<ProductSalesInfo, Long> {
-
+    Optional<ProductSalesInfo> findById(Long productSalesInfoId);
 }
