@@ -9,4 +9,6 @@ import spharos.msg.domain.bundle.entity.BundleProduct;
 @Repository
 public interface BundleProductRepository extends JpaRepository<BundleProduct, Long> {
     List<BundleProduct> findAllByBundle(Bundle bundle);
+
+    List<BundleProduct> findAllByBundleId(Long bundleId);
 }
