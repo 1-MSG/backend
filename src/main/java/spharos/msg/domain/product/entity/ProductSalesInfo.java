@@ -19,7 +19,7 @@ public class ProductSalesInfo extends BaseEntity {
     @NotNull
     @DecimalMin("0.0")
     @DecimalMax("5.0")
-    private BigDecimal productStars;
+    private BigDecimal productStar;
 
     @NotNull
     @Column(columnDefinition = "bigint default 0")

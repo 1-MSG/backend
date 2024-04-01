@@ -67,9 +67,9 @@ public class SearchRepositoryImpl implements SearchRepository {
 
     private BooleanExpression validateContainsKeyword(String keyword, QProduct product,
         QCategory category) {
+
         return product.productName.containsIgnoreCase(keyword)
             .or(product.productBrand.containsIgnoreCase(keyword))
-            .or(category.categoryName.contains(keyword));
     }
 
     @Override

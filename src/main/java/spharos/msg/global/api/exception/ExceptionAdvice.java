@@ -203,10 +203,27 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
         return super.handleExceptionInternal(
             e, responseBody, HttpHeaders.EMPTY, errorStatus.getHttpStatus(), request);
     }
+
     /*
     사용자 커스텀 예외 추가
     @ExceptionHandler(value = 사용자 커스텀 예외 클래스)
      */
+    @ExceptionHandler(value = CategoryException.class)
+    public ResponseEntity<Object> categoryException(CategoryException exception,
+        WebRequest request) {
+        ErrorReasonDto errorReasonHttpStatus = exception.getErrorReasonHttpStatus();
+        ApiResponse<Object> responseBody = createResponseBody(
+            errorReasonHttpStatus.getStatus(),
+            errorReasonHttpStatus.getMessage(),
+            null);
+
+        return super.handleExceptionInternal(
+            exception,
+            responseBody,
+            HttpHeaders.EMPTY,
+            errorReasonHttpStatus.getHttpStatus(),
+            request);
+    }
 
     private <T> ApiResponse<T> createResponseBody(ErrorStatus errorStatus, T data) {
         return ApiResponse.onFailure(
