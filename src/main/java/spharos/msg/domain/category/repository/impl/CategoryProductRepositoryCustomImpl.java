@@ -29,13 +29,41 @@ public class CategoryProductRepositoryCustomImpl implements CategoryProductRepos
     @Override
     public List<CategoryDto> findCategoriesByParentId(Long parentId) {
         QCategory category = QCategory.category;
+        List<Long> cateogryIds = findIds(parentId, category);
+        cateogryIds.add(0, parentId);
+
+        return jpaQueryFactory
+            .select(Projections.constructor(CategoryDto.class,
+                category.id,
+                new CaseBuilder()
+                    .when(category.id.eq(parentId))
+                    .then("상품 전체보기")
+                    .otherwise(category.categoryName),
+                tryGetCategoryImage(category)))
+            .from(category)
+            .where(category.id.in(cateogryIds))
+            .fetch();
+    }
+
+    private List<Long> findIds(Long parentId, QCategory category) {
+        return jpaQueryFactory
+            .select(category.id)
+            .from(category)
+            .where(validateParentAndLevel(parentId, category))
+            .fetch();
+    }
+
+    @Override
+    public List<CategoryDto> findCategoriesByLevel(int categoryLevel) {
+        QCategory category = QCategory.category;
         return jpaQueryFactory
             .select(Projections.constructor(CategoryDto.class,
                 category.id,
                 category.categoryName,
                 tryGetCategoryImage(category)))
             .from(category)
-            .where(validateCorrectParentAndLevel(parentId, category))
+            .where(category.productCategoryLevel.eq(categoryLevel))
+            .distinct()
             .fetch();
     }
 
@@ -69,7 +97,7 @@ public class CategoryProductRepositoryCustomImpl implements CategoryProductRepos
             .fetch();
     }
 
-    private BooleanExpression validateCorrectParentAndLevel(Long parentId, QCategory category) {
+    private BooleanExpression validateParentAndLevel(Long parentId, QCategory category) {
         return category.parent.id.eq(parentId)
             .and(category.productCategoryLevel
                 .eq(category.parent.productCategoryLevel.add(1)));
