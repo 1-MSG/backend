@@ -158,15 +158,15 @@ public class ProductService {
 
     private List<ProductDetailReponse.OptionDetail> convertOptions(List<ProductOption> productOptions) {
         return productOptions.stream().map(productOption -> {
-            String optionColor = productOption.getOptionColor() != null ? productOption.getOptionColor().getProductColor() : null;
-            String optionSize = productOption.getOptionSize() != null ? productOption.getOptionSize().getProductSize() : null;
-            String optionEtc = productOption.getOptionEtc() != null ? productOption.getOptionEtc().getProductEtc() : null;
+//            String optionColor = productOption.getOptionColor() != null ? productOption.getOptionColor().getProductColor() : null;
+//            String optionSize = productOption.getOptionSize() != null ? productOption.getOptionSize().getProductSize() : null;
+//            String optionEtc = productOption.getOptionEtc() != null ? productOption.getOptionEtc().getProductEtc() : null;
 
             return ProductDetailReponse.OptionDetail.builder()
                 .optionId(productOption.getProductOptionId())
-                .optionColor(optionColor)
-                .optionSize(optionSize)
-                .optionEtc(optionEtc)
+//                .optionColor(optionColor)
+//                .optionSize(optionSize)
+//                .optionEtc(optionEtc)
                 .build();
         }).toList();
     }

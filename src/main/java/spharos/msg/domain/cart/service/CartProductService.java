@@ -34,9 +34,9 @@ public class CartProductService {
         Users users = usersRepository.findByUuid(userUuid).orElseThrow();
 
         //옵션 없는 상품
-        if (productOption.getOptionColor() == null && productOption.getOptionSize() == null && productOption.getOptionEtc() == null) {
-            return addCart(users, productOptionId, productOption, 1);
-        }
+//        if () {
+//            return addCart(users, productOptionId, productOption, 1);
+//        }
         //옵션 있는 상품
         return addCart(users, productOptionId, productOption, cartProductQuantity.getProductQuantity());
     }

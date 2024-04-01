@@ -3,9 +3,6 @@ package spharos.msg.domain.product.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import spharos.msg.domain.product.entity.option.OptionColor;
-import spharos.msg.domain.product.entity.option.OptionEtc;
-import spharos.msg.domain.product.entity.option.OptionSize;
 import spharos.msg.global.entity.BaseEntity;
 
 @Entity
@@ -26,14 +23,6 @@ public class ProductOption extends BaseEntity {
     private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "option_size_id")
-    private OptionSize optionSize;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "option_color_id")
-    private OptionColor optionColor;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "option_etc_id")
-    private OptionEtc optionEtc;
+    @JoinColumn(name = "option_id")
+    private Option option;
 }
