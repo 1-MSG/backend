@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.users.dto.request.DuplicationCheckRequestDto;
 import spharos.msg.domain.users.dto.request.LoginRequestDto;
+import spharos.msg.domain.users.dto.response.FindIdOutDto;
 import spharos.msg.domain.users.dto.response.LoginOutDto;
 import spharos.msg.domain.users.dto.response.ReissueOutDto;
 import spharos.msg.domain.users.dto.request.SignUpRequestDto;
@@ -99,5 +100,17 @@ public class AuthServiceImpl implements AuthService {
         if (usersRepository.existsByLoginId(duplicationCheckRequestDto.getLoginId())) {
             throw new UsersException(ErrorStatus.DUPLICATION_LOGIN_ID);
         }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public FindIdOutDto findLoginUnionId(String email) {
+        Users user = usersRepository.findByEmail(email).orElseThrow(
+                () -> new UsersException(ErrorStatus.FIND_LOGIN_ID_FAIL));
+
+        return FindIdOutDto
+                .builder()
+                .loginId(user.getLoginId())
+                .build();
     }
 }
