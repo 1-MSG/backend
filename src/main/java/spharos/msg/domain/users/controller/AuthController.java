@@ -94,7 +94,7 @@ public class AuthController {
 
 
     @Operation(summary = "아이디 찾기", description = "입력받은 이메일로 로그인 아이디를 조회합니다.")
-    @GetMapping("/find-id")
+    @GetMapping("/find-id/{email}")
     public ApiResponse<FindIdOutDto> findUserId(@RequestParam(name = "email") String email) {
         FindIdOutDto loginUnionId = authService.findLoginUnionId(email);
         return ApiResponse.of(SuccessStatus.FIND_LOGIN_ID_SUCCESS, loginUnionId);
