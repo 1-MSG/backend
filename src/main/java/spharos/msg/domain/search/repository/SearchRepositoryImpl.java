@@ -70,7 +70,7 @@ public class SearchRepositoryImpl implements SearchRepository {
     private BooleanExpression isContainsNameOrBrandOrCategory(String keyword, QProduct product,
         QCategory category) {
         return product.productName.contains(keyword)
-            .or(product.productBrand.contains(keyword))
+//            .or(product.productBrand.contains(keyword)) Brand엔티티 생성으로 brand 필드가 없어 에러나서 주석처리
             .or(category.categoryName.contains(keyword));
     }
 
