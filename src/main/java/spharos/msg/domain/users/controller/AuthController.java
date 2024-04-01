@@ -48,7 +48,7 @@ public class AuthController {
     @Operation(summary = "로그아웃", description = "로그인 회원 로그아웃")
     @DeleteMapping("/logout/{userId}")
     public ApiResponse<?> logout(
-            @RequestParam(name = "userId") Long userId
+            @PathVariable(name = "userId") Long userId
     ) {
         authService.logout(userId);
         return ApiResponse.of(SuccessStatus.LOGOUT_SUCCESS, null);
@@ -77,7 +77,7 @@ public class AuthController {
     @Operation(summary = "회원 탈퇴", description = "회원을 탈퇴 시킵니다.")
     @DeleteMapping("/secession/{userId}")
     public ApiResponse<?> withdrawMember(
-            @RequestParam(name = "userId") Long userId
+            @PathVariable(name = "userId") Long userId
     ) {
         authService.withdrawMember(userId);
         return ApiResponse.of(SuccessStatus.WITHDRAW_USER_SUCCESS, null);
@@ -95,7 +95,8 @@ public class AuthController {
 
     @Operation(summary = "아이디 찾기", description = "입력받은 이메일로 로그인 아이디를 조회합니다.")
     @GetMapping("/find-id/{email}")
-    public ApiResponse<FindIdOutDto> findUserId(@RequestParam(name = "email") String email) {
+    public ApiResponse<FindIdOutDto> findUserId(
+            @PathVariable(name = "email") String email) {
         FindIdOutDto loginUnionId = authService.findLoginUnionId(email);
         return ApiResponse.of(SuccessStatus.FIND_LOGIN_ID_SUCCESS, loginUnionId);
     }
