@@ -25,7 +25,7 @@ public class OAuthController {
     private final OAuthServiceImpl oAuthService;
 
     @Operation(summary = "간편 회원가입", description = "간편회원 회원가입")
-    @PostMapping("/signup/easy")
+    @PostMapping("/signup")
     public ApiResponse<?> signUpEasy(
             @RequestBody EasySignUpRequestDto easySignUpRequestDto
     ) {
@@ -34,7 +34,7 @@ public class OAuthController {
     }
 
     @Operation(summary = "간편 회원로그인", description = "간편회원 로그인")
-    @PostMapping("/login/easy")
+    @PostMapping("/login")
     public ApiResponse<?> loginEasy(
             @RequestBody EasyLoginRequestDto easyLoginRequestDto
     ) {
@@ -43,8 +43,9 @@ public class OAuthController {
     }
 
     @Operation(summary = "간편 회원 아이디 찾기", description = "입력받은 이메일로 간편회원의 로그인 아이디를 조회합니다.")
-    @GetMapping("/find-id")
-    public ApiResponse<FindIdOutDto> findUserId(@RequestParam("email") String email) {
+    @GetMapping("/find-id/{email}")
+    public ApiResponse<FindIdOutDto> findUserId(
+            @PathVariable("email") String email) {
         FindIdOutDto loginUnionId = oAuthService.findLoginEasyId(email);
         return ApiResponse.of(SuccessStatus.FIND_LOGIN_ID_SUCCESS, loginUnionId);
     }

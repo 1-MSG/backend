@@ -63,8 +63,9 @@ public class Users extends BaseEntity implements UserDetails {
     private Long baseAddressId;
 
     @Builder
-    public Users(String loginId, String uuid, String password, String phoneNumber, String email,
+    public Users(Long id, String loginId, String uuid, String password, String phoneNumber, String email,
             String userName, String address) {
+        this.id = id;
         this.loginId = loginId;
         this.uuid = uuid;
         this.password = password;
