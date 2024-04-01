@@ -71,6 +71,18 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
             e, responseBody, HttpHeaders.EMPTY, errorStatus.getHttpStatus(), request);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<Object> orderException(SearchException e, WebRequest request) {
+        ErrorReasonDto errorStatus = e.getErrorReasonHttpStatus();
+        ApiResponse<Object> responseBody = createResponseBody(
+            errorStatus.getStatus(),
+            errorStatus.getMessage(),
+            null);
+
+        return super.handleExceptionInternal(
+            e, responseBody, HttpHeaders.EMPTY, errorStatus.getHttpStatus(), request);
+    }
+
     /**
      * 회원 가입 시, Login Id 중복 시, Users Common Exception
      */
