@@ -53,7 +53,6 @@ public enum ErrorStatus implements BaseErrorCode {
 
     INVALID_SEARCH_KEYWORD(HttpStatus.BAD_REQUEST, "SEARCH400", "잘못된 검색어입니다."),
     SEARCH_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH404", "해당 검색어의 결과가 존재하지 않습니다."),
-    EXAMPLE_EXCEPTION(HttpStatus.BAD_REQUEST, "EXAMPLE400", "샘플 에러 메시지입니다");
     EXAMPLE_EXCEPTION(HttpStatus.BAD_REQUEST, "EXAMPLE400", "샘플 에러 메시지입니다"),
 
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY404", "하위 카테고리 조회 실패");
