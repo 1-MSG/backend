@@ -33,6 +33,7 @@ public class Category extends BaseEntity {
 
     @NotNull
     private String categoryName;
+    private String categoryImage;
 
     @NotNull
     @Max(3)
