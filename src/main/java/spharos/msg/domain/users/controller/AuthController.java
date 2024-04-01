@@ -26,15 +26,16 @@ public class AuthController {
 
     //회원가입
     @Operation(summary = "통합회원가입", description = "통합회원 회원가입")
-    @PostMapping("/signup/union")
-    public ApiResponse<?> signUpUnion(@RequestBody SignUpRequestDto signUpRequestDto) {
+    @PostMapping("/signup")
+    public ApiResponse<?> signUpUnion(
+            @RequestBody SignUpRequestDto signUpRequestDto) {
         authService.signUp(signUpRequestDto);
         return ApiResponse.of(SuccessStatus.SIGN_UP_SUCCESS_UNION, null);
     }
 
     //로그인
     @Operation(summary = "로그인", description = "통합회원 로그인")
-    @PostMapping("/login/union")
+    @PostMapping("/login")
     public ApiResponse<LoginOutDto> loginUnion(
             @RequestBody LoginRequestDto loginRequestDto
     ) {
@@ -44,11 +45,11 @@ public class AuthController {
 
     //로그아웃
     @Operation(summary = "로그아웃", description = "로그인 회원 로그아웃")
-    @DeleteMapping("/logout")
+    @DeleteMapping("/logout/{userId}")
     public ApiResponse<?> logout(
-            @AuthenticationPrincipal UserDetails userDetails
+            @RequestParam(name = "userId") Long userId
     ) {
-        authService.logout(userDetails.getUsername());
+        authService.logout(userId);
         return ApiResponse.of(SuccessStatus.LOGOUT_SUCCESS, null);
     }
 
@@ -73,11 +74,11 @@ public class AuthController {
     }
 
     @Operation(summary = "회원 탈퇴", description = "회원을 탈퇴 시킵니다.")
-    @DeleteMapping("/withdraw-user")
+    @DeleteMapping("/withdraw/{userId}")
     public ApiResponse<?> withdrawMember(
-            @AuthenticationPrincipal UserDetails userDetails
+            @RequestParam(name = "userId") Long userId
     ) {
-        authService.withdrawMember(userDetails.getUsername());
+        authService.withdrawMember(userId);
         return ApiResponse.of(SuccessStatus.WITHDRAW_USER_SUCCESS, null);
     }
 

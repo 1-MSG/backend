@@ -13,13 +13,13 @@ public interface AuthService {
 
     LoginOutDto login(LoginRequestDto loginRequestDto);
 
-    void logout(String uuid);
+    void logout(Long userId);
 
     ReissueOutDto reissueToken(String token);
 
     void duplicateCheckLoginId(DuplicationCheckRequestDto duplicationCheckRequestDto);
 
-    void withdrawMember(String uuid);
+    void withdrawMember(Long userId);
 
     void changePassword(ChangePasswordRequestDto changePasswordRequestDto);
 }

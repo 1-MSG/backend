@@ -76,6 +76,7 @@ public class AuthServiceImpl implements AuthService {
 
         return LoginOutDto
                 .builder()
+                .userId(findUser.getId())
                 .uuid(findUser.getUuid())
                 .refreshToken(refreshToken)
                 .accessToken(accessToken)
@@ -84,9 +85,10 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
-    public void logout(String uuid) {
-        if (Boolean.TRUE.equals(redisService.isRefreshTokenExist(uuid))) {
-            redisService.deleteRefreshToken(uuid);
+    public void logout(Long userId) {
+        Users findUser = usersRepository.findById(userId).orElseThrow();
+        if (Boolean.TRUE.equals(redisService.isRefreshTokenExist(findUser.getUuid()))) {
+            redisService.deleteRefreshToken(findUser.getUuid());
         }
     }
 
@@ -114,13 +116,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public void withdrawMember(String uuid) {
-        Users users = usersRepository.findByUuid(uuid).orElseThrow();
+    public void withdrawMember(Long userId) {
+        Users users = usersRepository.findById(userId).orElseThrow();
         List<Address> addressList = addressRepository.findByUsersId(users.getId());
 
         addressRepository.deleteAll(addressList);
         usersRepository.delete(users);
-        userOAuthListRepository.deleteByUuid(uuid);
+        userOAuthListRepository.deleteByUuid(users.getUuid());
     }
 
     @Transactional

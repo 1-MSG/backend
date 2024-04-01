@@ -25,7 +25,7 @@ public class OAuthController {
     private final OAuthServiceImpl oAuthService;
 
     @Operation(summary = "간편 회원가입", description = "간편회원 회원가입")
-    @PostMapping("/signup/easy")
+    @PostMapping("/signup")
     public ApiResponse<?> signUpEasy(
             @RequestBody EasySignUpRequestDto easySignUpRequestDto
     ) {
@@ -34,7 +34,7 @@ public class OAuthController {
     }
 
     @Operation(summary = "간편 회원로그인", description = "간편회원 로그인")
-    @PostMapping("/login/easy")
+    @PostMapping("/login")
     public ApiResponse<?> loginEasy(
             @RequestBody EasyLoginRequestDto easyLoginRequestDto
     ) {
