@@ -1,4 +1,4 @@
-package spharos.msg.domain.product.entity;
+package spharos.msg.domain.option.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
