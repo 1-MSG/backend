@@ -45,35 +45,35 @@ public class ProductController {
     @Operation(summary = "상품 상세 조회",
         description = "개별 상품에 대한 상세 정보를 조회합니다")
     @GetMapping("/product/{productId}")
-    public ApiResponse<ProductResponse.ProductInfo> getProductDetails(@PathVariable("productId") Long product_id) {
-        return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductInfo(product_id));
+    public ApiResponse<ProductResponse.ProductInfo> getProductDetails(@PathVariable("productId") Long productId) {
+        return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductInfo(productId));
     }
 
     @Operation(summary = "상품 썸네일 조회",
         description = "특정 상품에 대한 상품 이미지(썸네일)을 반환합니다")
     @GetMapping("/product/{productId}/image")
-    public ApiResponse<ProductResponse.ProductImage> getProductImage(@PathVariable("productId") Long product_id) {
-        return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductImage(product_id));
+    public ApiResponse<ProductResponse.ProductImage> getProductImage(@PathVariable("productId") Long productId) {
+        return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductImage(productId));
     }
 
     @Operation(summary = "상품 이미지 전체 조회",
         description = "특정 상품에 대한 상품 이미지 리스트를 반환합니다")
     @GetMapping("/product/{productId}/images")
-    public ApiResponse<List<ProductResponse.ProductImage>> getProductImages(@PathVariable("productId") Long product_id) {
-        return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductImages(product_id));
+    public ApiResponse<List<ProductResponse.ProductImage>> getProductImages(@PathVariable("productId") Long productId) {
+        return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductImages(productId));
     }
 
     @Operation(summary = "상품 상세 html 조회",
         description = "특정 상품에 대한 상품 상세 정보 html을 반환합니다")
     @GetMapping("/product/{productId}/detail")
-    public ApiResponse<String> getProductDetail(@PathVariable("productId") Long product_id) {
-        return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductDetail(product_id));
+    public ApiResponse<String> getProductDetail(@PathVariable("productId") Long productId) {
+        return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductDetail(productId));
     }
 
     @Operation(summary = "상품 카테고리 정보 조회",
         description = "특정 상품이 속한 카테고리를 반환합니다")
     @GetMapping("/product/{productId}/category")
-    public ApiResponse<ProductResponse.ProductCategory> getProductCategory(@PathVariable("productId") Long product_id) {
-        return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductCategory(product_id));
+    public ApiResponse<ProductResponse.ProductCategory> getProductCategory(@PathVariable("productId") Long productId) {
+        return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductCategory(productId));
     }
 }
