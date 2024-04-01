@@ -7,26 +7,26 @@ import spharos.msg.domain.cart.entity.CartProduct;
 @Getter
 @NoArgsConstructor
 public class CartProductResponseDto {
+    private int id;
+    private Long cartId;
+    private Long brandId;
     private Long productId;
-    private String productName;
-    private Integer productPrice;
-    private boolean cartIsChecked;
+    private Integer cartProductQuantity;
     private Long productOptionId;
-    //todo 이미지, 별점 정보 가져오기
-    //private String image;
-    //private Integer productStar;
-    private Integer productQuantity;
-    private Integer productStock;
+    private boolean cartIsChecked;
+    private boolean cartIsPinned;
 
     public CartProductResponseDto(CartProduct cartProduct) {
-        this.productId = cartProduct.getProductOption().getProduct().getId();
-        this.productName = cartProduct.getProductOption().getProduct().getProductName();
-        this.productPrice = cartProduct.getProductOption().getProduct().getProductPrice();
+        this.cartId = cartProduct.getId();
+        this.productId = cartProduct.getProductId();
+        this.cartProductQuantity = cartProduct.getCartProductQuantity();
         this.cartIsChecked = cartProduct.getCartIsChecked();
+        this.cartIsPinned = cartProduct.getCartIsPinned();
         this.productOptionId = cartProduct.getProductOption().getProductOptionId();
-//        this.image = cartProduct.getProductOption().getProduct().get
-//        this.productStar =
-        this.productQuantity = cartProduct.getCartProductQuantity();
-        this.productStock = cartProduct.getProductOption().getStock();
+        this.brandId = cartProduct.getBrandId();
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

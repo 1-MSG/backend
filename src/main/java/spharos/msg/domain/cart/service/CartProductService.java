@@ -18,7 +18,7 @@ import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +28,6 @@ public class CartProductService {
     private final ProductOptionRepository productOptionRepository;
     private final UsersRepository usersRepository;
 
-    //todo 회원/비회원 구분 및 예외처리
     @Transactional
     public ApiResponse<?> addCartProduct(Long productOptionId, CartProductQuantityDto cartProductQuantity, String userUuid) {
         ProductOption productOption = productOptionRepository.findById(productOptionId).orElseThrow();
@@ -46,11 +45,15 @@ public class CartProductService {
     public ApiResponse<?> getCart(String userUuid) {
         Users users = usersRepository.findByUuid(userUuid).orElseThrow();
 
-        return ApiResponse.of(SuccessStatus.CART_PRODUCT_GET_SUCCESS,
-                cartProductRepository.findByUsers(users)
-                        .stream()
-                        .map(CartProductResponseDto::new)
-                        .collect(Collectors.toList()));
+        List<CartProductResponseDto> cartProductResponseDtos = cartProductRepository.findByUsers(users)
+                .stream()
+                .map(CartProductResponseDto::new)
+                .toList();
+
+        IntStream.range(0, cartProductResponseDtos.size())
+                .forEach(index -> cartProductResponseDtos.get(index).setId(index));
+
+        return ApiResponse.of(SuccessStatus.CART_PRODUCT_GET_SUCCESS, cartProductResponseDtos);
     }
 
     @Transactional
@@ -78,7 +81,7 @@ public class CartProductService {
             if (cartProduct.getProductOption().getProductOptionId().equals(productOptionId)) {
                 cartProductRepository.save(CartProduct.builder()
                         .id(cartProduct.getId())
-                        .cartProductQuantity(cartProduct.getCartProductQuantity()+productQuantity)
+                        .cartProductQuantity(cartProduct.getCartProductQuantity() + productQuantity)
                         .productOption(cartProduct.getProductOption())
                         .cartIsChecked(cartProduct.getCartIsChecked())
                         .users(cartProduct.getUsers())
