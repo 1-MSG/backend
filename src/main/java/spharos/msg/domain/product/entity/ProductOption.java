@@ -3,7 +3,7 @@ package spharos.msg.domain.product.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import spharos.msg.domain.option.entity.Option;
+import spharos.msg.domain.option.entity.Options;
 import spharos.msg.global.entity.BaseEntity;
 
 @Entity
@@ -24,5 +24,5 @@ public class ProductOption extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "option_id")
-    private Option option;
+    private Options option;
 }
