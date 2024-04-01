@@ -31,7 +31,7 @@ public class OptionsController {
     }
     @Operation(summary = "자식 옵션 조회",
             description = "옵션을 선택했을 때 해당 옵션의 자식 옵션을 조회 합니다.")
-    @GetMapping("/optionName/{optionId}")
+    @GetMapping("/{optionId}")
     public ApiResponse<?> getOptionChild(
             @PathVariable Long optionId)
     {
