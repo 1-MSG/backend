@@ -2,12 +2,13 @@ package spharos.msg.domain.option.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import spharos.msg.global.entity.BaseEntity;
 
 import java.util.List;
 
 @Entity
 @Getter
-public class Option {
+public class Option extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "option_id")
