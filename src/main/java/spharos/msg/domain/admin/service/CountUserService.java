@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import spharos.msg.domain.admin.dto.SearchUsersInfoRequestDto;
+import spharos.msg.domain.admin.dto.AdminResponseDto;
 import spharos.msg.domain.admin.repository.CountUserRepository;
 import spharos.msg.domain.users.entity.LoginType;
 import spharos.msg.domain.users.entity.UserOAuthList;
@@ -25,10 +25,10 @@ public class CountUserService {
     private final UserOAuthListRepository userOAuthListRepository;
     private final RedisService redisService;
 
-    public List<SearchUsersInfoRequestDto>SearchUsersInfo(Pageable pageable){
+    public List<AdminResponseDto.SearchAllInfo>SearchUsersInfo(Pageable pageable){
         Page<Users> findUsers = usersRepository.findAll(pageable);
 
-        return findUsers.map(m -> SearchUsersInfoRequestDto
+        return findUsers.map(m -> AdminResponseDto.SearchAllInfo
                 .builder()
                 .userInfo(m.getEmail())
                 .userId(m.getId())
@@ -44,5 +44,12 @@ public class CountUserService {
             return LoginType.UNION;
         }
         return LoginType.EASY;
+    }
+
+    public AdminResponseDto.ConnectCount countConnectUser(){
+        return AdminResponseDto.ConnectCount
+                .builder()
+                .connectCount(redisService.countConnectUser())
+                .build();
     }
 }

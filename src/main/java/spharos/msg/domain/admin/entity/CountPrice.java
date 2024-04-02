@@ -3,10 +3,11 @@ package spharos.msg.domain.admin.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import spharos.msg.global.entity.BaseEntity;
 
 @Entity
 @Getter
-public class CountPrice {
+public class CountPrice extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "count_price_id")
