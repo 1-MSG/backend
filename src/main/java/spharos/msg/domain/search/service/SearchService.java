@@ -6,9 +6,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.search.dto.SearchResponse.SearchInputDto;
+import spharos.msg.domain.search.dto.SearchResponse.SearchProductDto;
 import spharos.msg.domain.search.dto.SearchResponse.SearchProductDtos;
 import spharos.msg.domain.search.repository.SearchRepository;
 import spharos.msg.domain.search.utils.KeywordModifier.SearchKeywordBuilder;
@@ -19,7 +22,8 @@ import spharos.msg.global.api.exception.SearchException;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class SearchService {
-  private static final String KEYWORD_DELIMITER = " ";
+
+    private static final String KEYWORD_DELIMITER = " ";
 
     private final SearchRepository searchRepository;
 
