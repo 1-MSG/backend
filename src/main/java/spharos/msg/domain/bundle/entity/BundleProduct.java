@@ -13,7 +13,8 @@ public class BundleProduct extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bundle_product_id")
     private Long id;
-    @NotNull()
+
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bundle_id")
     private Bundle bundle;

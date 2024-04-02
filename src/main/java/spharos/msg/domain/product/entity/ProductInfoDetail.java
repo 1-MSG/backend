@@ -8,9 +8,10 @@ import spharos.msg.global.entity.BaseEntity;
 @Entity
 @Getter
 public class ProductInfoDetail extends BaseEntity {
+
     @Id
-    @Column(name = "product_info_detail_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_info_detail_id")
     private Long Id;
 
     @NotBlank
