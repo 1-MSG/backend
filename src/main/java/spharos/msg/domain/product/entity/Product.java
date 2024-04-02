@@ -23,8 +23,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spharos.msg.domain.category.entity.CategoryProduct;
 import spharos.msg.global.entity.BaseEntity;
-import spharos.msg.global.entity.Brand;
-import spharos.msg.global.entity.Vendor;
+import spharos.msg.domain.brand.entity.Brand;
 
 @Entity
 @Getter

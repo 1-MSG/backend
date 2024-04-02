@@ -29,7 +29,7 @@ public class CategoryController {
 
     @Operation(summary = "카테고리 id를 통한 자식 카테고리 조회",
         description = "해당 카테고리의 바로 아래 차수의 카테고리를 조회합니다.")
-    @GetMapping("/category")
+    @GetMapping("/category-child")
     public ApiResponse<List<CategoryDto>> findCategoryAPI(
         @RequestParam("categoryId") Long categoryId) {
 
@@ -37,6 +37,19 @@ public class CategoryController {
             SuccessStatus.CATEGORY_LIST_SUCCESS,
             categoryService.findCategoryChild(categoryId));
     }
+
+    @Operation(summary = "레벨(계층) 기준으로 카테고리 조회",
+        description =
+            "해당 레벨에 해당하는 모든 카테고리를 반환합니다. 예를 들어 대분류를 얻고 싶으면 level = 0을 설정합니다. "
+                + "기본값은 level = 0 입니다.")
+    @GetMapping("/category")
+    public ApiResponse<List<CategoryDto>> findcategoryByLevelAPI(
+        @RequestParam(value = "level", defaultValue = "0") int level) {
+        return ApiResponse.of(
+            SuccessStatus.CATEGORY_LIST_SUCCESS,
+            categoryService.findCategoriesByLevel(level));
+    }
+
 
     @Operation(summary = "카테고리별 상품조회",
         description = "해당 카테고리를 가진 모든 상품을 조회합니다. 현재 productId순으로 내림차순 정렬이 기본입니다.")
