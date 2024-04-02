@@ -10,12 +10,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import spharos.msg.domain.brand.entity.QBrand;
 import spharos.msg.domain.category.entity.QCategory;
 import spharos.msg.domain.category.entity.QCategoryProduct;
 import spharos.msg.domain.product.entity.QProduct;
 import spharos.msg.domain.search.dto.SearchResponse.SearchInputDto;
 import spharos.msg.domain.search.dto.SearchResponse.SearchProductDto;
-import spharos.msg.global.entity.QBrand;
 
 @Repository
 @RequiredArgsConstructor
