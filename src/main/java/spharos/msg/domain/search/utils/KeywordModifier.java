@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-public class SearchKeywordFinder {
+public class KeywordModifier {
 
     private static final String UNNESSARY_WORD = "[^a-zA-Z가-힣0-9\\s-]";
     private static final String KEYWORD_DELIMITER = " ";
@@ -15,7 +15,7 @@ public class SearchKeywordFinder {
 
     private final String keyword;
 
-    private SearchKeywordFinder(String keyword) {
+    private KeywordModifier(String keyword) {
         this.keyword = keyword;
     }
 
@@ -28,8 +28,8 @@ public class SearchKeywordFinder {
             return new SearchKeywordBuilder(keyword);
         }
 
-        public SearchKeywordFinder build() {
-            return new SearchKeywordFinder(keyword);
+        public KeywordModifier build() {
+            return new KeywordModifier(keyword);
         }
 
         public SearchKeywordBuilder trimSpaces() {

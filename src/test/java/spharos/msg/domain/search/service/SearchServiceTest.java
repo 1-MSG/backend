@@ -151,9 +151,9 @@ class SearchServiceTest {
     @Test
     @DisplayName("존재하지 않는 상품이면, 빈 리스트를 반환한다.")
     void 빈_리스트_반환() {
-        assertThatThrownBy(
-            () -> searchService.findMatchProducts("존재하지 않는 상품 ", DEFAULT_PAGEABLE))
-            .isInstanceOf(SearchException.class);
+        SearchProductDtos result = searchService.findMatchProducts("존재하지 않는 상품 ",
+            DEFAULT_PAGEABLE);
+        assertThat(result.getSearchProductDtos()).isEmpty();
     }
 
     @Test

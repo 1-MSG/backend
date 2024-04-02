@@ -14,7 +14,7 @@ import spharos.msg.domain.search.dto.SearchResponse.SearchInputDto;
 import spharos.msg.domain.search.dto.SearchResponse.SearchProductDto;
 import spharos.msg.domain.search.dto.SearchResponse.SearchProductDtos;
 import spharos.msg.domain.search.repository.SearchRepository;
-import spharos.msg.domain.search.utils.SearchKeywordFinder.SearchKeywordBuilder;
+import spharos.msg.domain.search.utils.KeywordModifier.SearchKeywordBuilder;
 import spharos.msg.global.api.code.status.ErrorStatus;
 import spharos.msg.global.api.exception.SearchException;
 
@@ -36,9 +36,6 @@ public class SearchService {
 
         Page<SearchProductDto> searched = searchRepository.searchAllProduct(keyword, pageable);
 
-        if (searched.isEmpty()) {
-            throw new SearchException(ErrorStatus.SEARCH_NOT_FOUND);
-        }
         return SearchProductDtos
             .builder()
             .searchProductDtos(searched.getContent())
@@ -66,9 +63,6 @@ public class SearchService {
             searchInputDtos.addAll(toSearchInputDto(searchWords));
         }
 
-        if (searchInputDtos.isEmpty()) {
-            throw new SearchException(ErrorStatus.SEARCH_NOT_FOUND);
-        }
         return searchInputDtos
             .stream()
             .distinct()

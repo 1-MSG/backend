@@ -15,6 +15,7 @@ import spharos.msg.domain.category.entity.QCategoryProduct;
 import spharos.msg.domain.product.entity.QProduct;
 import spharos.msg.domain.search.dto.SearchResponse.SearchInputDto;
 import spharos.msg.domain.search.dto.SearchResponse.SearchProductDto;
+import spharos.msg.global.entity.QBrand;
 
 @Repository
 @RequiredArgsConstructor
@@ -57,6 +58,7 @@ public class SearchRepositoryImpl implements SearchRepository {
             .from(categoryProduct)
             .innerJoin(categoryProduct.product, product)
             .innerJoin(categoryProduct.category, category)
+            .innerJoin(product.brand, QBrand.brand)
             .where(validateContainsKeyword(keyword, product, category))
             .orderBy(product.id.desc())
             .distinct()
@@ -65,11 +67,11 @@ public class SearchRepositoryImpl implements SearchRepository {
             .fetch();
     }
 
-    private BooleanExpression validateContainsKeyword(String keyword, QProduct product,
-        QCategory category) {
-
+    private BooleanExpression validateContainsKeyword(
+        String keyword, QProduct product, QCategory category) {
         return product.productName.containsIgnoreCase(keyword)
-            .or(product.productBrand.containsIgnoreCase(keyword))
+            .or(category.categoryName.containsIgnoreCase(keyword))
+            .or(product.brand.brandName.containsIgnoreCase(keyword));
     }
 
     @Override
