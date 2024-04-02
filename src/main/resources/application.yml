@@ -6,7 +6,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
@@ -15,8 +15,6 @@ spring:
     redis:
       host: ${REDIS_DB_ADDRESS}
       port: ${REDIS_PORT}
-      repository:
-        enabled: false
   mail:
     host: smtp.naver.com
     port: 465

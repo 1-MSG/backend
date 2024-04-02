@@ -1,6 +1,7 @@
 package spharos.msg.domain.bundle.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import spharos.msg.global.entity.BaseEntity;
@@ -13,9 +14,12 @@ public class Bundle extends BaseEntity {
     @Column(name = "bundle_id")
     private Long id;
 
-    @NotNull
+    @NotBlank
     private String bundleName;
 
-    @NotNull
-    private Long vendorId;
+    @NotBlank
+    private String bundleImage;
+
+    @NotBlank
+    private String brandName;
 }

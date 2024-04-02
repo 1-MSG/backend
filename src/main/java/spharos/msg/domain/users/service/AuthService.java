@@ -1,5 +1,6 @@
 package spharos.msg.domain.users.service;
 
+import spharos.msg.domain.users.dto.request.ChangePasswordRequestDto;
 import spharos.msg.domain.users.dto.request.DuplicationCheckRequestDto;
 import spharos.msg.domain.users.dto.request.LoginRequestDto;
 import spharos.msg.domain.users.dto.response.FindIdOutDto;
@@ -13,11 +14,15 @@ public interface AuthService {
 
     LoginOutDto login(LoginRequestDto loginRequestDto);
 
-    void logout(String uuid);
+    void logout(Long userId);
 
     ReissueOutDto reissueToken(String token);
 
     void duplicateCheckLoginId(DuplicationCheckRequestDto duplicationCheckRequestDto);
+
+    void withdrawMember(Long userId);
+
+    void changePassword(ChangePasswordRequestDto changePasswordRequestDto);
 
     FindIdOutDto findLoginUnionId(String email);
 }

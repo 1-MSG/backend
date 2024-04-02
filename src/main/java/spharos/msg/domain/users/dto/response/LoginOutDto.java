@@ -13,6 +13,7 @@ public class LoginOutDto {
 
     private String refreshToken;
     private String accessToken;
+    private Long userId;
     private String name;
     private String email;
     private String uuid;
