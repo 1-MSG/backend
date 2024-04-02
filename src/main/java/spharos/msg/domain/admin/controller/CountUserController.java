@@ -49,4 +49,12 @@ public class CountUserController {
                 SuccessStatus.COUNT_CONNECT_USERS_SUCCESS,
                 countUserService.countConnectUser());
     }
+
+    @Operation(summary = "전체 회원 수 조회 API", description = "전체 회원 수를 반환합니다.")
+    @GetMapping("/count-user")
+    private ApiResponse<AdminResponseDto.UsersCount> UsersCountApi() {
+        return ApiResponse.of(
+                SuccessStatus.COUNT_TOTAL_USERS_SUCCESS,
+                countUserService.usersCount());
+    }
 }

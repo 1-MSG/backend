@@ -52,4 +52,11 @@ public class CountUserService {
                 .connectCount(redisService.countConnectUser())
                 .build();
     }
+
+    public AdminResponseDto.UsersCount usersCount(){
+        return AdminResponseDto.UsersCount
+                .builder()
+                .usersCount(usersRepository.count())
+                .build();
+    }
 }
