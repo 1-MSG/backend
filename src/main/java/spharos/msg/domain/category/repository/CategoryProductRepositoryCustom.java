@@ -10,6 +10,8 @@ public interface CategoryProductRepositoryCustom {
 
     List<CategoryDto> findCategoriesByParentId(Long parentId);
 
+    List<CategoryDto> findCategoriesByLevel(int categoryLevel);
+
     Page<CategoryProductDto> findCategoryProductsById(Long categoryId, Pageable pageable);
 
 }

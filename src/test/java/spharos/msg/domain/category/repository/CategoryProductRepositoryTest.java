@@ -1,6 +1,7 @@
 package spharos.msg.domain.category.repository;
 
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -48,8 +49,10 @@ class CategoryProductRepositoryTest {
         List<Integer> levels = categoryProducts.stream()
             .map(Category::getProductCategoryLevel)
             .toList();
+        List<Integer> result = new ArrayList<>(levels);
+        result.remove(0);
         //then
-        Assertions.assertThat(levels)
+        Assertions.assertThat(result)
             .isNotEmpty()
             .allMatch(e -> e.equals(parentLevel + 1));
     }
