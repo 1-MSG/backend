@@ -7,7 +7,7 @@ import spharos.msg.global.entity.BaseEntity;
 
 @Entity
 @Getter
-public class CountUser extends BaseEntity {
+public class CountUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "count_user_id")

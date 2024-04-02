@@ -30,7 +30,7 @@ public class CountUserController {
     @Operation(summary = "전체 회원 정보 조회 API", description = "전체 회원에 대한 정보를 반환합니다.")
     @PostMapping("/search-all")
     private ApiResponse<List<AdminResponseDto.SearchAllInfo>> SearchAllUsersApi(
-            @RequestParam(defaultValue = "0") int page, //requiredFalse
+            @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortField,
             @RequestParam(defaultValue = "ASC") String sortDirection
