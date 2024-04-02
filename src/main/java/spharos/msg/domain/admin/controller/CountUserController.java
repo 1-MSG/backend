@@ -57,4 +57,12 @@ public class CountUserController {
                 SuccessStatus.COUNT_TOTAL_USERS_SUCCESS,
                 countUserService.usersCount());
     }
+
+    @Operation(summary = "오늘 가입자 수 조회 API", description = "오늘 가입한 회원 수를 반환합니다.")
+    @GetMapping("/count-today-user")
+    private ApiResponse<AdminResponseDto.UsersCount> todaySignupCount() {
+        return ApiResponse.of(
+                SuccessStatus.COUNT_TOTAL_USERS_SUCCESS,
+                countUserService.todaySignupCount());
+    }
 }

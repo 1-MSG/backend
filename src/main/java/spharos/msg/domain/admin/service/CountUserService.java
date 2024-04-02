@@ -1,5 +1,6 @@
 package spharos.msg.domain.admin.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,6 +58,13 @@ public class CountUserService {
         return AdminResponseDto.UsersCount
                 .builder()
                 .usersCount(usersRepository.count())
+                .build();
+    }
+
+    public AdminResponseDto.UsersCount todaySignupCount(){
+        return AdminResponseDto.UsersCount
+                .builder()
+                .usersCount(usersRepository.countByCreatedAtAfter(LocalDate.now().atStartOfDay()))
                 .build();
     }
 }
