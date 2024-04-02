@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.cart.dto.CartProductOptionResponseDto;
-import spharos.msg.domain.cart.dto.CartProductQuantityDto;
+import spharos.msg.domain.cart.dto.CartProductRequestDto;
 import spharos.msg.domain.cart.dto.CartProductResponseDto;
 import spharos.msg.domain.cart.entity.CartProduct;
 import spharos.msg.domain.cart.repository.CartProductRepository;
@@ -29,16 +29,11 @@ public class CartProductService {
     private final UsersRepository usersRepository;
 
     @Transactional
-    public ApiResponse<?> addCartProduct(Long productOptionId, CartProductQuantityDto cartProductQuantity, String userUuid) {
+    public ApiResponse<?> addCartProduct(Long productOptionId, CartProductRequestDto cartProductRequestDto, int cartProductQuantity, String userUuid) {
         ProductOption productOption = productOptionRepository.findById(productOptionId).orElseThrow();
         Users users = usersRepository.findByUuid(userUuid).orElseThrow();
 
-        //옵션 없는 상품
-//        if () {
-//            return addCart(users, productOptionId, productOption, 1);
-//        }
-        //옵션 있는 상품
-        return addCart(users, productOptionId, productOption, cartProductQuantity.getProductQuantity());
+        return addCart(users, productOptionId, cartProductRequestDto, productOption, cartProductQuantity);
     }
 
     @Transactional
@@ -74,7 +69,7 @@ public class CartProductService {
                         .toList());
     }
 
-    private ApiResponse<?> addCart(Users users, Long productOptionId, ProductOption productOption, Integer productQuantity) {
+    private ApiResponse<?> addCart(Users users, Long productOptionId, CartProductRequestDto cartProductRequestDto, ProductOption productOption, Integer productQuantity) {
         List<CartProduct> cartProducts = cartProductRepository.findByUsers(users);
         //이미 장바구니에 담긴 상품의 경우 개수 더해서 save하기
         for (CartProduct cartProduct : cartProducts) {
@@ -84,19 +79,24 @@ public class CartProductService {
                         .cartProductQuantity(cartProduct.getCartProductQuantity() + productQuantity)
                         .productOption(cartProduct.getProductOption())
                         .cartIsChecked(cartProduct.getCartIsChecked())
+                        .cartIsPinned(cartProduct.getCartIsPinned())
+                        .productId(cartProduct.getProductId())
+                        .brandId(cartProduct.getBrandId())
                         .users(cartProduct.getUsers())
                         .build());
                 return ApiResponse.of(SuccessStatus.CART_PRODUCT_ADD_SUCCESS, null);
             }
         }
         //새롭게 담는 상품의 경우 새로 생성하기
-        CartProduct cartProduct = CartProduct.builder()
+        cartProductRepository.save(CartProduct.builder()
+                .productId(cartProductRequestDto.getProductId())
+                .brandId(cartProductRequestDto.getBrandId())
                 .cartProductQuantity(productQuantity)
-                .cartIsChecked(false)
-                .users(users)
                 .productOption(productOption)
-                .build();
-        cartProductRepository.save(cartProduct);
+                .cartIsChecked(false)
+                .cartIsPinned(false)
+                .users(users)
+                .build());
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_ADD_SUCCESS, null);
     }
 }
