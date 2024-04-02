@@ -16,6 +16,7 @@ import spharos.msg.domain.product.entity.ProductImage;
 
 import spharos.msg.domain.product.repository.ProductImageRepository;
 import spharos.msg.domain.product.repository.ProductRepository;
+import spharos.msg.domain.product.repository.ProductRepositoryCustom;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +26,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryProductRepository categoryProductRepository;
     private final ProductImageRepository productImageRepository;
+    private final ProductRepositoryCustom productRepositoryCustom;
 
     //id로 상품의 기본 정보 불러오기
     @Transactional
@@ -93,8 +95,23 @@ public class ProductService {
     //id리스트로 상품 객체 불러오기
     @Transactional
     public List<ProductResponse.ProductInfoDto> getProductsDetails(List<Long> idList) {
+        List<Product> products = productRepositoryCustom.findProductsByIdList(idList);
+        return products.stream().map(product -> {
+            ProductImage productImage = productImageRepository.findByProductAndImageIndex(product, 0)
+                .orElseGet(ProductImage::new); // 이미지를 찾을 수 없을 때 빈 ProductImage 객체를 생성하여 반환
 
-        return null;
+            return ProductResponse.ProductInfoDto.builder()
+                .productName(product.getProductName())
+                .productBrand(product.getBrand().getBrandName())
+                .productImage(productImage.getProductImageUrl())
+                .productPrice(product.getProductPrice())
+                .discountRate(product.getDiscountRate())
+                .discountPrice(
+                    getDiscountedPrice(product.getProductPrice(), product.getDiscountRate()))
+                .productStar(product.getProductSalesInfo().getProductStar())
+                .reviewCount(product.getProductSalesInfo().getReviewCount())
+                .build();
+        }).toList();
     }
 
     //할인가 계산하는 method

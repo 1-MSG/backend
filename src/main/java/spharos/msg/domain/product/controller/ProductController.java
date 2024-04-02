@@ -64,7 +64,7 @@ public class ProductController {
     @Operation(summary = "여러 상품 정보 조회",
         description = "상품들에 대한 상세 정보를 조회합니다")
     @GetMapping("/products")
-    public ApiResponse<?> getProductsDetails(
+    public ApiResponse<List<ProductResponse.ProductInfoDto>> getProductsDetails(
         @RequestParam("productIds") String productIds
     ) {
         // 쉼표로 구분된 문자열을 배열로 변환
@@ -75,6 +75,6 @@ public class ProductController {
             .map(Long::valueOf)
             .toList();
 
-        return null;
+        return ApiResponse.of(PRODUCT_INFO_SUCCESS,productService.getProductsDetails(idList));
     }
 }

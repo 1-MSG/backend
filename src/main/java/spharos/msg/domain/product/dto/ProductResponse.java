@@ -46,13 +46,13 @@ public class ProductResponse {
         @Schema(description = "상품 별점")
         private BigDecimal productStar;
         @Schema(description = "상품 리뷰 개수")
-        private Integer reviewCount;
+        private Long reviewCount;
         @Schema(description = "상품 이미지")
         private String productImage;
 
         @Builder
         private ProductInfoDto(String productBrand, String productName, Integer productPrice, String productImage,
-            BigDecimal productStar, Integer discountPrice, BigDecimal discountRate, Integer reviewCount) {
+            BigDecimal productStar, Integer discountPrice, BigDecimal discountRate, Long reviewCount) {
 
             this.productBrand = productBrand;
             this.productName = productName;
