@@ -37,4 +37,22 @@ public class OptionsController {
     {
         return optionsService.getOptionChild(optionId);
     }
+
+    @Operation(summary = "첫 옵션 조회v2",
+            description = "옵션을 선택했을 때 해당 옵션의 자식 옵션을 조회 합니다.")
+    @GetMapping("/product/{productId}")
+    public ApiResponse<?> getOptionsV2(
+            @PathVariable Long productId)
+    {
+        return optionsService.getOptionsV2(productId);
+    }
+
+    @Operation(summary = "자식 옵션 조회v2",
+            description = "옵션을 선택했을 때 해당 옵션의 자식 옵션을 조회 합니다.v2")
+    @GetMapping("/product/child/{optionsId}")
+    public ApiResponse<?> getChildOptionsV2(
+            @PathVariable Long optionsId)
+    {
+        return optionsService.getChildOptionsV2(optionsId);
+    }
 }
