@@ -1,75 +1,76 @@
 package spharos.msg.domain.orders.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static spharos.msg.domain.orders.dto.OrderRequest.OrderProduct;
+
+import java.math.BigDecimal;
+import java.util.List;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import spharos.msg.domain.orders.dto.OrderRequest.OrderSheetDto;
+import spharos.msg.domain.orders.dto.OrderResponse.OrderResultDto;
+import spharos.msg.domain.orders.repository.OrderRepository;
 import spharos.msg.global.config.QueryDslConfig;
 
 @DataJpaTest
 @Import({OrderService.class, QueryDslConfig.class})
 class OrderServiceTest {
-/**
- * 현재 올바르지 않은 ORDERS 이므로 테스트를 주석화
- */
-//    @Autowired
-//    OrderRepository orderRepository;
-//    @Autowired
-//    UsersRepository usersRepository;
-//    @Autowired
-//    AddressRepository addressRepository;
-//    @Autowired
-//    OrderService orderService;
-//
-//    @BeforeEach
-//    public void init() {
-//        orderRepository.save(
-//            Orders.builder()
-//                .address("abc")
-//                .buyerId(1L)
-//                .buyerName("test")
-//                .buyerPhoneNumber("01012345667")
-//                .totalAmount(10L)
-//                .build());
-//
-//        Address address = Address.builder()
-//            .addressName("부산 남구")
-//            .mobileNumber("01092312316")
-//            .recipient("홍준표")
-//            .addressName("부산 남구 용소로")
-//            .addressPhoneNumber("01092312316")
-//            .address("부산남구용")
-//            .build();
-//        addressRepository.save(address);
-//        usersRepository.save(
-//            Users.builder()
-//                .userName("test")
-//                .email("tjdvy963@naver.com")
-//                .loginId("abcdsd")
-//                .uuid("uuid")
-//                .password("1234")
-//                .phoneNumber("01092312316")
-//                .build()
-//        );
-//    }
-//
-//    @Test
-//    @DisplayName("uuid를 찾을 수 없다면 OrderException이 발생한다.")
-//    void 유저_예외_발생_테스트() {
-//        //given
-//        OrderDto orderDto = new OrderDto();
-//        //when
-//        assertThatThrownBy(
-//            () -> orderService.saveOrder(List.of(orderDto), "s"))
-//            .isInstanceOf(OrderException.class);
-//        //then
-//    }
-//
-//    @Test
-//    @DisplayName("주문자 정보 조회시 uuid에 해당하는 유저가 없다면 OrderException 발생")
-//    void 유저_없음_예외_테스트() {
-//        assertThatThrownBy(
-//            () -> orderService.findOrderUser("no"))
-//            .isInstanceOf(OrderException.class);
-//    }
+
+    /**
+     * 현재 올바르지 않은 ORDERS 이므로 테스트를 주석화
+     */
+    @Autowired
+    OrderRepository orderRepository;
+
+    @Autowired
+    OrderService orderService;
+
+    private OrderProduct createOrderProduct(Long productId, Long optionId, int quantity,
+        int deliveryFee, BigDecimal discountRate, long salePrice, long originPrice) {
+        return new OrderProduct(
+            productId, optionId, quantity, deliveryFee, discountRate, salePrice, originPrice);
+    }
+
+    @Test
+    @DisplayName("생성된 orderResultDto의 주소, 휴대폰 번호가 입력과 일치해야 한다.")
+    void 주문_생성_성공_테스트() {
+        //given
+        OrderSheetDto orderSheetDto = new OrderSheetDto(1L, "userA", "phone", "부산",
+            List.of(createOrderProduct(1L, 1L, 1, 1000,
+                new BigDecimal("34"), 2000, 3000)));
+        //when
+        OrderResultDto orderResultDto = orderService.saveOrder(orderSheetDto);
+        //then
+        assertThat(orderResultDto.toString())
+            .contains(orderSheetDto.getAddress(), orderSheetDto.getBuyerPhoneNumber());
+    }
+
+    @Test
+    @DisplayName("totalPrice는 (salePrice * 개수) + deliveryFee의 합이어야 한다.")
+    void 유저_없음_예외_테스트() {
+        //given
+        OrderProduct orderProduct1 = createOrderProduct(1L, 1L, 1, 1000,
+            new BigDecimal("34"), 2000, 3000);
+        OrderProduct orderProduct2 = createOrderProduct(2L, 2L, 1, 2000,
+            new BigDecimal("34"), 2000, 3000);
+        OrderSheetDto orderSheetDto = new OrderSheetDto(1L, "userA", "phone", "부산",
+            List.of(orderProduct1, orderProduct2));
+
+        //when
+        OrderResultDto orderResultDto = orderService.saveOrder(orderSheetDto);
+
+        //then
+        Long price1 = orderProduct1.getSalePrice() * orderProduct1.getOrderQuantity()
+            + orderProduct1.getOrderDeliveryFee();
+        Long price2 = orderProduct2.getSalePrice() * orderProduct2.getOrderQuantity()
+            + orderProduct2.getOrderDeliveryFee();
+
+        assertThat(orderResultDto.getTotalPrice()).isEqualTo(price1 + price2);
+    }
+    
 //
 //    @Test
 //    @DisplayName("주문자 정보 조회시 모든 정보가 일치해야한다.")
