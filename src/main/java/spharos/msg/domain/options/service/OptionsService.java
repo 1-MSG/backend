@@ -51,9 +51,13 @@ public class OptionsService {
     //해당 옵션에게 자식이 있다면 옵션의 자식 리스트 반환
     public ApiResponse<?> getOptionChild(Long parentId) {
         List<Options> options = optionsRepository.findOptionsByParentId(parentId);
+        Options parentOption = optionsRepository.findById(parentId).orElseThrow();
+        //자식이 없을 경우
         if (options.isEmpty()) {
-            throw new OptionsException(ErrorStatus.NOT_EXIST_PRODUCT_OPTION);
+            return ApiResponse.of(SuccessStatus.OPTION_DETAIL_SUCCESS,
+                    new OptionsNameDto(parentOption));
         }
+        //있을 경우
         return ApiResponse.of(SuccessStatus.OPTION_DETAIL_SUCCESS,
                  options.stream()
                         .map(OptionsNameDto::new)
