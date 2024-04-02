@@ -62,7 +62,7 @@ public class CountUserController {
     @GetMapping("/count-today-user")
     private ApiResponse<AdminResponseDto.UsersCount> todaySignupCount() {
         return ApiResponse.of(
-                SuccessStatus.COUNT_TOTAL_USERS_SUCCESS,
+                SuccessStatus.TODAY_SIGNUP_COUNT_SUCCESS,
                 countUserService.todaySignupCount());
     }
 }

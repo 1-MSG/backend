@@ -27,6 +27,7 @@ public enum SuccessStatus implements BaseCode {
     SEARCH_USERS_INFO_SUCCESS(HttpStatus.ACCEPTED, "ADMIN001", "회원 정보 조회 성공"),
     COUNT_CONNECT_USERS_SUCCESS(HttpStatus.ACCEPTED, "ADMIN002", "접속자 수 조회 성공"),
     COUNT_TOTAL_USERS_SUCCESS(HttpStatus.ACCEPTED, "ADMIN002", "전체 회원 수 조회 성공"),
+    TODAY_SIGNUP_COUNT_SUCCESS(HttpStatus.ACCEPTED, "ADMIN002", "오늘 가입자 수 조회 성공"),
 
 
     ORDER_SUCCESS(HttpStatus.CREATED, "ORDER201", "상품 주문 성공"),
