@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import spharos.msg.domain.admin.dto.AdminResponseDto;
 import spharos.msg.domain.users.entity.LoginType;
 import spharos.msg.domain.users.entity.UserOAuthList;
+import spharos.msg.domain.users.entity.UserStatus;
 import spharos.msg.domain.users.entity.Users;
 import spharos.msg.domain.users.repository.UserOAuthListRepository;
 import spharos.msg.domain.users.repository.UsersRepository;
@@ -63,6 +64,13 @@ public class CountUserService {
         return AdminResponseDto.UsersCount
                 .builder()
                 .usersCount(usersRepository.countByCreatedAtAfter(LocalDate.now().atStartOfDay()))
+                .build();
+    }
+
+    public AdminResponseDto.SecessionCount secessionCount() {
+        return AdminResponseDto.SecessionCount
+                .builder()
+                .usersSecessionCount(usersRepository.countByStatus(UserStatus.NOT_USER))
                 .build();
     }
 }

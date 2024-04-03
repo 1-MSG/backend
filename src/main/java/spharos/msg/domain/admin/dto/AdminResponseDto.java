@@ -34,4 +34,12 @@ public class AdminResponseDto {
 
         private Long usersCount;
     }
+
+    @Builder
+    @AllArgsConstructor
+    @Getter
+    public static class SecessionCount {
+
+        private Long usersSecessionCount;
+    }
 }

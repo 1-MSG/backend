@@ -60,9 +60,17 @@ public class CountUserController {
 
     @Operation(summary = "오늘 가입자 수 조회 API", description = "오늘 가입한 회원 수를 반환합니다.")
     @GetMapping("/count-today-user")
-    private ApiResponse<AdminResponseDto.UsersCount> todaySignupCount() {
+    private ApiResponse<AdminResponseDto.UsersCount> todaySignupCountApi() {
         return ApiResponse.of(
                 SuccessStatus.TODAY_SIGNUP_COUNT_SUCCESS,
                 countUserService.todaySignupCount());
+    }
+
+    @Operation(summary = "전체 탈퇴 회원 수 조회 API", description = "전체 탈퇴 회원의 수를 반환합니다.")
+    @GetMapping("/count-secession-user")
+    private ApiResponse<AdminResponseDto.SecessionCount> UsersSecessionCountApi() {
+        return ApiResponse.of(
+                SuccessStatus.COUNT_SESSION_USERS_SUCCESS,
+                countUserService.secessionCount());
     }
 }
