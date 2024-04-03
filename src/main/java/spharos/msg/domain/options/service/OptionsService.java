@@ -35,28 +35,20 @@ public class OptionsService {
 
         List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
 
-        //상품이 가진 최하위 옵션 ID의 상위 옵션 ID 취합
-        Set<Long> parentIds = productOptions.stream()
-                .map(productOption -> productOption.getOption().getParent().getId())
-                .collect(Collectors.toSet());
-        //해당 ID들의 정보(옵션ID,이름,타입,레벨) 반환
-        List<OptionsResponseDto> optionNameList = parentIds.stream()
-                .map(optionId -> optionsRepository.findById(optionId)
-                        .orElseThrow(() -> new OptionsException(ErrorStatus.NOT_EXIST_PRODUCT_OPTION)))
-                .map(OptionsResponseDto::new)
-                .toList();
-        //한단계 더 상위 옵션이 있는지 검증 및 있다면 해당 옵션 정보 반환
-        List<OptionsResponseDto> parentOptionNameList = parentIds.stream()
-                .map(optionId -> optionsRepository.findById(optionId)
-                        .orElseThrow(() -> new OptionsException(ErrorStatus.NOT_EXIST_PRODUCT_OPTION)))
-                .filter(options -> options.getParent() != null)
-                .map(options -> new OptionsResponseDto(options.getParent()))
-                .toList();
+        Set<Long> parentIds = getParentOptionIds(productOptions);
+
+        List<OptionsResponseDto> optionNameList = getParentOptionDetails(parentIds);
+
+        List<OptionsResponseDto> parentOptionNameList = getFinalParentOptionDetails(parentIds);
+
         if (parentOptionNameList.isEmpty()) {
             return ApiResponse.of(SuccessStatus.OPTION_FIRST_SUCCESS, optionNameList);
         }
             return ApiResponse.of(SuccessStatus.OPTION_ID_SUCCESS, parentOptionNameList.stream().distinct());
     }
+
+
+
     //하위 옵션 데이터 조회
     public ApiResponse<?> getChildOptions(Long optionsId) {
         Options options = optionsRepository.findById(optionsId)
@@ -71,5 +63,29 @@ public class OptionsService {
                 childOptions.stream()
                         .map(OptionsResponseDto::new)
                         .toList());
+    }
+
+    //상품이 가진 최하위 옵션 ID의 상위 옵션 ID 취합
+    private Set<Long> getParentOptionIds(List<ProductOption> productOptions) {
+        return productOptions.stream()
+                .map(productOption -> productOption.getOption().getParent().getId())
+                .collect(Collectors.toSet());
+    }
+    //해당 ID들의 정보(옵션ID,이름,타입,레벨) 반환
+    private List<OptionsResponseDto> getParentOptionDetails(Set<Long> parentIds) {
+        return parentIds.stream()
+                .map(optionId -> optionsRepository.findById(optionId)
+                        .orElseThrow(() -> new OptionsException(ErrorStatus.NOT_EXIST_PRODUCT_OPTION)))
+                .map(OptionsResponseDto::new)
+                .toList();
+    }
+    //한단계 더 상위 옵션이 있는지 검증 및 있다면 해당 옵션 정보 반환
+    private List<OptionsResponseDto> getFinalParentOptionDetails(Set<Long> parentIds) {
+        return parentIds.stream()
+                .map(optionId -> optionsRepository.findById(optionId)
+                        .orElseThrow(() -> new OptionsException(ErrorStatus.NOT_EXIST_PRODUCT_OPTION)))
+                .filter(options -> options.getParent() != null)
+                .map(options -> new OptionsResponseDto(options.getParent()))
+                .toList();
     }
 }
