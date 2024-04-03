@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import spharos.msg.domain.product.entity.ProductSalesInfo;
 import spharos.msg.domain.review.dto.ReviewRequest;
 import spharos.msg.domain.review.dto.ReviewResponse;
 import spharos.msg.domain.review.service.ReviewService;

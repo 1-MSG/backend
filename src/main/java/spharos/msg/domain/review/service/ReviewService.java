@@ -9,6 +9,8 @@ import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_READ_SUCCE
 import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_SAVE_SUCCESS;
 import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_UPDATE_SUCCESS;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 import spharos.msg.domain.product.entity.Product;
+import spharos.msg.domain.product.entity.ProductSalesInfo;
 import spharos.msg.domain.product.repository.ProductRepository;
+import spharos.msg.domain.product.repository.ProductSalesInfoRepository;
 import spharos.msg.domain.review.dto.ReviewRequest;
 import spharos.msg.domain.review.dto.ReviewResponse;
 import spharos.msg.domain.review.entity.Review;
@@ -38,6 +42,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
     private final UsersRepository usersRepository;
+    private final ProductSalesInfoRepository productSalesInfoRepository;
 
     //리뷰 목록 가져 오기
     @Transactional
@@ -77,17 +82,18 @@ public class ReviewService {
             .build();
     }
 
+    //리뷰 등록하기
     @Transactional
     public void saveReview(Long productId, ReviewRequest.createDto reviewRequest,
         String userUuid) {
         //상품 객체 가져오기
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new NotFoundException(productId + "해당하는 상품 찾을 수 없음"));
+        ProductSalesInfo productSalesInfo = product.getProductSalesInfo();
         //유저 id 가져오기
         Long userId = usersRepository.findByUuid(userUuid)
             .map(Users::getId)
             .orElseThrow();
-
         //추후, 이미 작성된 리뷰 인지 확인 필요함
         //저장
         reviewRepository.save(Review.builder()
@@ -95,6 +101,13 @@ public class ReviewService {
             .reviewStar(reviewRequest.getReviewStar())
             .reviewComment(reviewRequest.getReviewContent())
             .userId(userId)
+            .build());
+        //리뷰count와 별점을 새롭게 갱신
+        productSalesInfoRepository.save(ProductSalesInfo.builder()
+            .id(productSalesInfo.getId())
+            .productStar(countProductStar(productSalesInfo.getProductStar(),productSalesInfo.getReviewCount(),reviewRequest.getReviewStar()))
+            .reviewCount(productSalesInfo.getReviewCount()+1)
+            .productSellTotalCount(productSalesInfo.getProductSellTotalCount())
             .build());
     }
 
@@ -139,5 +152,13 @@ public class ReviewService {
                     .build();
             })
             .toList();
+    }
+
+    private BigDecimal countProductStar(BigDecimal oldAverage, Long totalCount,BigDecimal newValue) {
+        long newTotalCount = totalCount + 1;
+        // 새로운 평균 별점 계산
+        return oldAverage.multiply(BigDecimal.valueOf(totalCount))
+            .add(newValue)
+            .divide(BigDecimal.valueOf(newTotalCount), 2, RoundingMode.HALF_UP);
     }
 }
