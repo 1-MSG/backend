@@ -40,13 +40,16 @@ public class OrderController {
             orderService.saveOrder(orderSheetDto));
     }
 
-//    @Operation(summary = "주문자 정보 조회", description = "토큰을 통해 주문자의 정보를 조회합니다.")
-//    @GetMapping("/user")
-//    public ApiResponse<?> orderUserAPI(
-//        @Parameter(hidden = true)
-//        @RequestHeader(AUTHORIZATION) String token) {
-//        String uuid = jwtTokenProvider.validateAndGetUserUuid(token);
-//        OrderUserDto orderUserDto = orderService.findOrderUser(uuid);
-//        return ApiResponse.of(SuccessStatus.ORDER_USER_SUCCESS, orderUserDto);
-//    }
+    /*
+    TODO : API 수정으로 인한 보완 필요
+    @Operation(summary = "주문자 정보 조회", description = "토큰을 통해 주문자의 정보를 조회합니다.")
+    @GetMapping("/user")
+    public ApiResponse<?> orderUserAPI(
+        @Parameter(hidden = true)
+        @RequestHeader(AUTHORIZATION) String token) {
+        String uuid = jwtTokenProvider.validateAndGetUserUuid(token);
+        OrderUserDto orderUserDto = orderService.findOrderUser(uuid);
+        return ApiResponse.of(SuccessStatus.ORDER_USER_SUCCESS, orderUserDto);
+    }
+    */
 }
