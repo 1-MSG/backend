@@ -107,6 +107,6 @@ public class AuthController {
     public ApiResponse<FindUserInfoOutDto> findUserInfo(
             @AuthenticationPrincipal UserDetails userDetails) {
         FindUserInfoOutDto userInfo = authService.findUserInfo(userDetails.getUsername());
-        return ApiResponse.of(SuccessStatus.FIND_LOGIN_ID_SUCCESS, userInfo);
+        return ApiResponse.of(SuccessStatus.FIND_USER_INFO_SUCCESS, userInfo);
     }
 }
