@@ -2,7 +2,8 @@ package spharos.msg.domain.options.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import spharos.msg.domain.options.dto.OptionsNameDto;
+import org.springframework.transaction.annotation.Transactional;
+import spharos.msg.domain.options.dto.OptionsResponseDto;
 import spharos.msg.domain.options.entity.Options;
 import spharos.msg.domain.options.repository.OptionsRepository;
 import spharos.msg.domain.product.entity.Product;
@@ -13,10 +14,14 @@ import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.ErrorStatus;
 import spharos.msg.global.api.code.status.SuccessStatus;
 import spharos.msg.global.api.exception.OptionsException;
+import spharos.msg.global.api.exception.ProductNotExistException;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class OptionsService {
     private final OptionsRepository optionsRepository;
@@ -24,89 +29,48 @@ public class OptionsService {
     private final ProductOptionRepository productOptionRepository;
     private final ProductRepository productRepository;
 
-    //상품의 옵션 종류 조회 (옵션레벨:옵션타입) -> 1:사이즈/2:색상
-    public ApiResponse<?> getOptionType(Long[] optionIds) {
-        HashMap<Integer, String> optionsHashMap = new HashMap<>();
-        for (Long optionId : optionIds) {
-            Options option = optionsRepository.findById(optionId).orElseThrow();
-            optionsHashMap.put(option.getOptionLevel(), option.getOptionType());
-        }
-        return ApiResponse.of(SuccessStatus.OPTION_TYPE_SUCCESS, optionsHashMap);
-    }
+    public ApiResponse<?> getOptions(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotExistException(ErrorStatus.NOT_EXIST_PRODUCT_ID));
 
-    //옵션 첫번째 항목 리스트(id,옵션명)
-    public ApiResponse<?> getFirstOption(Long[] optionIds) {
-        List<Options> firstOptions = new ArrayList<>();
-        for (Long optionId : optionIds) {
-            Options option = optionsRepository.findById(optionId).orElseThrow();
-            if (option.getParent() == null) {
-                firstOptions.add(option);
-            }
-        }
-        if (firstOptions.isEmpty()) {
-            throw new OptionsException(ErrorStatus.NOT_EXIST_PRODUCT_OPTION);
-        }
-        return ApiResponse.of(SuccessStatus.OPTION_FIRST_SUCCESS,
-                firstOptions
-                        .stream()
-                        .map(OptionsNameDto::new)
-                        .toList());
-    }
-
-    //해당 옵션에게 자식이 있다면 옵션의 자식 리스트 반환
-    public ApiResponse<?> getOptionChild(Long parentId) {
-        List<Options> options = optionsRepository.findOptionsByParentId(parentId);
-        Options parentOption = optionsRepository.findById(parentId).orElseThrow();
-        //자식이 없을 경우
-        if (options.isEmpty()) {
-            return ApiResponse.of(SuccessStatus.OPTION_DETAIL_SUCCESS,
-                    new OptionsNameDto(parentOption));
-        }
-        //있을 경우
-        return ApiResponse.of(SuccessStatus.OPTION_DETAIL_SUCCESS,
-                 options.stream()
-                        .map(OptionsNameDto::new)
-                        .toList());
-    }
-
-    //최상위 옵션 불러오기
-    public ApiResponse<?> getOptionsV2(Long productId) {
-        Product product = productRepository.findById(productId).orElseThrow();
         List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
-        Set<Long> parentIds = new HashSet<>();
-        List<String> optionNameList = new ArrayList<>();
-        List<String> parentOtionNameList = new ArrayList<>();
 
-
-        for(ProductOption productOption:productOptions){
-            parentIds.add(productOption.getOption().getParent().getId());
+        //상품이 가진 최하위 옵션 ID의 상위 옵션 ID 취합
+        Set<Long> parentIds = productOptions.stream()
+                .map(productOption -> productOption.getOption().getParent().getId())
+                .collect(Collectors.toSet());
+        //해당 ID들의 정보(옵션ID,이름,타입,레벨) 반환
+        List<OptionsResponseDto> optionNameList = parentIds.stream()
+                .map(optionId -> optionsRepository.findById(optionId)
+                        .orElseThrow(() -> new OptionsException(ErrorStatus.NOT_EXIST_PRODUCT_OPTION)))
+                .map(OptionsResponseDto::new)
+                .toList();
+        //한단계 더 상위 옵션이 있는지 검증 및 있다면 해당 옵션 정보 반환
+        List<OptionsResponseDto> parentOptionNameList = parentIds.stream()
+                .map(optionId -> optionsRepository.findById(optionId)
+                        .orElseThrow(() -> new OptionsException(ErrorStatus.NOT_EXIST_PRODUCT_OPTION)))
+                .filter(options -> options.getParent() != null)
+                .map(options -> new OptionsResponseDto(options.getParent()))
+                .toList();
+        if (parentOptionNameList.isEmpty()) {
+            return ApiResponse.of(SuccessStatus.OPTION_FIRST_SUCCESS, optionNameList);
+        } else {
+            return ApiResponse.of(SuccessStatus.OPTION_ID_SUCCESS, parentOptionNameList.stream().distinct());
         }
-
-        for(Long optionId:parentIds) {
-            Options options = optionsRepository.findById(optionId).orElseThrow();
-            optionNameList.add(options.getOptionName());
-        }
-
-        for(Long optionId:parentIds){
-            Options options = optionsRepository.findById(optionId).orElseThrow();
-            if(options.getParent()==null){
-                return ApiResponse.of(SuccessStatus.OPTION_DETAIL_SUCCESS,optionNameList);
-            }else{
-                parentOtionNameList.add(options.getParent().getOptionName());
-            }
-        }
-    //todo 리턴값 dto로 만들기 (id,타입 포함되게)
-        return ApiResponse.of(SuccessStatus.OPTION_ID_SUCCESS,
-                parentOtionNameList.stream().distinct());
     }
-    //자식 데이터 넣기
-    public ApiResponse<?> getChildOptionsV2(Long optionsId) {
-        Options options = optionsRepository.findById(optionsId).orElseThrow();
-        List<Options> childOptions = new ArrayList<>();
-        if(options.getChild()!=null){
-            childOptions.addAll(options.getChild());
+    //하위 옵션 데이터 조회
+    public ApiResponse<?> getChildOptions(Long optionsId) {
+        Options options = optionsRepository.findById(optionsId)
+                .orElseThrow(() -> new OptionsException(ErrorStatus.NOT_EXIST_PRODUCT_OPTION));
+
+        List<Options> childOptions = options.getChild();
+        //하위 옵션이 없다면 던지고 있다면 해당 옵션 리스트 반환
+        if(childOptions.isEmpty()){
+            throw new OptionsException(ErrorStatus.NOT_EXIST_CHILD_OPTION);
         }
         return ApiResponse.of(SuccessStatus.OPTION_DETAIL_SUCCESS,
-                childOptions.stream().map(OptionsNameDto::new).toList());
+                childOptions.stream()
+                        .map(OptionsResponseDto::new)
+                        .toList());
     }
 }
