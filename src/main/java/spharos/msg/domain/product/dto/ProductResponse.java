@@ -30,7 +30,6 @@ public class ProductResponse {
     }
 
     @Getter
-    @Setter
     public static class ProductInfoDto {
 
         @Schema(description = "상품 브랜드")

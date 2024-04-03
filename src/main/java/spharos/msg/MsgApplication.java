@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 @OpenAPIDefinition(
     servers = {
-        @Server(url = "https://sssg.shop", description = "Default Server URL")
+//        @Server(url = "https://sssg.shop", description = "Default Server URL")
     }
 )
 public class MsgApplication {
