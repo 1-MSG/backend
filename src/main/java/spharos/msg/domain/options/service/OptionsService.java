@@ -50,11 +50,18 @@ public class OptionsService {
         return ApiResponse.of(SuccessStatus.OPTION_TYPE_SUCCESS, optionTypeDtos);
     }
     //최상위 옵션 조회
-    public ApiResponse<?> getOptions(Long productId) {
+    public ApiResponse<?> getFirstOptions(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotExistException(ErrorStatus.NOT_EXIST_PRODUCT_ID));
 
         List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
+
+        if(productOptions.get(0).getOptions().getParent() == null){
+            return ApiResponse.of(SuccessStatus.OPTION_FIRST_SUCCESS,
+                    productOptions.stream()
+                            .map(OptionsResponseDto::new)
+                            .toList());
+        }
         Set<Long> parentIds = getParentOptionIds(productOptions);
         List<OptionsResponseDto> optionDetailList = getParentOptionDetails(parentIds);
         List<OptionsResponseDto> parentOptionDetailList = getFinalParentOptionDetails(parentIds);

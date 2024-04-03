@@ -24,10 +24,10 @@ public class OptionsController {
     @Operation(summary = "최상위 옵션 조회",
             description = "상품 ID를 입력하면 해당 상품의 최상위 옵션을 조회 합니다.")
     @GetMapping("/{productId}")
-    public ApiResponse<?> getOptions(
+    public ApiResponse<?> getFirstOptions(
             @PathVariable Long productId)
     {
-        return optionsService.getOptions(productId);
+        return optionsService.getFirstOptions(productId);
     }
     @Operation(summary = "자식 옵션 조회",
             description = "최상위 옵션에 있는 옵션 ID를 선택 시 해당 옵션의 자식 옵션을 조회 합니다.")
