@@ -14,10 +14,10 @@ import java.math.BigDecimal;
 @Entity
 @Getter
 @NoArgsConstructor
-public class ProductSalesInfo {
+public class ProductSalesInfo extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_sales_id")
+    @Column(name = "product_sales_info_id")
     private Long id;
 
     @NotNull

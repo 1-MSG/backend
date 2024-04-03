@@ -48,9 +48,10 @@ public class ReviewService {
     @Transactional
     public ReviewResponse.ReviewsDto getReviews(Long productId, Pageable pageable) {
         //상품 가져오기
-        Product product = productRepository.findById(productId).orElseThrow(()->new NotFoundException("상품 찾을 수 없음"));
+        Product product = productRepository.findById(productId)
+            .orElseThrow(() -> new NotFoundException("상품 찾을 수 없음"));
         //슬라이스 가져오기
-        Slice<Review> reviewPage = reviewRepository.findByProduct(product,pageable);
+        Slice<Review> reviewPage = reviewRepository.findByProduct(product, pageable);
         //리스트로 변환
         List<ReviewResponse.ReviewDetailDto> reviews = convertToReviewList(reviewPage);
         //다음 페이지가 있는지 확인
@@ -105,8 +106,9 @@ public class ReviewService {
         //리뷰count와 별점을 새롭게 갱신
         productSalesInfoRepository.save(ProductSalesInfo.builder()
             .id(productSalesInfo.getId())
-            .productStar(countProductStar(productSalesInfo.getProductStar(),productSalesInfo.getReviewCount(),reviewRequest.getReviewStar()))
-            .reviewCount(productSalesInfo.getReviewCount()+1)
+            .productStar(calcProductStar(productSalesInfo.getProductStar(),
+                productSalesInfo.getReviewCount(), reviewRequest.getReviewStar()))
+            .reviewCount(productSalesInfo.getReviewCount() + 1)
             .productSellTotalCount(productSalesInfo.getProductSellTotalCount())
             .build());
     }
@@ -116,6 +118,11 @@ public class ReviewService {
         //id로 기존 리뷰 찾기
         Review review = reviewRepository.findById(reviewId)
             .orElseThrow(() -> new NotFoundException(reviewId + "해당하는 리뷰 찾을 수 없음"));
+        // 리뷰가 속한 상품(productSalesInfo) 가져오기
+        ProductSalesInfo productSalesInfo = review.getProduct().getProductSalesInfo();
+        // 기존 별점 제거
+        BigDecimal newAverageStar = recalcProductStar(productSalesInfo.getProductStar(),
+            review.getReviewStar(), productSalesInfo.getReviewCount());
         //리뷰 업데이트
         reviewRepository.save(
             Review.builder()
@@ -126,17 +133,40 @@ public class ReviewService {
                 .userId(review.getUserId())
                 .build()
         );
+
+        //리뷰count와 별점을 새롭게 갱신
+        productSalesInfoRepository.save(ProductSalesInfo.builder()
+            .id(productSalesInfo.getId())
+            .productStar(calcProductStar(newAverageStar, productSalesInfo.getReviewCount() - 1,
+                reviewRequest.getReviewStar()))
+            .reviewCount(productSalesInfo.getReviewCount())
+            .productSellTotalCount(productSalesInfo.getProductSellTotalCount())
+            .build());
     }
 
     @Transactional
     public void deleteReview(Long reviewId) {
+        //리뷰 가져오기
+        Review review = reviewRepository.findById(reviewId)
+            .orElseThrow(() -> new NotFoundException(reviewId + "해당하는 리뷰 찾을 수 없음"));
+        //리뷰가 속한 상품(productSalesInfo) 가져오기
+        ProductSalesInfo productSalesInfo = review.getProduct().getProductSalesInfo();
         //id와 일치 하는 리뷰 삭제
         reviewRepository.deleteById(reviewId);
+        //리뷰 count와 별점 갱신
+        productSalesInfoRepository.save(ProductSalesInfo.builder()
+            .id(productSalesInfo.getId())
+            .productStar(
+                recalcProductStar(productSalesInfo.getProductStar(), review.getReviewStar(),
+                    productSalesInfo.getReviewCount()))
+            .reviewCount(productSalesInfo.getReviewCount() - 1)
+            .productSellTotalCount(productSalesInfo.getProductSellTotalCount())
+            .build());
     }
 
     private List<ReviewResponse.ReviewDetailDto> convertToReviewList(Slice<Review> reviewPage) {
         return reviewPage.getContent().stream()
-            .map(review ->{
+            .map(review -> {
 
                 //사용자 이름 가져 오기
                 String userName = usersRepository.findById(review.getUserId())
@@ -154,11 +184,24 @@ public class ReviewService {
             .toList();
     }
 
-    private BigDecimal countProductStar(BigDecimal oldAverage, Long totalCount,BigDecimal newValue) {
+    private BigDecimal calcProductStar(BigDecimal oldAverage, Long totalCount,
+        BigDecimal newValue) {
+
         long newTotalCount = totalCount + 1;
         // 새로운 평균 별점 계산
         return oldAverage.multiply(BigDecimal.valueOf(totalCount))
             .add(newValue)
             .divide(BigDecimal.valueOf(newTotalCount), 2, RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal recalcProductStar(BigDecimal oldAverage, BigDecimal oldValue,
+        Long oldCount) {
+
+        BigDecimal oldSum = oldAverage.multiply(BigDecimal.valueOf(oldCount));
+        BigDecimal newSum = oldSum.subtract(oldValue);
+        long newCount = oldCount - 1;
+
+        // 새로운 평균값을 계산합니다.
+        return newSum.divide(BigDecimal.valueOf(newCount), 2, RoundingMode.HALF_UP);
     }
 }
