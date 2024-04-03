@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import spharos.msg.domain.category.dto.CategoryResponse.CategoryDto;
 import spharos.msg.domain.category.dto.CategoryResponse.CategoryProductDto;
+import spharos.msg.domain.category.dto.CategoryResponse.SubCategory;
 import spharos.msg.domain.category.entity.QCategory;
 import spharos.msg.domain.category.entity.QCategoryProduct;
 import spharos.msg.domain.category.repository.CategoryProductRepositoryCustom;
@@ -27,13 +28,13 @@ public class CategoryProductRepositoryCustomImpl implements CategoryProductRepos
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<CategoryDto> findCategoriesByParentId(Long parentId) {
+    public List<SubCategory> findCategoriesByParentId(Long parentId) {
         QCategory category = QCategory.category;
-        List<Long> cateogryIds = findIds(parentId, category);
-        cateogryIds.add(0, parentId);
+        List<Long> categoryIds = findIds(parentId, category);
+        categoryIds.add(0, parentId);
 
         return jpaQueryFactory
-            .select(Projections.constructor(CategoryDto.class,
+            .select(Projections.constructor(SubCategory.class,
                 category.id,
                 new CaseBuilder()
                     .when(category.id.eq(parentId))
@@ -41,7 +42,7 @@ public class CategoryProductRepositoryCustomImpl implements CategoryProductRepos
                     .otherwise(category.categoryName),
                 tryGetCategoryImage(category)))
             .from(category)
-            .where(category.id.in(cateogryIds))
+            .where(category.id.in(categoryIds))
             .fetch();
     }
 

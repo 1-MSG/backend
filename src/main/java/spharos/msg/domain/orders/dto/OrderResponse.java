@@ -15,15 +15,14 @@ public class OrderResponse {
     @AllArgsConstructor
     @Builder
     @Getter
-    public static class OrderProductDto {
+    @ToString
+    public static class OrderResultDto {
 
-        List<PriceInfo> priceInfos;
-        private String loginId;
-        private String username;
-        private String address;
-        private Long orderId;
-        private String phoneNumber;
         private Long totalPrice;
+        private String address;
+        private String phoneNumber;
+        private Long orderId;
+        List<OrderProductDetail> orderProductDetails;
     }
 
     @NoArgsConstructor
@@ -42,10 +41,10 @@ public class OrderResponse {
 
     @Getter
     @AllArgsConstructor
-    public static class PriceInfo {
+    public static class OrderProductDetail {
 
         private int deliveryFee;
-        private int productPrice;
-        private Long salePrice;
+        private Long productOriginPrice;
+        private Long productSalePrice;
     }
 }

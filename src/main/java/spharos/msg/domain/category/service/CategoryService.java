@@ -4,29 +4,56 @@ import static spharos.msg.domain.category.dto.CategoryResponse.CategoryProductDt
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.category.dto.CategoryResponse.CategoryDto;
 import spharos.msg.domain.category.dto.CategoryResponse.CategoryProductDto;
+import spharos.msg.domain.category.dto.CategoryResponse.SubCategory;
+import spharos.msg.domain.category.entity.Category;
 import spharos.msg.domain.category.repository.CategoryProductRepository;
+import spharos.msg.domain.category.repository.CategoryRepository;
 import spharos.msg.global.api.code.status.ErrorStatus;
 import spharos.msg.global.api.exception.CategoryException;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class CategoryService {
 
+    private static final int LARGE_CATEGORY_LEVEL = 0;
     private final CategoryProductRepository categoryProductRepository;
+    private final CategoryRepository categoryRepository;
 
-    public List<CategoryDto> findCategoryChild(Long parentId) {
-        List<CategoryDto> categories = categoryProductRepository.findCategoriesByParentId(parentId);
-        if (categories.isEmpty()) {
-            throw new CategoryException(ErrorStatus.CATEGORY_NOT_FOUND);
-        }
-        return categories;
+    public CategoryDto findCategories(Long parentId) {
+        Category parent = categoryRepository.findById(parentId)
+            .orElseThrow(
+                () -> new CategoryException(ErrorStatus.CATEGORY_NOT_FOUND));
+        List<SubCategory> categories = categoryProductRepository.findCategoriesByParentId(parentId);
+        return createCategoryDto(parent, categories);
+    }
+
+    private CategoryDto createCategoryDto(Category parent, List<SubCategory> categories) {
+        return parent.getProductCategoryLevel() == LARGE_CATEGORY_LEVEL ?
+            toDtoWithoutParent(categories) :
+            toDtoWithParent(parent, categories);
+    }
+
+    private CategoryDto toDtoWithoutParent(List<SubCategory> categories) {
+        return CategoryDto.builder()
+            .subCategories(categories)
+            .build();
+    }
+
+    private CategoryDto toDtoWithParent(Category parent, List<SubCategory> categories) {
+        return CategoryDto.builder()
+            .parentId(parent.getId())
+            .parentName(parent.getCategoryName())
+            .subCategories(categories)
+            .build();
     }
 
     public List<CategoryDto> findCategoriesByLevel(int level) {
