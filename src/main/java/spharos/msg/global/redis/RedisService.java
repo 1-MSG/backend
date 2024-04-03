@@ -1,6 +1,7 @@
 package spharos.msg.global.redis;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -62,5 +63,20 @@ public class RedisService {
     public String getEmailSecretKey(String email) {
         String key = EMAIL_AUTH_KEY + email;
         return redisTemplate.opsForValue().get(key);
+    }
+
+    // REDIS_KEY_PREFIX로 시작하는 데이터의 총 수량 반환
+    private Long countKeysWithPrefix(String prefix) {
+        Set<String> keys = redisTemplate.keys(prefix + "*");
+        if (keys != null) {
+            return (long) keys.size();
+        } else {
+            return 0L;
+        }
+    }
+
+    // REDIS_KEY_PREFIX로 시작하는 데이터의 총 수량 반환
+    public Long countConnectUser() {
+        return countKeysWithPrefix(REDIS_KEY_PREFIX);
     }
 }

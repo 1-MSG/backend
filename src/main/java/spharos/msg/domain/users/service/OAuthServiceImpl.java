@@ -31,11 +31,11 @@ public class OAuthServiceImpl implements OAuthService {
     @Transactional
     @Override
     public Optional<LoginOutDto> easySignUp(EasySignUpRequestDto easySignUpRequestDto) {
-        Users users = userRepository.findByEmail(easySignUpRequestDto.getEmail()).orElseThrow(
+        Users findUser = userRepository.findByEmail(easySignUpRequestDto.getEmail()).orElseThrow(
                 () -> new UsersException(ErrorStatus.NOT_UNION_USER)
         );
 
-        if (Boolean.TRUE.equals(userOAuthListRepository.existsByUuid(users.getUuid()))) {
+        if (Boolean.TRUE.equals(userOAuthListRepository.existsByUuid(findUser.getUuid()))) {
             log.info("기존 가입된 회원이라 바로 로그인 처리");
             return Optional.of(easyLogin(EasyLoginRequestDto
                     .builder()
@@ -47,7 +47,7 @@ public class OAuthServiceImpl implements OAuthService {
                 .builder()
                 .OAuthId(easySignUpRequestDto.getOauthId())
                 .OAuthName(easySignUpRequestDto.getOauthName())
-                .uuid(users.getUuid())
+                .uuid(findUser.getUuid())
                 .build();
 
         userOAuthListRepository.save(userOAuthList);
@@ -84,6 +84,7 @@ public class OAuthServiceImpl implements OAuthService {
                 .accessToken(accessToken)
                 .name(findUser.readUserName())
                 .email(findUser.getEmail())
+                .userId(findUser.getId())
                 .build();
     }
 
