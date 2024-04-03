@@ -71,6 +71,7 @@ public class OAuthServiceImpl implements OAuthService {
                 .status(UserStatus.EASY)
                 .build()
         );
+
         return Optional.empty();
     }
 
@@ -109,6 +110,7 @@ public class OAuthServiceImpl implements OAuthService {
                 .accessToken(accessToken)
                 .name(findUser.readUserName())
                 .email(findUser.getEmail())
+                .userId(findUser.getId())
                 .build();
     }
 

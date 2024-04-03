@@ -12,6 +12,7 @@ import spharos.msg.domain.users.dto.request.ChangePasswordRequestDto;
 import spharos.msg.domain.users.dto.request.DuplicationCheckRequestDto;
 import spharos.msg.domain.users.dto.request.LoginRequestDto;
 import spharos.msg.domain.users.dto.response.FindIdOutDto;
+import spharos.msg.domain.users.dto.response.FindUserInfoOutDto;
 import spharos.msg.domain.users.dto.response.LoginOutDto;
 import spharos.msg.domain.users.dto.response.ReissueOutDto;
 import spharos.msg.domain.users.dto.request.SignUpRequestDto;
@@ -19,6 +20,7 @@ import spharos.msg.domain.users.entity.UserStatus;
 import spharos.msg.domain.users.entity.Users;
 import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.global.api.code.status.ErrorStatus;
+import spharos.msg.global.api.exception.JwtTokenException;
 import spharos.msg.global.api.exception.UsersException;
 import spharos.msg.global.redis.RedisService;
 import spharos.msg.global.security.JwtTokenProvider;
@@ -103,9 +105,17 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional(readOnly = true)
     @Override
-    public ReissueOutDto reissueToken(String uuid) {
+    public ReissueOutDto reissueToken(String oldRefreshToken) {
+        String uuid = jwtTokenProvider.getUuid(oldRefreshToken);
+        String oldToken = oldRefreshToken.substring(7);
+
         Users findUser = usersRepository.findByUuid(uuid).orElseThrow(
-                () -> new UsersException(ErrorStatus.REISSUE_TOKEN_FAIL));
+                () -> new JwtTokenException(ErrorStatus.REISSUE_TOKEN_FAIL));
+
+        if(!redisService.getRefreshToken(uuid).equals(oldToken)){
+            throw new JwtTokenException(ErrorStatus.REISSUE_TOKEN_FAIL);
+        }
+
         String accessToken = jwtTokenProvider.createAccessToken(findUser);
         String refreshToken = jwtTokenProvider.createRefreshToken(findUser);
         return ReissueOutDto
@@ -185,6 +195,18 @@ public class AuthServiceImpl implements AuthService {
         return FindIdOutDto
                 .builder()
                 .loginId(user.getLoginId())
+                .build();
+    }
+
+    @Override
+    public FindUserInfoOutDto findUserInfo(String uuid) {
+        Users findUser = usersRepository.findByUuid(uuid).orElseThrow(
+                () -> new UsersException(ErrorStatus.FIND_USER_INFO_FAIL)
+        );
+
+        return FindUserInfoOutDto
+                .builder()
+                .userName(findUser.readUserName())
                 .build();
     }
 }

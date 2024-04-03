@@ -2,8 +2,8 @@ package spharos.msg.domain.product.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import spharos.msg.domain.product.dto.ProductOptionIdDto;
 import spharos.msg.domain.product.entity.Product;
+import spharos.msg.domain.product.entity.ProductOption;
 import spharos.msg.domain.product.repository.ProductOptionRepository;
 import spharos.msg.domain.product.repository.ProductRepository;
 import spharos.msg.global.api.ApiResponse;
@@ -21,7 +21,7 @@ public class ProductOptionService {
         return ApiResponse.of(SuccessStatus.OPTION_ID_SUCCESS,
                 productOptionRepository.findByProduct(product)
                         .stream()
-                        .map(ProductOptionIdDto::new)
+                        .map(ProductOption::getProductOptionId)
                         .toList());
     }
 }
