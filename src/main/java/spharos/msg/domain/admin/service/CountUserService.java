@@ -9,10 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import spharos.msg.domain.admin.dto.AdminResponseDto;
 import spharos.msg.domain.users.entity.LoginType;
-import spharos.msg.domain.users.entity.UserOAuthList;
 import spharos.msg.domain.users.entity.UserStatus;
 import spharos.msg.domain.users.entity.Users;
-import spharos.msg.domain.users.repository.UserOAuthListRepository;
 import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.global.redis.RedisService;
 
@@ -22,7 +20,6 @@ import spharos.msg.global.redis.RedisService;
 public class CountUserService {
 
     private final UsersRepository usersRepository;
-    private final UserOAuthListRepository userOAuthListRepository;
     private final RedisService redisService;
 
     public List<AdminResponseDto.SearchAllInfo> SearchUsersInfo(Pageable pageable) {
@@ -34,13 +31,15 @@ public class CountUserService {
                 .userId(m.getId())
                 .userName(m.readUserName())
                 .status(redisService.isRefreshTokenExist(m.getUuid()))
-                .LoginType(getLoginType(m.getUuid()))
+                .LoginType(getLoginType(m.getStatus()))
                 .build()).getContent();
     }
 
-    private LoginType getLoginType(String uuid) {
-        List<UserOAuthList> userOAuthLists = userOAuthListRepository.findByUuid(uuid);
-        if (userOAuthLists.isEmpty()) {
+    private LoginType getLoginType(UserStatus status) {
+        if(status.equals(UserStatus.NOT_USER)){
+            return LoginType.DELETE;
+        }
+        else if(status.equals(UserStatus.UNION)){
             return LoginType.UNION;
         }
         return LoginType.EASY;
@@ -72,5 +71,10 @@ public class CountUserService {
                 .builder()
                 .usersSecessionCount(usersRepository.countByStatus(UserStatus.NOT_USER))
                 .build();
+    }
+
+    public void monthSignupCount(){
+        //todo : query dsl 적용 예정
+        //최적화 생각해서 짜볼 것.
     }
 }
