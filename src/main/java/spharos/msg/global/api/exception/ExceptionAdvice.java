@@ -56,7 +56,28 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
         return super.handleExceptionInternal(
             e, responseBody, HttpHeaders.EMPTY, errorStatus.getHttpStatus(), request);
     }
+    @ExceptionHandler
+    public ResponseEntity<Object> productException(ProductNotExistException e, WebRequest request) {
+        ErrorReasonDto errorStatus = e.getErrorReasonHttpStatus();
+        ApiResponse<Object> responseBody = createResponseBody(
+                errorStatus.getStatus(),
+                errorStatus.getMessage(),
+                null);
 
+        return super.handleExceptionInternal(
+                e, responseBody, HttpHeaders.EMPTY, errorStatus.getHttpStatus(), request);
+    }
+    @ExceptionHandler
+    public ResponseEntity<Object> optionException(OptionsException e, WebRequest request) {
+        ErrorReasonDto errorStatus = e.getErrorReasonHttpStatus();
+        ApiResponse<Object> responseBody = createResponseBody(
+                errorStatus.getStatus(),
+                errorStatus.getMessage(),
+                null);
+
+        return super.handleExceptionInternal(
+                e, responseBody, HttpHeaders.EMPTY, errorStatus.getHttpStatus(), request);
+    }
     @ExceptionHandler
     public ResponseEntity<Object> commonException(Exception e, WebRequest request) {
         //미처 처리 못한 Exception 전부 이쪽으로 넘와와서 확인용 Log 하나 생성

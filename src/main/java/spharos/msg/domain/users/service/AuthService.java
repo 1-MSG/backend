@@ -4,6 +4,7 @@ import spharos.msg.domain.users.dto.request.ChangePasswordRequestDto;
 import spharos.msg.domain.users.dto.request.DuplicationCheckRequestDto;
 import spharos.msg.domain.users.dto.request.LoginRequestDto;
 import spharos.msg.domain.users.dto.response.FindIdOutDto;
+import spharos.msg.domain.users.dto.response.FindUserInfoOutDto;
 import spharos.msg.domain.users.dto.response.ReissueOutDto;
 import spharos.msg.domain.users.dto.request.SignUpRequestDto;
 import spharos.msg.domain.users.dto.response.LoginOutDto;
@@ -25,4 +26,6 @@ public interface AuthService {
     void changePassword(ChangePasswordRequestDto changePasswordRequestDto);
 
     FindIdOutDto findLoginUnionId(String email);
+
+    FindUserInfoOutDto findUserInfo(String uuid);
 }

@@ -8,24 +8,48 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import lombok.Getter;
+import org.hibernate.annotations.DynamicInsert;
 import spharos.msg.global.entity.BaseEntity;
 
 @Entity
 @Getter
+@DynamicInsert
 public class OrderProduct extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_product_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
+    @Column(columnDefinition = "bigint default 0")
+    private Integer orderQuantity;
+
+    private String productOption;
+
+    @NotNull
+    @Column(columnDefinition = "boolean default false")
+    private Boolean orderIsCompleted;
+
+    @NotNull
+    private Long orderPrice;
+
+    @DecimalMin("0.0")
+    @DecimalMax("100.0")
+    @Column(columnDefinition = "decimal default 0.0")
+    private BigDecimal discountRatio;
+
     @Column
+    @NotNull
     private Long productId;
 
-    @NotNull()
+    @NotNull
     @Min(0)
     @Column(columnDefinition = "integer default 0")
     private Integer ordersDeliveryFee;
@@ -33,5 +57,4 @@ public class OrderProduct extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Orders orders;
-
 }

@@ -1,17 +1,25 @@
 package spharos.msg.domain.review.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import java.time.LocalDateTime;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import spharos.msg.domain.orders.entity.OrderDetail;
+import spharos.msg.domain.orders.entity.OrderProduct;
 import spharos.msg.domain.product.entity.Product;
-import spharos.msg.domain.users.entity.Users;
 import spharos.msg.global.entity.BaseEntity;
-
-import java.math.BigDecimal;
 
 @Entity
 @Getter
@@ -37,7 +45,7 @@ public class Review extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_detail_id")
-    private OrderDetail orderDetail;
+    private OrderProduct orderProduct;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
@@ -45,12 +53,12 @@ public class Review extends BaseEntity {
 
     @Builder
     public Review(Long id, String reviewComment, BigDecimal reviewStar, Long userId,
-        OrderDetail orderDetail, Product product) {
+        OrderProduct orderProduct, Product product) {
         this.id = id;
         this.reviewComment = reviewComment;
         this.reviewStar = reviewStar;
         this.userId = userId;
-        this.orderDetail = orderDetail;
+        this.orderProduct = orderProduct;
         this.product = product;
     }
 

@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import spharos.msg.domain.cart.dto.CartProductQuantityDto;
+import spharos.msg.domain.cart.dto.CartProductRequestDto;
 import spharos.msg.domain.cart.service.CartProductService;
 import spharos.msg.domain.cart.service.CartProductUpdateService;
 import spharos.msg.global.api.ApiResponse;
@@ -14,7 +14,7 @@ import spharos.msg.global.api.ApiResponse;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/cart")
-@Tag(name = "CartProduct", description = "장바구니 API")
+@Tag(name = "Cart", description = "장바구니 API")
 public class CartProductController {
     private final CartProductService cartProductService;
     private final CartProductUpdateService cartProductUpdateService;
@@ -24,10 +24,11 @@ public class CartProductController {
     @PostMapping("/option/{productOptionId}")
     public ApiResponse<?> addCart(
             @PathVariable Long productOptionId,
-            @RequestBody CartProductQuantityDto cartProductQuantity,
+            @RequestParam(defaultValue = "1") int cartProductQuantity,
+            @RequestBody CartProductRequestDto cartProductRequestDto,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-        return cartProductService.addCartProduct(productOptionId, cartProductQuantity, userDetails.getUsername());
+        return cartProductService.addCartProduct(productOptionId, cartProductRequestDto, cartProductQuantity, userDetails.getUsername());
     }
 
     @Operation(summary = "장바구니 조회",
