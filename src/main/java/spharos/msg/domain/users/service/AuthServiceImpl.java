@@ -36,6 +36,13 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     @Override
     public void signUp(SignUpRequestDto signUpRequestDto) {
+
+//        //todo : 탈퇴한 회원 검증 필요.
+//        usersRepository.findByLoginId(signUpRequestDto.getLoginId())
+//                .filter(m -> m.getStatus() == UserStatus.NOT_USER)
+//                .isPresent();
+//        //
+
         String uuid = UUID.randomUUID().toString();
         Users user = new Users(uuid);
         user.passwordToHash(signUpRequestDto.getPassword());
