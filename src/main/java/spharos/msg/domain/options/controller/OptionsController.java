@@ -13,6 +13,14 @@ import spharos.msg.global.api.ApiResponse;
 @RequestMapping("/api/v1/option")
 public class OptionsController {
     private final OptionsService optionsService;
+    @Operation(summary = "상품 옵션 종류 조회",
+            description = "상품 ID를 입력하면 해당 상품의 옵션 종류를 조회 합니다. (색상,사이즈,기타)")
+    @GetMapping("/type/{productId}")
+    public ApiResponse<?> getOptionsType(
+            @PathVariable Long productId)
+    {
+        return optionsService.getOptionsType(productId);
+    }
     @Operation(summary = "최상위 옵션 조회",
             description = "상품 ID를 입력하면 해당 상품의 최상위 옵션을 조회 합니다.")
     @GetMapping("/{productId}")
