@@ -11,10 +11,7 @@ import spharos.msg.domain.orders.dto.OrderRequest.OrderSheetDto;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderProductDetail;
 import spharos.msg.domain.orders.entity.Orders;
 import spharos.msg.domain.orders.repository.OrderRepository;
-import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.repository.ProductOptionRepository;
-import spharos.msg.global.api.code.status.ErrorStatus;
-import spharos.msg.global.api.exception.OrderException;
 
 @Service
 @RequiredArgsConstructor
@@ -24,16 +21,20 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductOptionRepository productOptionRepository;
 
-//    public OrderUserDto findOrderUser(String uuid) {
-//        return OrderUserDto
-//            .builder()
-//            .loginId(user.getLoginId())
-//            .email(user.getEmail())
-//            .username(user.getUsername())
-//            .phoneNumber(user.getPhoneNumber())
-//            .address(address)
-//            .build();
-//    }
+
+    /*
+     TODO : 현재 수정해야 하는 로직
+    public OrderUserDto findOrderUser(String uuid) {
+        return OrderUserDto
+            .builder()
+            .loginId(user.getLoginId())
+            .email(user.getEmail())
+            .username(user.getUsername())
+            .phoneNumber(user.getPhoneNumber())
+            .address(address)
+            .build();
+    }
+    */
 
     @Transactional
     public OrderResultDto saveOrder(OrderSheetDto orderSheetDto) {
@@ -85,10 +86,13 @@ public class OrderService {
             .toList();
     }
 
+    /*
+    현재 사용되지 않음
     private Product findProductByOption(Long optionId) {
         return productOptionRepository
             .findById(optionId)
             .orElseThrow(() -> new OrderException(ErrorStatus.ORDER_PRODUCT_NOT_FOUND))
             .getProduct();
     }
+    */
 }

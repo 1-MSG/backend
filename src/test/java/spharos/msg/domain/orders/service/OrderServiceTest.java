@@ -70,13 +70,14 @@ class OrderServiceTest {
 
         assertThat(orderResultDto.getTotalPrice()).isEqualTo(price1 + price2);
     }
-    
-//
-//    @Test
-//    @DisplayName("주문자 정보 조회시 모든 정보가 일치해야한다.")
-//    void 주문자_정보_조회_성공_테스트() {
-//        OrderUserDto orderUserDto = orderService.findOrderUser("uuid");
-//        assertThat(orderUserDto.toString()).contains(
-//            "uuid", "tjdvy963@naver.com", "abcdsd", "01092312316");
-//    }
+
+    /*
+    TODO : 수정해야 하는 로직
+    @Test
+    @DisplayName("주문자 정보 조회시 모든 정보가 일치해야한다.")
+    void 주문자_정보_조회_성공_테스트() {
+        OrderUserDto orderUserDto = orderService.findOrderUser("uuid");
+        assertThat(orderUserDto.toString()).contains(
+            "uuid", "tjdvy963@naver.com", "abcdsd", "01092312316");
+    }*/
 }
