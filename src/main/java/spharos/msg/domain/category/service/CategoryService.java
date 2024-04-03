@@ -33,20 +33,27 @@ public class CategoryService {
             .orElseThrow(
                 () -> new CategoryException(ErrorStatus.CATEGORY_NOT_FOUND));
         List<SubCategory> categories = categoryProductRepository.findCategoriesByParentId(parentId);
-        return createCategoryDto(parentId, parent, categories);
+        return createCategoryDto(parent, categories);
     }
 
-    private CategoryDto createCategoryDto(Long parentId, Category parent,
-        List<SubCategory> categories) {
+    private CategoryDto createCategoryDto(Category parent, List<SubCategory> categories) {
         return parent.getProductCategoryLevel() == LARGE_CATEGORY_LEVEL ?
-            CategoryDto.builder()
-                .parentId(parentId)
-                .parentName(parent.getCategoryName())
-                .subCategories(categories)
-                .build() :
-            CategoryDto.builder()
-                .subCategories(categories)
-                .build();
+            toDtoWithoutParent(categories) :
+            toDtoWithParent(parent, categories);
+    }
+
+    private CategoryDto toDtoWithoutParent(List<SubCategory> categories) {
+        return CategoryDto.builder()
+            .subCategories(categories)
+            .build();
+    }
+
+    private CategoryDto toDtoWithParent(Category parent, List<SubCategory> categories) {
+        return CategoryDto.builder()
+            .parentId(parent.getId())
+            .parentName(parent.getCategoryName())
+            .subCategories(categories)
+            .build();
     }
 
     public List<CategoryDto> findCategoriesByLevel(int level) {
