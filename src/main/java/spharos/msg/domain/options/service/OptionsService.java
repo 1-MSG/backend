@@ -56,13 +56,13 @@ public class OptionsService {
 
         List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
         Set<Long> parentIds = getParentOptionIds(productOptions);
-        List<OptionsResponseDto> optionTypeList = getParentOptionDetails(parentIds);
-        List<OptionsResponseDto> parentOptionTypeList = getFinalParentOptionDetails(parentIds);
+        List<OptionsResponseDto> optionDetailList = getParentOptionDetails(parentIds);
+        List<OptionsResponseDto> parentOptionDetailList = getFinalParentOptionDetails(parentIds);
 
-        if (parentOptionTypeList.isEmpty()) {
-            return ApiResponse.of(SuccessStatus.OPTION_FIRST_SUCCESS, optionTypeList);
+        if (parentOptionDetailList.isEmpty()) {
+            return ApiResponse.of(SuccessStatus.OPTION_FIRST_SUCCESS, optionDetailList);
         }
-        return ApiResponse.of(SuccessStatus.OPTION_ID_SUCCESS, parentOptionTypeList.stream().distinct());
+        return ApiResponse.of(SuccessStatus.OPTION_ID_SUCCESS, parentOptionDetailList.stream().distinct());
     }
     private void addOptionTypeDtoFromParentIds(Set<Long> parentIds, List<OptionTypeDto> optionTypeDtos) {
         Options options = getOptionsById(parentIds.iterator().next());
