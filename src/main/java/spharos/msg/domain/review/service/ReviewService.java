@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
@@ -40,12 +41,11 @@ public class ReviewService {
 
     //리뷰 목록 가져 오기
     @Transactional
-    public ReviewResponse.ReviewsDto getReviews(Long productId, int page, int size) {
+    public ReviewResponse.ReviewsDto getReviews(Long productId, Pageable pageable) {
         //상품 가져오기
         Product product = productRepository.findById(productId).orElseThrow(()->new NotFoundException("상품 찾을 수 없음"));
-        //페이저블 객체 생성(page와 size 지정)
-        Pageable pageable = PageRequest.of(page,size);
-        Page<Review> reviewPage = reviewRepository.findByProduct(product,pageable);
+        //슬라이스 가져오기
+        Slice<Review> reviewPage = reviewRepository.findByProduct(product,pageable);
         //리스트로 변환
         List<ReviewResponse.ReviewDetailDto> reviews = convertToReviewList(reviewPage);
         //다음 페이지가 있는지 확인
@@ -59,90 +59,69 @@ public class ReviewService {
 
     //특정 리뷰 가져 오기
     @Transactional
-    public ApiResponse<?> getReviewDetail(Long reviewId) {
-        try {
-            //리뷰 객체 가져 오기
-            Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new NotFoundException(reviewId + "해당하는 리뷰 찾을수 없음"));
-            //사용자 이름 가져 오기
-            String userName = usersRepository.findById(review.getUserId())
-                .map(Users::getUsername)
-                .orElse("탈퇴한 회원입니다");
+    public ReviewResponse.ReviewDetailDto getReviewDetail(Long reviewId) {
+        //리뷰 객체 가져 오기
+        Review review = reviewRepository.findById(reviewId)
+            .orElseThrow(() -> new NotFoundException(reviewId + "해당하는 리뷰 찾을수 없음"));
+        //사용자 이름 가져 오기
+        String userName = usersRepository.findById(review.getUserId())
+            .map(Users::getUsername)
+            .orElse("탈퇴한 회원입니다");
 
-            return ApiResponse.of(REVIEW_READ_SUCCESS, ReviewResponse.ReviewDetailDto.builder()
-                .reviewId(review.getId())
-                .reviewStar(review.getReviewStar())
-                .reviewCreatedat(review.getCreatedAt())
-                .reviewContent(review.getReviewComment())
-                .reviewer(userName)
-                .build());
-        } catch (Exception e) {
-            return ApiResponse.onFailure(REVIEW_READ_FAIL, null);
-        }
+        return ReviewResponse.ReviewDetailDto.builder()
+            .reviewId(review.getId())
+            .reviewStar(review.getReviewStar())
+            .reviewCreatedat(review.getCreatedAt())
+            .reviewContent(review.getReviewComment())
+            .reviewer(userName)
+            .build();
     }
 
     @Transactional
-    public ApiResponse<?> saveReview(Long productId, ReviewRequest.createDto reviewRequest,
+    public void saveReview(Long productId, ReviewRequest.createDto reviewRequest,
         String userUuid) {
-        try {//상품 객체 가져오기
-            Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new NotFoundException(productId + "해당하는 상품 찾을 수 없음"));
-            //유저 id 가져오기
-            Long userId = usersRepository.findByUuid(userUuid)
-                .map(Users::getId)
-                .orElseThrow();
+        //상품 객체 가져오기
+        Product product = productRepository.findById(productId)
+            .orElseThrow(() -> new NotFoundException(productId + "해당하는 상품 찾을 수 없음"));
+        //유저 id 가져오기
+        Long userId = usersRepository.findByUuid(userUuid)
+            .map(Users::getId)
+            .orElseThrow();
 
-            //추후, 이미 작성된 리뷰 인지 확인 필요함
-            //저장
-            reviewRepository.save(Review.builder()
-                .product(product)
+        //추후, 이미 작성된 리뷰 인지 확인 필요함
+        //저장
+        reviewRepository.save(Review.builder()
+            .product(product)
+            .reviewStar(reviewRequest.getReviewStar())
+            .reviewComment(reviewRequest.getReviewContent())
+            .userId(userId)
+            .build());
+    }
+
+    @Transactional
+    public void updateReview(Long reviewId, ReviewRequest.updateDto reviewRequest) {
+        //id로 기존 리뷰 찾기
+        Review review = reviewRepository.findById(reviewId)
+            .orElseThrow(() -> new NotFoundException(reviewId + "해당하는 리뷰 찾을 수 없음"));
+        //리뷰 업데이트
+        reviewRepository.save(
+            Review.builder()
+                .id(review.getId())
+                .product(review.getProduct())
                 .reviewStar(reviewRequest.getReviewStar())
                 .reviewComment(reviewRequest.getReviewContent())
-                .userId(userId)
-                .build());
-            return ApiResponse.of(REVIEW_SAVE_SUCCESS, null);
-        } catch (
-            Exception e) {
-            log.error("리뷰 저장 중 에러 발생 " + e.getMessage());
-            return ApiResponse.onFailure(REVIEW_SAVE_FAIL, null);
-        }
+                .userId(review.getUserId())
+                .build()
+        );
     }
 
     @Transactional
-    public ApiResponse<?> updateReview(Long reviewId, ReviewRequest.updateDto reviewRequest) {
-        try {
-            //id로 기존 리뷰 찾기
-            Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new NotFoundException(reviewId + "해당하는 리뷰 찾을 수 없음"));
-            //리뷰 업데이트
-            reviewRepository.save(
-                Review.builder()
-                    .id(review.getId())
-                    .product(review.getProduct())
-                    .reviewStar(reviewRequest.getReviewStar())
-                    .reviewComment(reviewRequest.getReviewContent())
-                    .userId(review.getUserId())
-                    .build()
-            );
-            return ApiResponse.of(REVIEW_UPDATE_SUCCESS, null);
-        } catch (Exception e) {
-            log.error("에러 발생 " + e.getMessage());
-            return ApiResponse.onFailure(REVIEW_UPDATE_FAIL, null);
-        }
+    public void deleteReview(Long reviewId) {
+        //id와 일치 하는 리뷰 삭제
+        reviewRepository.deleteById(reviewId);
     }
 
-    @Transactional
-    public ApiResponse<?> deleteReview(Long reviewId) {
-        try {
-            //id와 일치 하는 리뷰 삭제
-            reviewRepository.deleteById(reviewId);
-            return ApiResponse.of(REVIEW_DELETE_SUCCESS, null);
-        } catch (Exception e) {
-            return ApiResponse.onFailure(REVIEW_DELETE_FAIL, null);
-        }
-    }
-
-    private List<ReviewResponse.ReviewDetailDto> convertToReviewList(Page<Review> reviewPage) {
+    private List<ReviewResponse.ReviewDetailDto> convertToReviewList(Slice<Review> reviewPage) {
         return reviewPage.getContent().stream()
             .map(review ->{
 
