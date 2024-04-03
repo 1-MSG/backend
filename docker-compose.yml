@@ -19,5 +19,7 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       SECRET_KEY: ${SECRET_KEY}
+      EMAIL_ID: ${EMAIL_ID}
+      EMAIL_PW: ${EMAIL_PW}
     ports:
       - "8282:8282"
