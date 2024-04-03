@@ -10,13 +10,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderSheetDto;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderResultDto;
 import spharos.msg.domain.orders.repository.OrderRepository;
 import spharos.msg.global.config.QueryDslConfig;
 
-@DataJpaTest
 @Import({OrderService.class, QueryDslConfig.class})
+@DataJpaTest
+@TestPropertySource(properties = {"spring.jpa.hibernate.ddl-auto=update"})
 class OrderServiceTest {
 
     /**
