@@ -13,6 +13,7 @@ import spharos.msg.domain.users.dto.request.ChangePasswordRequestDto;
 import spharos.msg.domain.users.dto.request.DuplicationCheckRequestDto;
 import spharos.msg.domain.users.dto.request.LoginRequestDto;
 import spharos.msg.domain.users.dto.response.FindIdOutDto;
+import spharos.msg.domain.users.dto.response.FindUserInfoOutDto;
 import spharos.msg.domain.users.dto.response.LoginOutDto;
 import spharos.msg.domain.users.dto.response.ReissueOutDto;
 import spharos.msg.domain.users.dto.request.SignUpRequestDto;
@@ -179,6 +180,18 @@ public class AuthServiceImpl implements AuthService {
         return FindIdOutDto
                 .builder()
                 .loginId(user.getLoginId())
+                .build();
+    }
+
+    @Override
+    public FindUserInfoOutDto findUserInfo(String uuid) {
+        Users findUser = usersRepository.findByUuid(uuid).orElseThrow(
+                () -> new UsersException(ErrorStatus.FIND_USER_INFO_FAIL)
+        );
+
+        return FindUserInfoOutDto
+                .builder()
+                .userName(findUser.readUserName())
                 .build();
     }
 }
