@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OptionsService {
     private final OptionsRepository optionsRepository;
-
     private final ProductOptionRepository productOptionRepository;
     private final ProductRepository productRepository;
 
@@ -34,20 +33,15 @@ public class OptionsService {
                 .orElseThrow(() -> new ProductNotExistException(ErrorStatus.NOT_EXIST_PRODUCT_ID));
 
         List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
-
         Set<Long> parentIds = getParentOptionIds(productOptions);
-
         List<OptionsResponseDto> optionNameList = getParentOptionDetails(parentIds);
-
         List<OptionsResponseDto> parentOptionNameList = getFinalParentOptionDetails(parentIds);
 
         if (parentOptionNameList.isEmpty()) {
             return ApiResponse.of(SuccessStatus.OPTION_FIRST_SUCCESS, optionNameList);
         }
-            return ApiResponse.of(SuccessStatus.OPTION_ID_SUCCESS, parentOptionNameList.stream().distinct());
+        return ApiResponse.of(SuccessStatus.OPTION_ID_SUCCESS, parentOptionNameList.stream().distinct());
     }
-
-
 
     //하위 옵션 데이터 조회
     public ApiResponse<?> getChildOptions(Long optionsId) {
@@ -56,7 +50,7 @@ public class OptionsService {
 
         List<Options> childOptions = options.getChild();
         //하위 옵션이 없다면 던지고 있다면 해당 옵션 리스트 반환
-        if(childOptions.isEmpty()){
+        if (childOptions.isEmpty()) {
             throw new OptionsException(ErrorStatus.NOT_EXIST_CHILD_OPTION);
         }
         return ApiResponse.of(SuccessStatus.OPTION_DETAIL_SUCCESS,
@@ -71,6 +65,7 @@ public class OptionsService {
                 .map(productOption -> productOption.getOption().getParent().getId())
                 .collect(Collectors.toSet());
     }
+
     //해당 ID들의 정보(옵션ID,이름,타입,레벨) 반환
     private List<OptionsResponseDto> getParentOptionDetails(Set<Long> parentIds) {
         return parentIds.stream()
@@ -79,6 +74,7 @@ public class OptionsService {
                 .map(OptionsResponseDto::new)
                 .toList();
     }
+
     //한단계 더 상위 옵션이 있는지 검증 및 있다면 해당 옵션 정보 반환
     private List<OptionsResponseDto> getFinalParentOptionDetails(Set<Long> parentIds) {
         return parentIds.stream()
