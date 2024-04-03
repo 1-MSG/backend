@@ -11,6 +11,7 @@ import spharos.msg.domain.users.dto.request.DuplicationCheckRequestDto;
 import spharos.msg.domain.users.dto.request.LoginRequestDto;
 import spharos.msg.domain.users.dto.request.SignUpRequestDto;
 import spharos.msg.domain.users.dto.response.FindIdOutDto;
+import spharos.msg.domain.users.dto.response.FindUserInfoOutDto;
 import spharos.msg.domain.users.dto.response.LoginOutDto;
 import spharos.msg.domain.users.dto.response.ReissueOutDto;
 import spharos.msg.domain.users.service.AuthService;
@@ -99,5 +100,13 @@ public class AuthController {
             @PathVariable(name = "email") String email) {
         FindIdOutDto loginUnionId = authService.findLoginUnionId(email);
         return ApiResponse.of(SuccessStatus.FIND_LOGIN_ID_SUCCESS, loginUnionId);
+    }
+
+    @Operation(summary = "MyPage 사용자 정보 조회", description = "My Page의 사용자 정보를 반환 합니다.")
+    @GetMapping("/users")
+    public ApiResponse<FindUserInfoOutDto> findUserInfo(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        FindUserInfoOutDto userInfo = authService.findUserInfo(userDetails.getUsername());
+        return ApiResponse.of(SuccessStatus.FIND_LOGIN_ID_SUCCESS, userInfo);
     }
 }
