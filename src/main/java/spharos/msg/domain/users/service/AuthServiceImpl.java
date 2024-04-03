@@ -22,6 +22,7 @@ import spharos.msg.domain.users.repository.AddressRepository;
 import spharos.msg.domain.users.repository.UserOAuthListRepository;
 import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.global.api.code.status.ErrorStatus;
+import spharos.msg.global.api.exception.JwtTokenException;
 import spharos.msg.global.api.exception.UsersException;
 import spharos.msg.global.redis.RedisService;
 import spharos.msg.global.security.JwtTokenProvider;
@@ -94,9 +95,17 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional(readOnly = true)
     @Override
-    public ReissueOutDto reissueToken(String uuid) {
+    public ReissueOutDto reissueToken(String oldRefreshToken) {
+        String uuid = jwtTokenProvider.getUuid(oldRefreshToken);
+        String oldToken = oldRefreshToken.substring(7);
+
         Users findUser = usersRepository.findByUuid(uuid).orElseThrow(
-                () -> new UsersException(ErrorStatus.REISSUE_TOKEN_FAIL));
+                () -> new JwtTokenException(ErrorStatus.REISSUE_TOKEN_FAIL));
+
+        if(!redisService.getRefreshToken(uuid).equals(oldToken)){
+            throw new JwtTokenException(ErrorStatus.REISSUE_TOKEN_FAIL);
+        }
+
         String accessToken = jwtTokenProvider.createAccessToken(findUser);
         String refreshToken = jwtTokenProvider.createRefreshToken(findUser);
         return ReissueOutDto
