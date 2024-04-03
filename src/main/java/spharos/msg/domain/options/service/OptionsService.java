@@ -54,9 +54,8 @@ public class OptionsService {
                 .toList();
         if (parentOptionNameList.isEmpty()) {
             return ApiResponse.of(SuccessStatus.OPTION_FIRST_SUCCESS, optionNameList);
-        } else {
-            return ApiResponse.of(SuccessStatus.OPTION_ID_SUCCESS, parentOptionNameList.stream().distinct());
         }
+            return ApiResponse.of(SuccessStatus.OPTION_ID_SUCCESS, parentOptionNameList.stream().distinct());
     }
     //하위 옵션 데이터 조회
     public ApiResponse<?> getChildOptions(Long optionsId) {
