@@ -41,8 +41,8 @@ public class AuthServiceImpl implements AuthService {
 
         //탈퇴한 회원 검증.
         //한번 탈퇴하면 절떄로 회원가입/로그인 금지 되는 정책.
-        if(usersRepository.findByLoginId(signUpRequestDto.getLoginId())
-                .filter(m -> m.getStatus() == UserStatus.NOT_USER).isPresent()){
+        if (usersRepository.findByLoginId(signUpRequestDto.getLoginId())
+                .filter(m -> m.getStatus() == UserStatus.NOT_USER).isPresent()) {
             throw new UsersException(ErrorStatus.WITHDRAW_USER_FAIL);
         }
 
@@ -70,7 +70,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new UsersException(ErrorStatus.LOG_IN_UNION_FAIL));
 
         //탈퇴 회원 검증 로직 추가
-        if(findUser.getStatus().equals(UserStatus.NOT_USER)){
+        if (findUser.getStatus().equals(UserStatus.NOT_USER)) {
             throw new UsersException(ErrorStatus.WITHDRAW_USER_FAIL);
         }
 
@@ -112,7 +112,7 @@ public class AuthServiceImpl implements AuthService {
         Users findUser = usersRepository.findByUuid(uuid).orElseThrow(
                 () -> new JwtTokenException(ErrorStatus.REISSUE_TOKEN_FAIL));
 
-        if(!redisService.getRefreshToken(uuid).equals(oldToken)){
+        if (!redisService.getRefreshToken(uuid).equals(oldToken)) {
             throw new JwtTokenException(ErrorStatus.REISSUE_TOKEN_FAIL);
         }
 

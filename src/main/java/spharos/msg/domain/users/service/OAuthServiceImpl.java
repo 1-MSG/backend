@@ -36,7 +36,7 @@ public class OAuthServiceImpl implements OAuthService {
                 () -> new UsersException(ErrorStatus.NOT_UNION_USER)
         );
 
-        if(findUser.getStatus().equals(UserStatus.NOT_USER)){
+        if (findUser.getStatus().equals(UserStatus.NOT_USER)) {
             throw new UsersException(ErrorStatus.WITHDRAW_USER_FAIL);
         }
 
@@ -87,7 +87,7 @@ public class OAuthServiceImpl implements OAuthService {
                 () -> new UsersException(ErrorStatus.NOT_UNION_USER));
 
         //탈퇴 회원 검증 로직 추가
-        if(findUser.getStatus().equals(UserStatus.NOT_USER)){
+        if (findUser.getStatus().equals(UserStatus.NOT_USER)) {
             throw new UsersException(ErrorStatus.WITHDRAW_USER_FAIL);
         }
 
