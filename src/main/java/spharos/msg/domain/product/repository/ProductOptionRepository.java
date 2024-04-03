@@ -10,5 +10,5 @@ import java.util.List;
 public interface ProductOptionRepository extends JpaRepository<ProductOption,Long> {
     List<ProductOption> findByProduct(Product product);
 
-    List<ProductOption> findByOptions(Options options);
+    ProductOption findByOptions(Options options);
 }

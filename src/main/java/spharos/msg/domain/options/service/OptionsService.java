@@ -92,7 +92,7 @@ public class OptionsService {
         }
         return ApiResponse.of(SuccessStatus.OPTION_DETAIL_SUCCESS,
                 childOptions.stream()
-                        .map(option -> new OptionsResponseDto(option, productOptionRepository.findByOptions(option).get(0).getStock()))
+                        .map(option -> new OptionsResponseDto(option, productOptionRepository.findByOptions(option).getStock()))
                         .toList());
     }
 
