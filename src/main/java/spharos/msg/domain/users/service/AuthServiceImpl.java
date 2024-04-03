@@ -1,6 +1,5 @@
 package spharos.msg.domain.users.service;
 
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,10 +15,8 @@ import spharos.msg.domain.users.dto.response.FindIdOutDto;
 import spharos.msg.domain.users.dto.response.LoginOutDto;
 import spharos.msg.domain.users.dto.response.ReissueOutDto;
 import spharos.msg.domain.users.dto.request.SignUpRequestDto;
-import spharos.msg.domain.users.entity.Address;
+import spharos.msg.domain.users.entity.UserStatus;
 import spharos.msg.domain.users.entity.Users;
-import spharos.msg.domain.users.repository.AddressRepository;
-import spharos.msg.domain.users.repository.UserOAuthListRepository;
 import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.global.api.code.status.ErrorStatus;
 import spharos.msg.global.api.exception.UsersException;
@@ -32,8 +29,6 @@ import spharos.msg.global.security.JwtTokenProvider;
 public class AuthServiceImpl implements AuthService {
 
     private final UsersRepository usersRepository;
-    private final UserOAuthListRepository userOAuthListRepository;
-    private final AddressRepository addressRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
@@ -54,6 +49,7 @@ public class AuthServiceImpl implements AuthService {
                 .password(user.getPassword())
                 .uuid(user.getUuid())
                 .address(signUpRequestDto.getAddress())
+                .status(UserStatus.UNION)
                 .build());
     }
 
@@ -117,12 +113,19 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     @Override
     public void withdrawMember(Long userId) {
-        Users users = usersRepository.findById(userId).orElseThrow();
-        List<Address> addressList = addressRepository.findByUsersId(users.getId());
-
-        addressRepository.deleteAll(addressList);
-        usersRepository.delete(users);
-        userOAuthListRepository.deleteByUuid(users.getUuid());
+        Users findUser = usersRepository.findById(userId).orElseThrow();
+        usersRepository.save(Users
+                .builder()
+                .id(findUser.getId())
+                .email(findUser.getEmail())
+                .userName(findUser.readUserName())
+                .loginId(findUser.getLoginId())
+                .phoneNumber(findUser.getPhoneNumber())
+                .password(findUser.getPassword())
+                .uuid(findUser.getUuid())
+                .address(findUser.getAddress())
+                .status(UserStatus.NOT_USER)
+                .build());
     }
 
     @Transactional
@@ -136,7 +139,7 @@ public class AuthServiceImpl implements AuthService {
             throw new UsersException(ErrorStatus.SAME_PASSWORD);
         }
 
-        Users newUser = Users
+        usersRepository.save(Users
                 .builder()
                 .id(findUser.getId())
                 .loginId(findUser.getLoginId())
@@ -146,9 +149,8 @@ public class AuthServiceImpl implements AuthService {
                 .email(findUser.getEmail())
                 .userName(findUser.readUserName())
                 .address(findUser.getAddress())
-                .build();
-
-        usersRepository.save(newUser);
+                .status(findUser.getStatus())
+                .build());
     }
 
     private Boolean validatePassword(String oldPasswordHash, String newPassword) {
