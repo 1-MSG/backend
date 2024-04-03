@@ -59,6 +59,11 @@ public class AuthServiceImpl implements AuthService {
         Users findUser = usersRepository.findByLoginId(loginRequestDto.getLoginId())
                 .orElseThrow(() -> new UsersException(ErrorStatus.LOG_IN_UNION_FAIL));
 
+        //탈퇴 회원 검증 로직 추가
+        if(findUser.getStatus().equals(UserStatus.NOT_USER)){
+            throw new UsersException(ErrorStatus.WITHDRAW_USER_FAIL);
+        }
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         findUser.getUsername(),

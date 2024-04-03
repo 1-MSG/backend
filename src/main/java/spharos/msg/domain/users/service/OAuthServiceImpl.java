@@ -79,6 +79,11 @@ public class OAuthServiceImpl implements OAuthService {
         Users findUser = userRepository.findByUuid(userOAuthList.getUuid()).orElseThrow(
                 () -> new UsersException(ErrorStatus.NOT_UNION_USER));
 
+        //탈퇴 회원 검증 로직 추가
+        if(findUser.getStatus().equals(UserStatus.NOT_USER)){
+            throw new UsersException(ErrorStatus.WITHDRAW_USER_FAIL);
+        }
+
         //todo : 인증처리 생각 할 것.
 //        authenticationManager.authenticate(
 //                new UsernamePasswordAuthenticationToken(
