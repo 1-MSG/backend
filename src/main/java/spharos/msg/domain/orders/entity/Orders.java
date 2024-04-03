@@ -30,7 +30,7 @@ public class Orders extends BaseEntity {
     private Long id;
 
     @Column(columnDefinition = "bigint default 0", nullable = false)
-    private Long totalAmount;
+    private Long totalPrice;
 
     @NotNull
     private Long buyerId;

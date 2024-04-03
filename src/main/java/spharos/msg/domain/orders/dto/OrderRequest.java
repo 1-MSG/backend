@@ -1,6 +1,9 @@
 package spharos.msg.domain.orders.dto;
 
+import java.math.BigDecimal;
+import java.util.List;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,10 +11,26 @@ import lombok.NoArgsConstructor;
 public class OrderRequest {
 
     @Getter
-    public static class OrderDto {
+    @AllArgsConstructor
+    public static class OrderSheetDto {
 
-        private Long productId;
-        private Long productOptionId;
-        private Integer quantity;
+        private Long buyerId;
+        private String buyerName;
+        private String buyerPhoneNumber;
+        private String address;
+        private List<OrderProduct> orderProducts;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class OrderProduct {
+
+        Long productId;
+        Long productOptionId;
+        Integer orderQuantity;
+        Integer orderDeliveryFee;
+        BigDecimal discountRate;
+        Long salePrice;
+        Long originPrice;
     }
 }
