@@ -1,5 +1,6 @@
 package spharos.msg.domain.orders.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,18 @@ public class OrderResponse {
         private String phoneNumber;
         private Long orderId;
         List<OrderProductDetail> orderProductDetails;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @Getter
+    @ToString
+    public static class OrderHistoryDto {
+
+        Long orderId;
+        Long totalPrice;
+        LocalDateTime createdAt;
     }
 
     @NoArgsConstructor

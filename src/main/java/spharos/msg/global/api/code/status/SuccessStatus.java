@@ -27,6 +27,7 @@ public enum SuccessStatus implements BaseCode {
 
     ORDER_SUCCESS(HttpStatus.CREATED, "ORDER201", "상품 주문 성공"),
     ORDER_USER_SUCCESS(HttpStatus.OK, "ORDER202", "주문자 정보 조회 성공"),
+    ORDER_HISTORY_SUCCESS(HttpStatus.OK, "ORDER203", "구매 내역 리스트 조회 성공"),
     CART_PRODUCT_ADD_SUCCESS(HttpStatus.CREATED, "CART201", "장바구니 담기 성공"),
     CART_PRODUCT_GET_SUCCESS(HttpStatus.OK, "CART200", "장바구니 조회 성공"),
     CART_PRODUCT_UPDATE_SUCCESS(HttpStatus.OK, "CART202", "장바구니 수정 성공"),
@@ -36,7 +37,7 @@ public enum SuccessStatus implements BaseCode {
     LIKES_SUCCESS(HttpStatus.CREATED, "LIKES201", "좋아요 등록 성공"),
     LIKES_DELETE_SUCCESS(HttpStatus.CREATED, "LIKES202", "좋아요 해제 성공"),
     LIKES_LIST_GET_SUCCESS(HttpStatus.CREATED, "LIKES200", "좋아요 목록 조회 성공"),
-    LIKES_GET_SUCCESS(HttpStatus.OK,"LIKES203","좋아요 유무 조회 성공") ,
+    LIKES_GET_SUCCESS(HttpStatus.OK, "LIKES203", "좋아요 유무 조회 성공"),
 
     COUPON_LIST_GET_SUCCESS(HttpStatus.OK, "COUPON200", "다운 가능 쿠폰 목록 조회 성공"),
     COUPON_DOWNLOAD_SUCCESS(HttpStatus.OK, "COUPON201", "쿠폰 다운로드 성공"),
@@ -44,7 +45,7 @@ public enum SuccessStatus implements BaseCode {
     TOKEN_REISSUE_COMPLETE(HttpStatus.ACCEPTED, "USER204", "토큰 재발급 성공"),
 
     PRODUCT_DETAIL_READ_SUCCESS(HttpStatus.OK, "PRODUCT200", "상품 상세 조회 성공"),
-    PRODUCT_INFO_SUCCESS(HttpStatus.OK,"PRODUCT200", "상품 정보 조회 성공"),
+    PRODUCT_INFO_SUCCESS(HttpStatus.OK, "PRODUCT200", "상품 정보 조회 성공"),
 
     REVIEW_SAVE_SUCCESS(HttpStatus.CREATED, "REVIEW200", "상품 리뷰 작성 성공"),
     REVIEW_UPDATE_SUCCESS(HttpStatus.OK, "REVIEW200", "상품 리뷰 수정 성공"),
@@ -59,12 +60,12 @@ public enum SuccessStatus implements BaseCode {
 
     BUNDLE_READ_SUCCESS(HttpStatus.OK, "BUNDLE200", "특가 목록 조회 성공"),
 
-    OPTION_TYPE_SUCCESS(HttpStatus.OK,"OPTION200","옵션 타입 조회 성공"),
-    OPTION_ID_SUCCESS(HttpStatus.OK,"OPTION202","옵션 ID 조회 성공"),
-    OPTION_DETAIL_SUCCESS(HttpStatus.OK,"OPTION203","옵션 상세 조회 성공"),
+    OPTION_TYPE_SUCCESS(HttpStatus.OK, "OPTION200", "옵션 타입 조회 성공"),
+    OPTION_ID_SUCCESS(HttpStatus.OK, "OPTION202", "옵션 ID 조회 성공"),
+    OPTION_DETAIL_SUCCESS(HttpStatus.OK, "OPTION203", "옵션 상세 조회 성공"),
 
-    BRAND_GET_SUCCESS(HttpStatus.OK,"BRAND200","전체 브랜드 조회 성공"),
-    OPTION_FIRST_SUCCESS(HttpStatus.OK,"OPTION204","옵션 첫번째 항목 리스트 조회 성공");
+    BRAND_GET_SUCCESS(HttpStatus.OK, "BRAND200", "전체 브랜드 조회 성공"),
+    OPTION_FIRST_SUCCESS(HttpStatus.OK, "OPTION204", "옵션 첫번째 항목 리스트 조회 성공");
 
     private final HttpStatus httpStatus;
     private final String status;

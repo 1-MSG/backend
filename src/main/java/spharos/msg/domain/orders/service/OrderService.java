@@ -8,10 +8,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderProduct;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderSheetDto;
+import spharos.msg.domain.orders.dto.OrderResponse.OrderHistoryDto;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderProductDetail;
 import spharos.msg.domain.orders.entity.Orders;
 import spharos.msg.domain.orders.repository.OrderRepository;
 import spharos.msg.domain.product.repository.ProductOptionRepository;
+import spharos.msg.domain.users.entity.Users;
+import spharos.msg.domain.users.repository.UsersRepository;
+import spharos.msg.global.api.code.status.ErrorStatus;
+import spharos.msg.global.api.exception.UsersException;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +24,7 @@ import spharos.msg.domain.product.repository.ProductOptionRepository;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final UsersRepository usersRepository;
     private final ProductOptionRepository productOptionRepository;
 
 
@@ -42,6 +48,13 @@ public class OrderService {
         List<OrderProductDetail> orderProductDetails = getOrderProductDetails(
             orderSheetDto.getOrderProducts());
         return toOrderResultDto(newOrder, orderProductDetails);
+    }
+
+    public List<OrderHistoryDto> findOrderHistories(String uuid) {
+        Users users = usersRepository.findByUuid(uuid)
+            .orElseThrow(() -> new UsersException(ErrorStatus.NOT_USER));
+
+        return orderRepository.findAllByBuyerId(users.getId());
     }
 
     private Orders toOrderEntity(OrderSheetDto orderSheetDto) {
