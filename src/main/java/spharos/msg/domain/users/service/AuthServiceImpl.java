@@ -37,11 +37,12 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void signUp(SignUpRequestDto signUpRequestDto) {
 
-//        //todo : 탈퇴한 회원 검증 필요.
-//        usersRepository.findByLoginId(signUpRequestDto.getLoginId())
-//                .filter(m -> m.getStatus() == UserStatus.NOT_USER)
-//                .isPresent();
-//        //
+        //탈퇴한 회원 검증.
+        //한번 탈퇴하면 절떄로 회원가입/로그인 금지 되는 정책.
+        if(usersRepository.findByLoginId(signUpRequestDto.getLoginId())
+                .filter(m -> m.getStatus() == UserStatus.NOT_USER).isPresent()){
+            throw new UsersException(ErrorStatus.WITHDRAW_USER_FAIL);
+        }
 
         String uuid = UUID.randomUUID().toString();
         Users user = new Users(uuid);

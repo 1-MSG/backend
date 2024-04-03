@@ -36,6 +36,10 @@ public class OAuthServiceImpl implements OAuthService {
                 () -> new UsersException(ErrorStatus.NOT_UNION_USER)
         );
 
+        if(findUser.getStatus().equals(UserStatus.NOT_USER)){
+            throw new UsersException(ErrorStatus.WITHDRAW_USER_FAIL);
+        }
+
         if (Boolean.TRUE.equals(userOAuthListRepository.existsByUuid(findUser.getUuid())) &&
                 findUser.getStatus().equals(UserStatus.EASY)) {
             log.info("기존 가입된 회원이라 바로 로그인 처리");
@@ -45,6 +49,8 @@ public class OAuthServiceImpl implements OAuthService {
                     .oauthName(easySignUpRequestDto.getOauthName())
                     .build()));
         }
+
+        //업데이트 처리
         userOAuthListRepository.save(UserOAuthList
                 .builder()
                 .OAuthId(easySignUpRequestDto.getOauthId())
