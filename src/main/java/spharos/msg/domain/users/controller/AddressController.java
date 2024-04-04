@@ -24,9 +24,9 @@ public class AddressController {
 
     @Operation(summary = "배송지 추가", description = "해당 회원의 배송지를 추가 합니다.")
     @PostMapping("/{userId}")
-    public ApiResponse<?> addAddress(
+    public ApiResponse<Void> addAddress(
             @RequestBody AddressRequestDto addressRequestDto,
-            @PathVariable(name = "userId") Long userId
+            @PathVariable(name = "userId") Long userId //todo : Token의 Uuid로 사용 여부.
     ) {
         addressService.createAddress(addressRequestDto, userId);
         return ApiResponse.of(SuccessStatus.DELIVERY_ADDRESS_ADD_SUCCESS, null);

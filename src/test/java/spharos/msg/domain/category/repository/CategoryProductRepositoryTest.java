@@ -11,8 +11,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
-import spharos.msg.domain.category.dto.CategoryResponse.CategoryDto;
 import spharos.msg.domain.category.dto.CategoryResponse.CategoryProductDto;
+import spharos.msg.domain.category.dto.CategoryResponse.SubCategory;
 import spharos.msg.domain.category.entity.Category;
 
 @SpringBootTest
@@ -25,9 +25,18 @@ class CategoryProductRepositoryTest {
     @Autowired
     CategoryRepository categoryRepository;
 
-    private List<Category> mapToCategoryProduct(List<CategoryDto> categories) {
+    private List<Category> mapToCategoryProduct(List<SubCategory> categories) {
         return categories.stream()
             .map(e -> categoryRepository.findById(e.getCategoryId()).get())
+            .toList();
+    }
+
+    private List<Long> getProductIds(int offset, long categoryId) {
+        return categoryProductRepository
+            .findCategoryProductsById(categoryId, PageRequest.of(offset, 10))
+            .getContent()
+            .stream()
+            .map(CategoryProductDto::getProductId)
             .toList();
     }
 
@@ -36,7 +45,7 @@ class CategoryProductRepositoryTest {
     @DisplayName("카테고리 레벨이 0인걸 검색했다면, 검색 결과는 레벨이 1인게 나와야한다.")
     void 카테고리_조회_성공(Long categoryId) {
         //given
-        List<CategoryDto> categories = categoryProductRepository
+        List<SubCategory> categories = categoryProductRepository
             .findCategoriesByParentId(categoryId);
 
         Integer parentLevel = categoryRepository
@@ -69,15 +78,4 @@ class CategoryProductRepositoryTest {
             .isNotEmpty()
             .doesNotContainAnyElementsOf(result2);
     }
-
-    private List<Long> getProductIds(int offset, long categoryId) {
-        return categoryProductRepository
-            .findCategoryProductsById(categoryId, PageRequest.of(offset, 10))
-            .getContent()
-            .stream()
-            .map(CategoryProductDto::getProductId)
-            .toList();
-    }
-
-
 }

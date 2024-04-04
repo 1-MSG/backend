@@ -23,6 +23,12 @@ public enum SuccessStatus implements BaseCode {
     SEARCH_ALL_ADDRESS_SUCCESS(HttpStatus.ACCEPTED, "USER214", "전체 배송지 조회 성공"),
     DELETE_ADDRESS_SUCCESS(HttpStatus.ACCEPTED, "USER215", "배송지 삭제 성공"),
     FIND_LOGIN_ID_SUCCESS(HttpStatus.ACCEPTED, "USER216", "아이디 찾기 성공"),
+    FIND_USER_INFO_SUCCESS(HttpStatus.ACCEPTED, "USER217", "회원 정보 조회 성공"),
+
+    SEARCH_USERS_INFO_SUCCESS(HttpStatus.ACCEPTED, "ADMIN001", "회원 정보 조회 성공"),
+    COUNT_CONNECT_USERS_SUCCESS(HttpStatus.ACCEPTED, "ADMIN002", "접속자 수 조회 성공"),
+    COUNT_TOTAL_USERS_SUCCESS(HttpStatus.ACCEPTED, "ADMIN002", "전체 회원 수 조회 성공"),
+    TODAY_SIGNUP_COUNT_SUCCESS(HttpStatus.ACCEPTED, "ADMIN002", "오늘 가입자 수 조회 성공"),
 
 
     ORDER_SUCCESS(HttpStatus.CREATED, "ORDER201", "상품 주문 성공"),

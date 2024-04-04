@@ -3,6 +3,7 @@ package spharos.msg.domain.admin.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import spharos.msg.global.entity.BaseEntity;
 
 @Entity
 @Getter
