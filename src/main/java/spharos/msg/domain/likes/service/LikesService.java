@@ -1,8 +1,9 @@
 package spharos.msg.domain.likes.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import spharos.msg.domain.likes.dto.IsLikesDto;
 import spharos.msg.domain.likes.dto.LikesResponseDto;
 import spharos.msg.domain.likes.entity.Likes;
 import spharos.msg.domain.likes.repository.LikesRepository;
@@ -12,8 +13,6 @@ import spharos.msg.domain.users.entity.Users;
 import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
-
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,7 +54,16 @@ public class LikesService {
         return ApiResponse.of(SuccessStatus.LIKES_LIST_GET_SUCCESS,
                 likesRepository.findByUsers(users)
                         .stream()
-                        .map(likes -> new LikesResponseDto(likes,likesRepository.existsByUsersAndProduct(users,likes.getProduct())))
+                        .map(LikesResponseDto::new)
                         .toList());
+    }
+
+    @Transactional
+    public ApiResponse<?> getProductLike(String userUuid, Long productId) {
+        Users users = usersRepository.findByUuid(userUuid).orElseThrow();
+        Product product = productRepository.findById(productId).orElseThrow();
+
+        return ApiResponse.of(SuccessStatus.LIKES_GET_SUCCESS,
+               new IsLikesDto(likesRepository.existsByUsersAndProduct(users,product)));
     }
 }
