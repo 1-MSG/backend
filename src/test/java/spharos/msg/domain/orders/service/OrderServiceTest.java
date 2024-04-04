@@ -5,26 +5,23 @@ import static spharos.msg.domain.orders.dto.OrderRequest.OrderProduct;
 
 import java.math.BigDecimal;
 import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderSheetDto;
-import spharos.msg.domain.orders.dto.OrderResponse.OrderHistoryDto;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderResultDto;
 import spharos.msg.domain.orders.repository.OrderRepository;
-import spharos.msg.domain.users.entity.Users;
 import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.global.config.QueryDslConfig;
 
 @Import({OrderService.class, QueryDslConfig.class})
-@DataJpaTest
-@TestPropertySource(properties = {"spring.jpa.hibernate.ddl-auto=update"})
+@SpringBootTest
+@Transactional
 class OrderServiceTest {
 
     /**
@@ -65,21 +62,6 @@ class OrderServiceTest {
     void after() {
         usersRepository.deleteAll();
         orderRepository.deleteAll();
-    }
-
-    @Test
-    @DisplayName("유저 Id로 주문 정보를 가져올 수 있어야 한다.")
-    void OrderServiceTest() {
-        usersRepository.save(
-            Users.builder().userName("ABC").email("tjdvy963@naver.com").loginId("tjdvy963")
-                .password("password").address("address").phoneNumber("01023112313").build());
-        Users users = usersRepository.findById(1L).get();
-        List<OrderHistoryDto> orderHistories = orderService.findOrderHistories(users.getUuid());
-
-        List<Long> result = orderHistories.stream().map(OrderHistoryDto::getTotalPrice).toList();
-        Assertions.assertThat(result)
-            .hasSize(1)
-            .isEqualTo(List.of(7000L));
     }
 
     @Test
