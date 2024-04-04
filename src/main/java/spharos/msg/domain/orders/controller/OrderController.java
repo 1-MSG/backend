@@ -13,9 +13,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderSheetDto;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderHistoryDto;
+import spharos.msg.domain.orders.dto.OrderResponse.OrderProductDto;
+import spharos.msg.domain.orders.repository.OrderProductRepository;
+import spharos.msg.domain.orders.service.OrderProductService;
 import spharos.msg.domain.orders.service.OrderService;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
@@ -28,21 +32,25 @@ import spharos.msg.global.api.code.status.SuccessStatus;
 public class OrderController {
 
     private final OrderService orderService;
+    private final OrderProductService orderProductService;
+    private final OrderProductRepository orderProductRepository;
 
     @Operation(summary = "상품 주문", description = "상품을 구매하여, Order 객체를 만든다.")
     @PostMapping("/orders")
     public ApiResponse<OrderResultDto> addOrderAPI(
         @RequestBody OrderSheetDto orderSheetDto,
         @AuthenticationPrincipal UserDetails userDetails) {
+        OrderResultDto orderResultDto = orderService.saveOrder(orderSheetDto);
+        orderProductService.saveAllByOrderSheet(orderSheetDto, orderResultDto.getOrderId());
         return ApiResponse.of(
             SuccessStatus.ORDER_SUCCESS,
-            orderService.saveOrder(orderSheetDto));
+            orderResultDto);
     }
 
     @Operation(summary = "회원별 주문 내역 조회를 위한 order_id 리스트 조회",
         description = "토큰을 통해 해당 회원이 주문했던 내역을 모두 order_id 배열 형태로 가져옵니다.")
     @GetMapping("/orders")
-    public ApiResponse<List<OrderHistoryDto>> getOrderIdsAPI(
+    public ApiResponse<List<OrderHistoryDto>> orderIdsAPI(
         @AuthenticationPrincipal UserDetails userDetails
     ) {
         String uuid = userDetails.getUsername();
@@ -52,6 +60,16 @@ public class OrderController {
         );
     }
 
+    @Operation(summary = "orderId를 통한 주문 내역 상세 조회",
+        description = "id를 통해 관련된 주문 내역을 가져옵니다.")
+    @GetMapping("/order-product")
+    public ApiResponse<List<OrderProductDto>> orderProductHistoryAPI(
+        @RequestParam("orderId") Long orderId
+    ) {
+        return ApiResponse.of(
+            SuccessStatus.ORDER_HISTORY_SUCCESS,
+            orderProductRepository.findAllById(orderId));
+    }
     /*
     TODO : API 수정으로 인한 보완 필요
     @Operation(summary = "주문자 정보 조회", description = "토큰을 통해 주문자의 정보를 조회합니다.")
