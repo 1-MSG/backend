@@ -14,7 +14,8 @@ import java.math.BigDecimal;
 public class ProductSalesInfo extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long productInfoId;
+    @Column(name = "product_sales_info_id")
+    private Long Id;
 
     @NotNull
     @DecimalMin("0.0")

@@ -22,7 +22,7 @@ public class ProductOption extends BaseEntity {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "option_id")
-    private Options option;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "options_id")
+    private Options options;
 }
