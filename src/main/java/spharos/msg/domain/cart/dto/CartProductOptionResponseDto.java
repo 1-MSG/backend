@@ -7,13 +7,15 @@ import spharos.msg.domain.product.entity.ProductOption;
 @Getter
 @NoArgsConstructor
 public class CartProductOptionResponseDto {
+
     private Long productOptionId;
     private Integer productStock;
     private String optionColor;
     private String optionSize;
     private String optionEtc;
-    public CartProductOptionResponseDto(ProductOption productOption){
-        this.productOptionId = productOption.getProductOptionId();
+
+    public CartProductOptionResponseDto(ProductOption productOption) {
+        this.productOptionId = productOption.getId();
         this.productStock = productOption.getStock();
 //        if (productOption.getOptionColor() != null) {
 //            this.optionColor = productOption.getOptionColor().getProductColor();
