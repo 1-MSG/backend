@@ -50,7 +50,7 @@ public class ProductOption extends BaseEntity {
         this.option = option;
     }
 
-    public void validateStock(int stock) {
+    private void validateStock(int stock) {
         if (stock < 0) {
             throw new OrderException(ErrorStatus.INVALID_STOCK);
         }
