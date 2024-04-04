@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spharos.msg.domain.orders.dto.OrderRequest.OrderProduct;
+import spharos.msg.domain.orders.dto.OrderRequest.OrderProductDetail;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderSheetDto;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderHistoryDto;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderPrice;
@@ -47,14 +47,14 @@ public class OrderService {
     @Transactional
     public OrderResultDto saveOrder(OrderSheetDto orderSheetDto) {
         Orders newOrder = orderRepository.save(toOrderEntity(orderSheetDto));
-        List<OrderProduct> orderProducts = orderSheetDto.getOrderProducts();
-        orderProducts.forEach(this::decreaseStock);
-
-        List<OrderPrice> orderPrices = createOrderPrice(orderProducts);
+        List<OrderProductDetail> orderProductDetails = orderSheetDto.getOrderProductDetails();
+        List<OrderPrice> orderPrices = createOrderPrice(orderProductDetails);
+        
+        orderProductDetails.forEach(this::decreaseStock);
         return toOrderResultDto(newOrder, orderPrices);
     }
 
-    private void decreaseStock(OrderProduct product) {
+    private void decreaseStock(OrderProductDetail product) {
         ProductOption optionProduct = productOptionRepository
             .findById(product.getProductOptionId())
             .orElseThrow(() -> new OrderException(ErrorStatus.NOT_EXIST_PRODUCT_OPTION));
@@ -83,16 +83,17 @@ public class OrderService {
             .buyerName(orderSheetDto.getBuyerName())
             .buyerPhoneNumber(orderSheetDto.getBuyerPhoneNumber())
             .address(orderSheetDto.getAddress())
-            .totalPrice(getTotalPrice(orderSheetDto.getOrderProducts()))
+            .totalPrice(getTotalPrice(orderSheetDto.getOrderProductDetails()))
             .build();
     }
 
 
-    private Long getTotalPrice(List<OrderProduct> orderProducts) {
+    private Long getTotalPrice(List<OrderProductDetail> orderProductDetails) {
         Long totalPrice = 0L;
-        for (OrderProduct orderProduct : orderProducts) {
-            Long productPrice = orderProduct.getOrderQuantity() * orderProduct.getSalePrice();
-            totalPrice += productPrice + orderProduct.getOrderDeliveryFee();
+        for (OrderProductDetail orderProductDetail : orderProductDetails) {
+            Long productPrice =
+                orderProductDetail.getOrderQuantity() * orderProductDetail.getSalePrice();
+            totalPrice += productPrice + orderProductDetail.getOrderDeliveryFee();
         }
         return totalPrice;
     }
@@ -108,13 +109,13 @@ public class OrderService {
             .build();
     }
 
-    private List<OrderPrice> createOrderPrice(List<OrderProduct> orderProducts) {
-        return orderProducts
+    private List<OrderPrice> createOrderPrice(List<OrderProductDetail> orderProductDetails) {
+        return orderProductDetails
             .stream()
-            .map(orderProduct -> new OrderPrice(
-                orderProduct.getOrderDeliveryFee(),
-                orderProduct.getOriginPrice(),
-                orderProduct.getSalePrice()))
+            .map(orderProductDetail -> new OrderPrice(
+                orderProductDetail.getOrderDeliveryFee(),
+                orderProductDetail.getOriginPrice(),
+                orderProductDetail.getSalePrice()))
             .toList();
     }
 

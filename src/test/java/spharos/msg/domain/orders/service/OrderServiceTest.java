@@ -1,7 +1,7 @@
 package spharos.msg.domain.orders.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static spharos.msg.domain.orders.dto.OrderRequest.OrderProduct;
+import static spharos.msg.domain.orders.dto.OrderRequest.OrderProductDetail;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -37,23 +37,23 @@ class OrderServiceTest {
     UsersRepository usersRepository;
 
     private OrderSheetDto orderSheetDto;
-    private OrderProduct orderProduct1;
-    private OrderProduct orderProduct2;
+    private OrderProductDetail orderProductDetail1;
+    private OrderProductDetail orderProductDetail2;
 
-    private OrderProduct createOrderProduct(Long productId, Long optionId, int quantity,
+    private OrderProductDetail createOrderProduct(Long productId, Long optionId, int quantity,
         int deliveryFee, BigDecimal discountRate, long salePrice, long originPrice) {
-        return new OrderProduct(
+        return new OrderProductDetail(
             productId, optionId, quantity, deliveryFee, discountRate, salePrice, originPrice);
     }
 
     @BeforeEach
     void before() {
-        orderProduct1 = createOrderProduct(1L, 1L, 1, 1000,
+        orderProductDetail1 = createOrderProduct(1L, 1L, 1, 1000,
             new BigDecimal("34"), 2000, 3000);
-        orderProduct2 = createOrderProduct(2L, 2L, 1, 2000,
+        orderProductDetail2 = createOrderProduct(2L, 2L, 1, 2000,
             new BigDecimal("34"), 2000, 3000);
         orderSheetDto = new OrderSheetDto(1L, "userA", "phone", "부산",
-            List.of(orderProduct1, orderProduct2));
+            List.of(orderProductDetail1, orderProductDetail2));
 
         orderService.saveOrder(orderSheetDto);
     }
@@ -80,10 +80,10 @@ class OrderServiceTest {
         //when
         OrderResultDto orderResultDto = orderService.saveOrder(orderSheetDto);
         //then
-        Long price1 = orderProduct1.getSalePrice() * orderProduct1.getOrderQuantity()
-            + orderProduct1.getOrderDeliveryFee();
-        Long price2 = orderProduct2.getSalePrice() * orderProduct2.getOrderQuantity()
-            + orderProduct2.getOrderDeliveryFee();
+        Long price1 = orderProductDetail1.getSalePrice() * orderProductDetail1.getOrderQuantity()
+            + orderProductDetail1.getOrderDeliveryFee();
+        Long price2 = orderProductDetail2.getSalePrice() * orderProductDetail2.getOrderQuantity()
+            + orderProductDetail2.getOrderDeliveryFee();
 
         assertThat(orderResultDto.getTotalPrice()).isEqualTo(price1 + price2);
     }

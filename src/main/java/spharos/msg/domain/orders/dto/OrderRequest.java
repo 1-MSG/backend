@@ -19,13 +19,13 @@ public class OrderRequest {
         private String buyerName;
         private String buyerPhoneNumber;
         private String address;
-        private List<OrderProduct> orderProducts;
+        private List<OrderProductDetail> orderProductDetails;
     }
 
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class OrderProduct {
+    public static class OrderProductDetail {
 
         Long productId;
         Long productOptionId;

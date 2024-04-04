@@ -13,8 +13,6 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OrderResponse {
 
-    private static final String NO_IMAGE = "NONE";
-
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
@@ -76,8 +74,7 @@ public class OrderResponse {
         Long productId;
         String productName;
         Long productPrice;
-        @Builder.Default
-        String image = NO_IMAGE;
+        String image;
         Integer productQuantity;
         BigDecimal discountRate;
         String option;
