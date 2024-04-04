@@ -1,5 +1,6 @@
 package spharos.msg.domain.admin.dto;
 
+import java.time.Month;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,5 +42,14 @@ public class AdminResponseDto {
     public static class SecessionCount {
 
         private Long usersSecessionCount;
+    }
+
+    @Builder
+    @AllArgsConstructor
+    @Getter
+    public static class MonthlySignupCount {
+        private int year;
+        private Month month;
+        private Long count;
     }
 }
