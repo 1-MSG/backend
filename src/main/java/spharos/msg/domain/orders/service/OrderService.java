@@ -49,7 +49,7 @@ public class OrderService {
         Orders newOrder = orderRepository.save(toOrderEntity(orderSheetDto));
         List<OrderProduct> orderProducts = orderSheetDto.getOrderProducts();
         orderProducts.forEach(this::decreaseStock);
-        
+
         List<OrderPrice> orderPrices = createOrderPrice(orderProducts);
         return toOrderResultDto(newOrder, orderPrices);
     }
@@ -59,7 +59,15 @@ public class OrderService {
             .findById(product.getProductOptionId())
             .orElseThrow(() -> new OrderException(ErrorStatus.NOT_EXIST_PRODUCT_OPTION));
 
-        optionProduct.decreaseStock(product.getOrderQuantity());
+        ProductOption updatedProductOption = ProductOption
+            .builder()
+            .stock(optionProduct.getStock() - product.getOrderQuantity())
+            .id(optionProduct.getId())
+            .product(optionProduct.getProduct())
+            .option(optionProduct.getOption())
+            .build();
+
+        productOptionRepository.save(updatedProductOption);
     }
 
     public List<OrderHistoryDto> findOrderHistories(String uuid) {
