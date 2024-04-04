@@ -6,4 +6,5 @@ import spharos.msg.domain.admin.entity.CountPrice;
 
 @Repository
 public interface CountPriceRepository extends JpaRepository<CountPrice, Long> {
+
 }

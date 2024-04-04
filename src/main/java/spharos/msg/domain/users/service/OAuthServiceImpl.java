@@ -12,6 +12,7 @@ import spharos.msg.domain.users.dto.request.EasySignUpRequestDto;
 import spharos.msg.domain.users.dto.response.FindIdOutDto;
 import spharos.msg.domain.users.dto.response.LoginOutDto;
 import spharos.msg.domain.users.entity.UserOAuthList;
+import spharos.msg.domain.users.entity.UserStatus;
 import spharos.msg.domain.users.entity.Users;
 import spharos.msg.domain.users.repository.UserOAuthListRepository;
 import spharos.msg.domain.users.repository.UsersRepository;
@@ -35,7 +36,12 @@ public class OAuthServiceImpl implements OAuthService {
                 () -> new UsersException(ErrorStatus.NOT_UNION_USER)
         );
 
-        if (Boolean.TRUE.equals(userOAuthListRepository.existsByUuid(findUser.getUuid()))) {
+        if (findUser.getStatus().equals(UserStatus.NOT_USER)) {
+            throw new UsersException(ErrorStatus.WITHDRAW_USER_FAIL);
+        }
+
+        if (Boolean.TRUE.equals(userOAuthListRepository.existsByUuid(findUser.getUuid())) &&
+                findUser.getStatus().equals(UserStatus.EASY)) {
             log.info("기존 가입된 회원이라 바로 로그인 처리");
             return Optional.of(easyLogin(EasyLoginRequestDto
                     .builder()
@@ -43,14 +49,29 @@ public class OAuthServiceImpl implements OAuthService {
                     .oauthName(easySignUpRequestDto.getOauthName())
                     .build()));
         }
-        UserOAuthList userOAuthList = UserOAuthList
+
+        //업데이트 처리
+        userOAuthListRepository.save(UserOAuthList
                 .builder()
                 .OAuthId(easySignUpRequestDto.getOauthId())
                 .OAuthName(easySignUpRequestDto.getOauthName())
                 .uuid(findUser.getUuid())
-                .build();
+                .build());
 
-        userOAuthListRepository.save(userOAuthList);
+        userRepository.save(Users
+                .builder()
+                .id(findUser.getId())
+                .email(findUser.getEmail())
+                .userName(findUser.readUserName())
+                .loginId(findUser.getLoginId())
+                .phoneNumber(findUser.getPhoneNumber())
+                .password(findUser.getPassword())
+                .uuid(findUser.getUuid())
+                .address(findUser.getAddress())
+                .status(UserStatus.EASY)
+                .build()
+        );
+
         return Optional.empty();
     }
 
@@ -64,6 +85,11 @@ public class OAuthServiceImpl implements OAuthService {
 
         Users findUser = userRepository.findByUuid(userOAuthList.getUuid()).orElseThrow(
                 () -> new UsersException(ErrorStatus.NOT_UNION_USER));
+
+        //탈퇴 회원 검증 로직 추가
+        if (findUser.getStatus().equals(UserStatus.NOT_USER)) {
+            throw new UsersException(ErrorStatus.WITHDRAW_USER_FAIL);
+        }
 
         //todo : 인증처리 생각 할 것.
 //        authenticationManager.authenticate(

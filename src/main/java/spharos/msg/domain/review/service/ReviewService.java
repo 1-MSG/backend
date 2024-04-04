@@ -51,7 +51,7 @@ public class ReviewService {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new NotFoundException("상품 찾을 수 없음"));
         //슬라이스 가져오기
-        Slice<Review> reviewPage = reviewRepository.findByProduct(product, pageable);
+        Page<Review> reviewPage = reviewRepository.findByProduct(product, pageable);
         //리스트로 변환
         List<ReviewResponse.ReviewDetailDto> reviews = convertToReviewList(reviewPage);
         //다음 페이지가 있는지 확인
@@ -72,7 +72,7 @@ public class ReviewService {
         //사용자 이름 가져 오기
         String userName = usersRepository.findById(review.getUserId())
             .map(Users::getUsername)
-            .orElse("탈퇴한 회원입니다");
+            .orElseThrow(() -> new NotFoundException(review.getUserId() + "해당하는 사용자 찾을수 없음"));
 
         return ReviewResponse.ReviewDetailDto.builder()
             .reviewId(review.getId())
@@ -171,7 +171,7 @@ public class ReviewService {
                 //사용자 이름 가져 오기
                 String userName = usersRepository.findById(review.getUserId())
                     .map(Users::getUsername)
-                    .orElse("탈퇴한 회원입니다");
+                    .orElseThrow(() -> new NotFoundException(review.getUserId() + "해당하는 사용자 찾을수 없음"));
 
                 return ReviewResponse.ReviewDetailDto.builder()
                     .reviewId(review.getId())

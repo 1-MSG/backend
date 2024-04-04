@@ -11,5 +11,5 @@ import spharos.msg.domain.review.entity.Review;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    Slice<Review> findByProduct(Product product, Pageable pageable);
+    Page<Review> findByProduct(Product product, Pageable pageable);
 }

@@ -11,7 +11,7 @@ import java.util.List;
 public class Options extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "option_id")
+    @Column(name = "options_id")
     private Long id;
     private String optionType;
     private String optionName;

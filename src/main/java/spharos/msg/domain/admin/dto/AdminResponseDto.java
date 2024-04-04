@@ -23,6 +23,7 @@ public class AdminResponseDto {
     @AllArgsConstructor
     @Getter
     public static class ConnectCount {
+
         private Long connectCount;
     }
 
@@ -30,6 +31,7 @@ public class AdminResponseDto {
     @AllArgsConstructor
     @Getter
     public static class UsersCount {
+
         private Long usersCount;
     }
 }
