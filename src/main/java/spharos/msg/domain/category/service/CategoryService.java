@@ -29,17 +29,17 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     public CategoryDto findCategories(Long parentId) {
-        Category parent = categoryRepository.findById(parentId)
+        Category currentCategory = categoryRepository.findById(parentId)
             .orElseThrow(
                 () -> new CategoryException(ErrorStatus.CATEGORY_NOT_FOUND));
         List<SubCategory> categories = categoryProductRepository.findCategoriesByParentId(parentId);
-        return createCategoryDto(parent, categories);
+        return createCategoryDto(currentCategory, categories);
     }
 
-    private CategoryDto createCategoryDto(Category parent, List<SubCategory> categories) {
-        return parent.getProductCategoryLevel() == LARGE_CATEGORY_LEVEL ?
+    private CategoryDto createCategoryDto(Category currentCategory, List<SubCategory> categories) {
+        return currentCategory.getProductCategoryLevel() == LARGE_CATEGORY_LEVEL ?
             toDtoWithoutParent(categories) :
-            toDtoWithParent(parent, categories);
+            toDtoWithParent(currentCategory.getParent(), categories);
     }
 
     private CategoryDto toDtoWithoutParent(List<SubCategory> categories) {
