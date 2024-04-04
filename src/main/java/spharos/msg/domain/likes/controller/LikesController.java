@@ -32,12 +32,22 @@ public class LikesController {
             @AuthenticationPrincipal UserDetails userDetails) {
         return likesService.deleteLikeProduct(productId, userDetails.getUsername());
     }
-    @Operation(summary = "좋아요한 상품 조회",
+    @Operation(summary = "좋아요한 상품 목록 조회",
             description = "좋아요 등록된 상품들을 조회합니다.")
     @GetMapping
     private ApiResponse<?> getProductLikeList(
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         return likesService.getProductLikeList(userDetails.getUsername());
+    }
+
+    @Operation(summary = "상품별 좋아요 조회",
+            description = "각 상품의 좋아요 여부를 조회합니다.")
+    @GetMapping("/{productId}")
+    private ApiResponse<?> getProductLike(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long productId
+    ) {
+        return likesService.getProductLike(userDetails.getUsername(),productId);
     }
 }
