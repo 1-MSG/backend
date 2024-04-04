@@ -56,6 +56,9 @@ public class Users extends BaseEntity implements UserDetails {
     @Column(name = "address")
     private String address;
 
+    @Column(name = "status")
+    private UserStatus status;
+
     /**
      * 기본 배송지 Index (default 0)
      */
@@ -64,7 +67,7 @@ public class Users extends BaseEntity implements UserDetails {
 
     @Builder
     public Users(Long id, String loginId, String uuid, String password, String phoneNumber, String email,
-            String userName, String address) {
+            String userName, String address, UserStatus status) {
         this.id = id;
         this.loginId = loginId;
         this.uuid = uuid;
@@ -74,6 +77,7 @@ public class Users extends BaseEntity implements UserDetails {
         this.userName = userName;
         this.address = address;
         this.baseAddressId = 0L;
+        this.status = status;
     }
 
 
