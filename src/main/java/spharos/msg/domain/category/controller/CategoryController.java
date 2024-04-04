@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import spharos.msg.domain.category.dto.CategoryResponse.CategoryProductDtos;
+import spharos.msg.domain.category.dto.CategoryResponse.SubCategory;
 import spharos.msg.domain.category.service.CategoryService;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
@@ -42,7 +43,7 @@ public class CategoryController {
             "해당 레벨에 해당하는 모든 카테고리를 반환합니다. 예를 들어 대분류를 얻고 싶으면 level = 0을 설정합니다. "
                 + "기본값은 level = 0 입니다.")
     @GetMapping("/category")
-    public ApiResponse<List<CategoryDto>> findCategoryByLevelAPI(
+    public ApiResponse<List<SubCategory>> findCategoryByLevelAPI(
         @RequestParam(value = "level", defaultValue = "0") int level) {
         return ApiResponse.of(
             SuccessStatus.CATEGORY_LIST_SUCCESS,

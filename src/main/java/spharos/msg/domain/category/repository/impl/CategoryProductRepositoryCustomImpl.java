@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import spharos.msg.domain.category.dto.CategoryResponse.CategoryDto;
 import spharos.msg.domain.category.dto.CategoryResponse.CategoryProductDto;
 import spharos.msg.domain.category.dto.CategoryResponse.SubCategory;
 import spharos.msg.domain.category.entity.QCategory;
@@ -55,10 +54,10 @@ public class CategoryProductRepositoryCustomImpl implements CategoryProductRepos
     }
 
     @Override
-    public List<CategoryDto> findCategoriesByLevel(int categoryLevel) {
+    public List<SubCategory> findCategoriesByLevel(int categoryLevel) {
         QCategory category = QCategory.category;
         return jpaQueryFactory
-            .select(Projections.constructor(CategoryDto.class,
+            .select(Projections.constructor(SubCategory.class,
                 category.id,
                 category.categoryName,
                 tryGetCategoryImage(category)))
