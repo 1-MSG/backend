@@ -56,12 +56,8 @@ public class CategoryService {
             .build();
     }
 
-    public List<CategoryDto> findCategoriesByLevel(int level) {
-        List<CategoryDto> categories = categoryProductRepository.findCategoriesByLevel(level);
-        if (categories.isEmpty()) {
-            throw new CategoryException(ErrorStatus.CATEGORY_NOT_FOUND);
-        }
-        return categories;
+    public List<SubCategory> findCategoriesByLevel(int level) {
+        return categoryProductRepository.findCategoriesByLevel(level);
     }
 
     public CategoryProductDtos findCategoryProducts(Long categoryId, Pageable pageable) {
