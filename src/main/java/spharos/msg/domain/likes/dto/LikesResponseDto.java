@@ -13,13 +13,11 @@ public class LikesResponseDto {
     private String productName;
     private int productPrice;
     private BigDecimal discountRate;
-    private boolean isLike;
 
-    public LikesResponseDto(Likes likes,boolean isLike) {
+    public LikesResponseDto(Likes likes) {
         this.productId = likes.getProduct().getId();
         this.productName = likes.getProduct().getProductName();
         this.productPrice = likes.getProduct().getProductPrice();
         this.discountRate = likes.getProduct().getDiscountRate();
-        this.isLike = isLike;
     }
 }
