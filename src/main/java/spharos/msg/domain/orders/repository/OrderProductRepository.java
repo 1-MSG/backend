@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderProductDto;
 import spharos.msg.domain.orders.entity.OrderProduct;
 import spharos.msg.domain.orders.entity.QOrderProduct;
-import spharos.msg.domain.product.entity.QProduct;
+import spharos.msg.domain.orders.entity.QOrders;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,7 +24,7 @@ public class OrderProductRepository {
 
     public List<OrderProductDto> findAllById(Long orderId) {
         QOrderProduct orderProduct = QOrderProduct.orderProduct;
-        QProduct product = QProduct.product;
+        QOrders orders = QOrders.orders;
         return jpaQueryFactory
             .select(Projections.constructor(OrderProductDto.class,
                 orderProduct.productId,
@@ -34,8 +34,9 @@ public class OrderProductRepository {
                 orderProduct.orderQuantity,
                 orderProduct.discountRatio,
                 orderProduct.productOption))
-            .from(orderProduct, product)
-            .where(orderProduct.id.eq(orderId))
+            .from(orderProduct)
+            .innerJoin(orderProduct.orders, orders)
+            .where(orders.id.eq(orderId))
             .fetch();
     }
 
