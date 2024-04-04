@@ -1,5 +1,6 @@
 package spharos.msg.domain.orders.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
@@ -12,6 +13,8 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OrderResponse {
 
+    private static final String NO_IMAGE = "NONE";
+
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
@@ -23,7 +26,17 @@ public class OrderResponse {
         private String address;
         private String phoneNumber;
         private Long orderId;
-        List<OrderProductDetail> orderProductDetails;
+        List<OrderPrice> orderPrices;
+
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class OrderPrice {
+
+        private int deliveryFee;
+        private Long productOriginPrice;
+        private Long productSalePrice;
     }
 
     @NoArgsConstructor
@@ -50,14 +63,23 @@ public class OrderResponse {
         private String address;
         private String phoneNumber;
         private String email;
+
     }
 
-    @Getter
+    @NoArgsConstructor
     @AllArgsConstructor
-    public static class OrderProductDetail {
+    @Builder
+    @Getter
+    @ToString
+    public static class OrderProductDto {
 
-        private int deliveryFee;
-        private Long productOriginPrice;
-        private Long productSalePrice;
+        Long productId;
+        String productName;
+        Long productPrice;
+        @Builder.Default
+        String image = NO_IMAGE;
+        Integer productQuantity;
+        BigDecimal discountRate;
+        String option;
     }
 }

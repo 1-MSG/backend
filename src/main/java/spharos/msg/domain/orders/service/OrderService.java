@@ -9,13 +9,15 @@ import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderProduct;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderSheetDto;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderHistoryDto;
-import spharos.msg.domain.orders.dto.OrderResponse.OrderProductDetail;
+import spharos.msg.domain.orders.dto.OrderResponse.OrderPrice;
 import spharos.msg.domain.orders.entity.Orders;
 import spharos.msg.domain.orders.repository.OrderRepository;
+import spharos.msg.domain.product.entity.ProductOption;
 import spharos.msg.domain.product.repository.ProductOptionRepository;
 import spharos.msg.domain.users.entity.Users;
 import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.global.api.code.status.ErrorStatus;
+import spharos.msg.global.api.exception.OrderException;
 import spharos.msg.global.api.exception.UsersException;
 
 @Service
@@ -45,9 +47,19 @@ public class OrderService {
     @Transactional
     public OrderResultDto saveOrder(OrderSheetDto orderSheetDto) {
         Orders newOrder = orderRepository.save(toOrderEntity(orderSheetDto));
-        List<OrderProductDetail> orderProductDetails = getOrderProductDetails(
-            orderSheetDto.getOrderProducts());
-        return toOrderResultDto(newOrder, orderProductDetails);
+        List<OrderProduct> orderProducts = orderSheetDto.getOrderProducts();
+        orderProducts.forEach(this::decreaseStock);
+        
+        List<OrderPrice> orderPrices = createOrderPrice(orderProducts);
+        return toOrderResultDto(newOrder, orderPrices);
+    }
+
+    private void decreaseStock(OrderProduct product) {
+        ProductOption optionProduct = productOptionRepository
+            .findById(product.getProductOptionId())
+            .orElseThrow(() -> new OrderException(ErrorStatus.NOT_EXIST_PRODUCT_OPTION));
+
+        optionProduct.decreaseStock(product.getOrderQuantity());
     }
 
     public List<OrderHistoryDto> findOrderHistories(String uuid) {
@@ -77,22 +89,21 @@ public class OrderService {
         return totalPrice;
     }
 
-    private OrderResultDto toOrderResultDto(Orders newOrder,
-        List<OrderProductDetail> orderProductDetails) {
+    private OrderResultDto toOrderResultDto(Orders newOrder, List<OrderPrice> orderPrices) {
         return OrderResultDto
             .builder()
             .orderId(newOrder.getId())
             .address(newOrder.getAddress())
             .phoneNumber(newOrder.getBuyerPhoneNumber())
             .totalPrice(newOrder.getTotalPrice())
-            .orderProductDetails(orderProductDetails)
+            .orderPrices(orderPrices)
             .build();
     }
 
-    private List<OrderProductDetail> getOrderProductDetails(List<OrderProduct> orderProducts) {
+    private List<OrderPrice> createOrderPrice(List<OrderProduct> orderProducts) {
         return orderProducts
             .stream()
-            .map(orderProduct -> new OrderProductDetail(
+            .map(orderProduct -> new OrderPrice(
                 orderProduct.getOrderDeliveryFee(),
                 orderProduct.getOriginPrice(),
                 orderProduct.getSalePrice()))

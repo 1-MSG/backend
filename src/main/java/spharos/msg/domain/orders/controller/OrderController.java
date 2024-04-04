@@ -19,7 +19,6 @@ import spharos.msg.domain.orders.dto.OrderResponse.OrderHistoryDto;
 import spharos.msg.domain.orders.service.OrderService;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
-import spharos.msg.global.security.JwtTokenProvider;
 
 @RestController
 @Slf4j
@@ -28,9 +27,6 @@ import spharos.msg.global.security.JwtTokenProvider;
 @Tag(name = "Order", description = "주문 API")
 public class OrderController {
 
-    private static final String AUTHORIZATION = "Authorization";
-
-    private final JwtTokenProvider jwtTokenProvider;
     private final OrderService orderService;
 
     @Operation(summary = "상품 주문", description = "상품을 구매하여, Order 객체를 만든다.")

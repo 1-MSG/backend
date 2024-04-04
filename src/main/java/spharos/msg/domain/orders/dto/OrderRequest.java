@@ -12,6 +12,7 @@ public class OrderRequest {
 
     @Getter
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class OrderSheetDto {
 
         private Long buyerId;
@@ -23,6 +24,7 @@ public class OrderRequest {
 
     @Getter
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class OrderProduct {
 
         Long productId;

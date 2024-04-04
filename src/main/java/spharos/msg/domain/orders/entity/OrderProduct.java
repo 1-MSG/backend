@@ -38,7 +38,7 @@ public class OrderProduct extends BaseEntity {
     private Boolean orderIsCompleted;
 
     @NotNull
-    private Long orderPrice;
+    private Long productPrice;
 
     @DecimalMin("0.0")
     @DecimalMax("100.0")
