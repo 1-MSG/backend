@@ -61,9 +61,4 @@ public class Review extends BaseEntity {
         this.orderProduct = orderProduct;
         this.product = product;
     }
-
-    public void updateReview(String reviewComment, BigDecimal reviewStar) {
-        this.reviewComment = reviewComment;
-        this.reviewStar = reviewStar;
-    }
 }

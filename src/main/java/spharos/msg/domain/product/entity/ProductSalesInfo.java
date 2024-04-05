@@ -4,18 +4,21 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import spharos.msg.global.entity.BaseEntity;
 
 import java.math.BigDecimal;
 
 @Entity
 @Getter
-public class ProductSalesInfo extends BaseEntity {
+@NoArgsConstructor
+public class ProductSalesInfo extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_sales_info_id")
-    private Long Id;
+    private Long id;
 
     @NotNull
     @DecimalMin("0.0")
@@ -29,9 +32,11 @@ public class ProductSalesInfo extends BaseEntity {
     @Column(columnDefinition = "bigint default 0")
     private Long productSellTotalCount;
 
-    //TODO : 연관관계 주인은 PRODUCT인가, 여기인가 상의해보기
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "product_id")
-//    private Product product;
-
+    @Builder
+    public ProductSalesInfo(Long id, BigDecimal productStar, Long reviewCount, Long productSellTotalCount) {
+        this.id = id;
+        this.productStar = productStar;
+        this.reviewCount = reviewCount;
+        this.productSellTotalCount = productSellTotalCount;
+    }
 }

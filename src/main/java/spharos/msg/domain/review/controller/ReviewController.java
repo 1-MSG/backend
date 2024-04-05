@@ -1,11 +1,16 @@
 package spharos.msg.domain.review.controller;
 
+import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_DELETE_SUCCESS;
 import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_READ_SUCCESS;
+import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_SAVE_SUCCESS;
+import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_UPDATE_SUCCESS;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import spharos.msg.domain.product.entity.ProductSalesInfo;
 import spharos.msg.domain.review.dto.ReviewRequest;
 import spharos.msg.domain.review.dto.ReviewResponse;
 import spharos.msg.domain.review.service.ReviewService;
@@ -36,47 +42,49 @@ public class ReviewController {
     @GetMapping("/{productId}/reviews")
     public ApiResponse<ReviewResponse.ReviewsDto> getReviews(
         @PathVariable("productId") Long productId,
-        @RequestParam("page") int page,
-        @RequestParam("size") int size
+        @PageableDefault(size = 10, page = 0) Pageable pageable
     ){
-        return ApiResponse.of(REVIEW_READ_SUCCESS,reviewService.getReviews(productId,page,size));
+        return ApiResponse.of(REVIEW_READ_SUCCESS,reviewService.getReviews(productId,pageable));
     }
 
     @Operation(summary = "상품 리뷰 상세 조회",
     description = "id로 특정 리뷰를 조회합니다")
     @GetMapping("/{reviewId}")
-    public ApiResponse<?> getReviewDetail(
+    public ApiResponse<ReviewResponse.ReviewDetailDto> getReviewDetail(
         @PathVariable("reviewId") Long reviewId
     ){
-     return reviewService.getReviewDetail(reviewId);
+     return ApiResponse.of(REVIEW_READ_SUCCESS,reviewService.getReviewDetail(reviewId));
     }
     @Operation(summary = "상품 리뷰 등록",
         description = "리뷰가 가능한 주문상세에 대해 상품 리뷰를 등록합니다")
     @PostMapping("/{productId}")
-    public ApiResponse<?> saveReview(
+    public ApiResponse<Void> saveReview(
         @PathVariable("productId") Long productId,
         @RequestBody ReviewRequest.createDto reviewRequest,
         @AuthenticationPrincipal UserDetails userDetails
     ) {
-    return reviewService.saveReview(productId, reviewRequest,userDetails.getUsername());
+        reviewService.saveReview(productId, reviewRequest,userDetails.getUsername());
+    return ApiResponse.of(REVIEW_SAVE_SUCCESS,null);
     }
 
     @Operation(summary = "상품 리뷰 수정",
     description = "리뷰 id와 일치하는 리뷰의 별점과 내용을 수정합니다")
     @PatchMapping("/{reviewId}")
-    public ApiResponse<?> updateReview(
+    public ApiResponse<Void> updateReview(
         @PathVariable("reviewId") Long reviewId,
         @RequestBody ReviewRequest.updateDto reviewRequest
     ){
-        return reviewService.updateReview(reviewId, reviewRequest);
+        reviewService.updateReview(reviewId, reviewRequest);
+        return ApiResponse.of(REVIEW_UPDATE_SUCCESS,null);
     }
 
     @Operation(summary = "상품 리뷰 삭제",
         description = "리뷰 id와 일치하는 리뷰를 삭제합니다")
     @DeleteMapping("/{reviewId}")
-    public ApiResponse<?> deleteReview(
+    public ApiResponse<Void> deleteReview(
         @PathVariable("reviewId") Long reviewId
     ){
-        return reviewService.deleteReview(reviewId);
+        reviewService.deleteReview(reviewId);
+        return ApiResponse.of(REVIEW_DELETE_SUCCESS,null);
     }
 }
