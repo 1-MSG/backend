@@ -24,7 +24,7 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
                 orders.totalPrice,
                 orders.createdAt))
             .from(orders)
-            .where(orders.buyerId.eq(buyerId))
+            .where(orders.userId.eq(buyerId))
             .orderBy(orders.createdAt.desc())
             .distinct()
             .fetch();
