@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderProductDetail;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderSheetDto;
+import spharos.msg.domain.orders.dto.OrderResponse.OrderPrice;
 import spharos.msg.domain.orders.entity.OrderProduct;
 import spharos.msg.domain.orders.entity.Orders;
 import spharos.msg.domain.orders.repository.OrderProductRepository;
@@ -23,20 +24,37 @@ import spharos.msg.global.api.exception.ProductNotExistException;
 public class OrderProductService {
 
     private static final boolean COMPLETED_DEFAULT = false;
+
     private final OrderProductRepository orderProductRepository;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
 
     @Transactional
-    public void saveAllByOrderSheet(OrderSheetDto orderSheetDto, Long orderId) {
+    public void saveAllByOrderSheet(OrderSheetDto orderSheetDto, Orders orders) {
         List<OrderProductDetail> orderProductDetails = orderSheetDto.getOrderProductDetails();
-        Orders orders = orderRepository.findById(orderId).get();
+
         List<OrderProduct> orderProductEntities = orderProductDetails
             .stream()
             .map(detail -> toOrderProductEntity(detail, orders))
             .toList();
 
         orderProductRepository.saveAll(orderProductEntities);
+    }
+
+    public List<OrderPrice> createOrderPricesByOrderId(Long orderId) {
+        List<OrderProduct> orderProducts = orderProductRepository.findAllByOrderId(orderId);
+        return orderProducts
+            .stream()
+            .map(this::toOrderPrice)
+            .toList();
+    }
+
+    private OrderPrice toOrderPrice(OrderProduct orderProduct) {
+        int discountRate = orderProduct.getDiscountRate().intValue();
+        Long originPrice = orderProduct.getProductPrice();
+        Long salePrice = originPrice * (100 - discountRate) / 100;
+
+        return new OrderPrice(discountRate, originPrice, salePrice);
     }
 
     private OrderProduct toOrderProductEntity(OrderProductDetail orderProductDetail,
