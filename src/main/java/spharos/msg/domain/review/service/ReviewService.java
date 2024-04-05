@@ -1,22 +1,11 @@
 package spharos.msg.domain.review.service;
 
-import static spharos.msg.global.api.code.status.ErrorStatus.REVIEW_DELETE_FAIL;
-import static spharos.msg.global.api.code.status.ErrorStatus.REVIEW_READ_FAIL;
-import static spharos.msg.global.api.code.status.ErrorStatus.REVIEW_SAVE_FAIL;
-import static spharos.msg.global.api.code.status.ErrorStatus.REVIEW_UPDATE_FAIL;
-import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_DELETE_SUCCESS;
-import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_READ_SUCCESS;
-import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_SAVE_SUCCESS;
-import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_UPDATE_SUCCESS;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -32,7 +21,6 @@ import spharos.msg.domain.review.entity.Review;
 import spharos.msg.domain.review.repository.ReviewRepository;
 import spharos.msg.domain.users.entity.Users;
 import spharos.msg.domain.users.repository.UsersRepository;
-import spharos.msg.global.api.ApiResponse;
 
 @Service
 @RequiredArgsConstructor

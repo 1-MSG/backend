@@ -32,12 +32,12 @@ public class AddressService {
 
         addressRepository.save(Address
                 .builder()
-                .mobileNumber(addressRequestDto.getMobileNumber())
-                .addressName(addressRequestDto.getAddressName())
-                .addressPhoneNumber(addressRequestDto.getAddressPhoneNumber())
+                .phoneNumber(addressRequestDto.getMobileNumber())
+                .addressNickname(addressRequestDto.getAddressName())
+                .recipientPhoneNumber(addressRequestDto.getAddressPhoneNumber())
                 .recipient(addressRequestDto.getRecipient())
                 .users(users)
-                .address(addressRequestDto.getAddress())
+                .addressDetail(addressRequestDto.getAddress())
                 .build());
     }
 
