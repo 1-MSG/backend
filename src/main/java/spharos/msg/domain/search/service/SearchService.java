@@ -2,7 +2,6 @@ package spharos.msg.domain.search.service;
 
 import static java.util.Comparator.comparingInt;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +38,7 @@ public class SearchService {
 
         return SearchProductDtos
             .builder()
-            .responseTime(LocalDateTime.now().toString())
+            .responseTime(String.valueOf(System.currentTimeMillis()))
             .searchProductDtos(searched.getContent())
             .isLast(searched.isLast())
             .build();
