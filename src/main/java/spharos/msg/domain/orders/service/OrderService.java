@@ -49,7 +49,7 @@ public class OrderService {
         Orders newOrder = orderRepository.save(toOrderEntity(orderSheetDto));
         List<OrderProductDetail> orderProductDetails = orderSheetDto.getOrderProductDetails();
         List<OrderPrice> orderPrices = createOrderPrice(orderProductDetails);
-        
+
         orderProductDetails.forEach(this::decreaseStock);
         return toOrderResultDto(newOrder, orderPrices);
     }
@@ -64,7 +64,7 @@ public class OrderService {
             .stock(optionProduct.getStock() - product.getOrderQuantity())
             .id(optionProduct.getId())
             .product(optionProduct.getProduct())
-            .option(optionProduct.getOption())
+            .options(optionProduct.getOptions())
             .build();
 
         productOptionRepository.save(updatedProductOption);
