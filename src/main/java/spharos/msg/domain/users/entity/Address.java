@@ -19,38 +19,32 @@ public class Address {
 
     @NotBlank
     @Size(max = 255)
-    @Column(name = "address_name")
-    private String addressName;
+    private String addressNickname;
 
     @NotBlank
-    @Column(name = "recipient")
     private String recipient;
 
     @NotBlank
-    @Column(name = "mobile_number")
-    private String mobileNumber;
+    private String phoneNumber;
 
     @NotBlank
-    @Column(name = "address_phone_number")
-    private String addressPhoneNumber;
+    private String recipientPhoneNumber;
 
     @NotBlank
-    @Column(name = "address")
-    private String address;
+    private String addressDetail;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Users users;
 
     @Builder
-    public Address(String addressName, String recipient, String mobileNumber,
-            String addressPhoneNumber,
-            String address, Users users) {
-        this.addressName = addressName;
+    public Address(String addressNickname, String recipient, String phoneNumber,
+            String recipientPhoneNumber, String addressDetail, Users users) {
+        this.addressNickname = addressNickname;
         this.recipient = recipient;
-        this.mobileNumber = mobileNumber;
-        this.addressPhoneNumber = addressPhoneNumber;
-        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.recipientPhoneNumber = recipientPhoneNumber;
+        this.addressDetail = addressDetail;
         this.users = users;
     }
 }

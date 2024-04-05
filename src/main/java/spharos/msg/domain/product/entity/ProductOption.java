@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 import spharos.msg.domain.options.entity.Options;
 import spharos.msg.global.api.code.status.ErrorStatus;
 import spharos.msg.global.api.exception.OrderException;
@@ -22,6 +23,7 @@ import spharos.msg.global.entity.BaseEntity;
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert
 public class ProductOption extends BaseEntity {
 
     @Id

@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 import spharos.msg.global.entity.BaseEntity;
 
 import java.math.BigDecimal;
@@ -14,6 +15,7 @@ import java.math.BigDecimal;
 @Entity
 @Getter
 @NoArgsConstructor
+@DynamicInsert
 public class ProductSalesInfo extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +25,7 @@ public class ProductSalesInfo extends BaseEntity{
     @NotNull
     @DecimalMin("0.0")
     @DecimalMax("5.0")
+    @Column(columnDefinition = "bigint default 0")
     private BigDecimal productStar;
 
     @NotNull

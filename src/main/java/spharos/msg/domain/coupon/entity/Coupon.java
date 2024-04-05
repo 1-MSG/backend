@@ -19,7 +19,7 @@ import java.util.List;
 public class Coupon extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "discount_coupon_id")
+    @Column(name = "coupon_id")
     private Long id;
 
     @NotNull

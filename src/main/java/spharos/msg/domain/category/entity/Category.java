@@ -38,5 +38,5 @@ public class Category extends BaseEntity {
     @NotNull
     @Max(3)
     @Column(columnDefinition = "integer default 0")
-    private Integer productCategoryLevel;
+    private Integer categoryLevel;
 }

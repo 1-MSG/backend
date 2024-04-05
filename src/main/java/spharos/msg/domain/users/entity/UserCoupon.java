@@ -5,12 +5,14 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 import spharos.msg.domain.coupon.entity.Coupon;
 import spharos.msg.global.entity.BaseEntity;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@DynamicInsert
 public class UserCoupon extends BaseEntity {
 
     @Id
@@ -23,7 +25,7 @@ public class UserCoupon extends BaseEntity {
     private Boolean isCouponUsed;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "users_id")
     private Users users;
 
     @ManyToOne(fetch = FetchType.LAZY)

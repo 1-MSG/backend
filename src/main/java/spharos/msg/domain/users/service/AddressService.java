@@ -55,11 +55,11 @@ public class AddressService {
 
     private SearchAddressOutDto convertToSearchAddressDto(Address address) {
         return SearchAddressOutDto.builder()
-                .addressName(address.getAddressName())
+                .addressName(address.getAddressNickname())
                 .recipient(address.getRecipient())
-                .mobileNumber(address.getMobileNumber())
-                .addressPhoneNumber(address.getAddressPhoneNumber())
-                .address(address.getAddress())
+                .mobileNumber(address.getPhoneNumber())
+                .addressPhoneNumber(address.getRecipientPhoneNumber())
+                .address(address.getAddressDetail())
                 .addressId(address.getId())
                 .build();
     }
