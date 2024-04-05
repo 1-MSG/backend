@@ -23,7 +23,7 @@ public class OptionsController {
     }
     @Operation(summary = "최상위 옵션 조회",
             description = "상품 ID를 입력하면 해당 상품의 최상위 옵션을 조회 합니다.")
-    @GetMapping("/{productId}")
+    @GetMapping("/first/{productId}")
     public ApiResponse<?> getFirstOptions(
             @PathVariable Long productId)
     {
@@ -39,7 +39,7 @@ public class OptionsController {
     }
     @Operation(summary = "옵션 조회",
             description = "상품의 옵션을 조회합니다. (빨강,L)")
-    @GetMapping("/child")
+    @GetMapping
     public ApiResponse<?> getOptions(
             @RequestParam(value = "productOptionId") Long productOptionId)
     {
