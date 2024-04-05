@@ -33,15 +33,15 @@ public class Orders extends BaseEntity {
     private Long totalPrice;
 
     @NotNull
-    private Long buyerId;
+    private Long userId;
 
     @NotBlank
     @Size(max = 255)
     private String address;
 
     @NotBlank
-    private String buyerName;
+    private String userName;
 
     @NotBlank
-    private String buyerPhoneNumber;
+    private String userPhoneNumber;
 }

@@ -50,7 +50,7 @@ public class OrderProduct extends BaseEntity {
     @DecimalMin("0.0")
     @DecimalMax("100.0")
     @Column(columnDefinition = "decimal default 0.0")
-    private BigDecimal discountRatio;
+    private BigDecimal discountRate;
 
     @Column
     @NotNull
@@ -66,5 +66,6 @@ public class OrderProduct extends BaseEntity {
     private Orders orders;
 
     private String productName;
+
     private String productImage;
 }

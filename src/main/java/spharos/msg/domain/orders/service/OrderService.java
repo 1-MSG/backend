@@ -103,7 +103,7 @@ public class OrderService {
             .builder()
             .orderId(newOrder.getId())
             .address(newOrder.getAddress())
-            .phoneNumber(newOrder.getBuyerPhoneNumber())
+            .phoneNumber(newOrder.getUserPhoneNumber())
             .totalPrice(newOrder.getTotalPrice())
             .orderPrices(orderPrices)
             .build();
