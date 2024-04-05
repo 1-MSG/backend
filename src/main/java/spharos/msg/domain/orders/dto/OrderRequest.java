@@ -12,18 +12,20 @@ public class OrderRequest {
 
     @Getter
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class OrderSheetDto {
 
         private Long buyerId;
         private String buyerName;
         private String buyerPhoneNumber;
         private String address;
-        private List<OrderProduct> orderProducts;
+        private List<OrderProductDetail> orderProductDetails;
     }
 
     @Getter
     @AllArgsConstructor
-    public static class OrderProduct {
+    @NoArgsConstructor
+    public static class OrderProductDetail {
 
         Long productId;
         Long productOptionId;

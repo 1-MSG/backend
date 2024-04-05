@@ -7,6 +7,7 @@ import spharos.msg.domain.cart.entity.CartProduct;
 @Getter
 @NoArgsConstructor
 public class CartProductResponseDto {
+
     private int id;
     private Long cartId;
     private Long brandId;
@@ -22,7 +23,7 @@ public class CartProductResponseDto {
         this.cartProductQuantity = cartProduct.getCartProductQuantity();
         this.cartIsChecked = cartProduct.getCartIsChecked();
         this.cartIsPinned = cartProduct.getCartIsPinned();
-        this.productOptionId = cartProduct.getProductOption().getProductOptionId();
+        this.productOptionId = cartProduct.getProductOption().getId();
         this.brandId = cartProduct.getBrandId();
     }
 

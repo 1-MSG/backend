@@ -1,5 +1,7 @@
 package spharos.msg.domain.orders.dto;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -22,7 +24,29 @@ public class OrderResponse {
         private String address;
         private String phoneNumber;
         private Long orderId;
-        List<OrderProductDetail> orderProductDetails;
+        List<OrderPrice> orderPrices;
+
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class OrderPrice {
+
+        private int deliveryFee;
+        private Long productOriginPrice;
+        private Long productSalePrice;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @Getter
+    @ToString
+    public static class OrderHistoryDto {
+
+        Long orderId;
+        Long totalPrice;
+        LocalDateTime createdAt;
     }
 
     @NoArgsConstructor
@@ -37,14 +61,22 @@ public class OrderResponse {
         private String address;
         private String phoneNumber;
         private String email;
+
     }
 
-    @Getter
+    @NoArgsConstructor
     @AllArgsConstructor
-    public static class OrderProductDetail {
+    @Builder
+    @Getter
+    @ToString
+    public static class OrderProductDto {
 
-        private int deliveryFee;
-        private Long productOriginPrice;
-        private Long productSalePrice;
+        Long productId;
+        String productName;
+        Long productPrice;
+        String image;
+        Integer productQuantity;
+        BigDecimal discountRate;
+        String option;
     }
 }
