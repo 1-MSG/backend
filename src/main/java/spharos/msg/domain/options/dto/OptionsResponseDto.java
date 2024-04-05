@@ -1,5 +1,6 @@
 package spharos.msg.domain.options.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spharos.msg.domain.options.entity.Options;
