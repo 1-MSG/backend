@@ -32,7 +32,7 @@ public class OrderProductRepository {
                 orderProduct.productPrice,
                 orderProduct.productImage.coalesce(NO_IMAGE),
                 orderProduct.orderQuantity,
-                orderProduct.discountRatio,
+                orderProduct.discountRate,
                 orderProduct.productOption))
             .from(orderProduct)
             .innerJoin(orderProduct.orders, orders)

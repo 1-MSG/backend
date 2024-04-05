@@ -32,12 +32,12 @@ public class AddressService {
 
         addressRepository.save(Address
                 .builder()
-                .mobileNumber(addressRequestDto.getMobileNumber())
-                .addressName(addressRequestDto.getAddressName())
-                .addressPhoneNumber(addressRequestDto.getAddressPhoneNumber())
+                .phoneNumber(addressRequestDto.getMobileNumber())
+                .addressNickname(addressRequestDto.getAddressName())
+                .recipientPhoneNumber(addressRequestDto.getAddressPhoneNumber())
                 .recipient(addressRequestDto.getRecipient())
                 .users(users)
-                .address(addressRequestDto.getAddress())
+                .addressDetail(addressRequestDto.getAddress())
                 .build());
     }
 
@@ -55,11 +55,11 @@ public class AddressService {
 
     private SearchAddressOutDto convertToSearchAddressDto(Address address) {
         return SearchAddressOutDto.builder()
-                .addressName(address.getAddressName())
+                .addressName(address.getAddressNickname())
                 .recipient(address.getRecipient())
-                .mobileNumber(address.getMobileNumber())
-                .addressPhoneNumber(address.getAddressPhoneNumber())
-                .address(address.getAddress())
+                .mobileNumber(address.getPhoneNumber())
+                .addressPhoneNumber(address.getRecipientPhoneNumber())
+                .address(address.getAddressDetail())
                 .addressId(address.getId())
                 .build();
     }

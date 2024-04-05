@@ -63,7 +63,7 @@ public class CategoryProductRepositoryCustomImpl implements CategoryProductRepos
                 category.categoryName,
                 tryGetCategoryImage(category)))
             .from(category)
-            .where(category.productCategoryLevel.eq(categoryLevel))
+            .where(category.categoryLevel.eq(categoryLevel))
             .distinct()
             .fetch();
     }
@@ -100,8 +100,8 @@ public class CategoryProductRepositoryCustomImpl implements CategoryProductRepos
 
     private BooleanExpression validateParentAndLevel(Long parentId, QCategory category) {
         return category.parent.id.eq(parentId)
-            .and(category.productCategoryLevel
-                .eq(category.parent.productCategoryLevel.add(1)));
+            .and(category.categoryLevel
+                .eq(category.parent.categoryLevel.add(1)));
     }
 
     private Long getTotal(QCategoryProduct categoryProduct, QCategory category, Long categoryId) {

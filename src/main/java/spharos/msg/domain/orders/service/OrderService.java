@@ -79,9 +79,9 @@ public class OrderService {
 
     private Orders toOrderEntity(OrderSheetDto orderSheetDto) {
         return Orders.builder()
-            .buyerId(orderSheetDto.getBuyerId())
-            .buyerName(orderSheetDto.getBuyerName())
-            .buyerPhoneNumber(orderSheetDto.getBuyerPhoneNumber())
+            .userId(orderSheetDto.getBuyerId())
+            .userName(orderSheetDto.getBuyerName())
+            .userPhoneNumber(orderSheetDto.getBuyerPhoneNumber())
             .address(orderSheetDto.getAddress())
             .totalPrice(getTotalPrice(orderSheetDto.getOrderProductDetails()))
             .build();
@@ -103,7 +103,7 @@ public class OrderService {
             .builder()
             .orderId(newOrder.getId())
             .address(newOrder.getAddress())
-            .phoneNumber(newOrder.getBuyerPhoneNumber())
+            .phoneNumber(newOrder.getUserPhoneNumber())
             .totalPrice(newOrder.getTotalPrice())
             .orderPrices(orderPrices)
             .build();

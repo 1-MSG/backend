@@ -37,7 +37,7 @@ public class CategoryService {
     }
 
     private CategoryDto createCategoryDto(Category parent, List<SubCategory> categories) {
-        return parent.getProductCategoryLevel() == LARGE_CATEGORY_LEVEL ?
+        return parent.getCategoryLevel() == LARGE_CATEGORY_LEVEL ?
             toDtoWithoutParent(categories) :
             toDtoWithParent(parent, categories);
     }

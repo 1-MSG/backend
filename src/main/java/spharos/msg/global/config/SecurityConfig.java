@@ -17,7 +17,7 @@ import spharos.msg.global.security.JwtAuthenticationFilter;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfiguration {
+public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtTokenProvider;
     private final AuthenticationProvider authenticationProvider;

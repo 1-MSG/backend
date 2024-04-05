@@ -51,12 +51,12 @@ class CategoryProductRepositoryTest {
         Integer parentLevel = categoryRepository
             .findById(categoryId)
             .get()
-            .getProductCategoryLevel();
+            .getCategoryLevel();
 
         //when
         List<Category> categoryProducts = mapToCategoryProduct(categories);
         List<Integer> levels = categoryProducts.stream()
-            .map(Category::getProductCategoryLevel)
+            .map(Category::getCategoryLevel)
             .toList();
         List<Integer> result = new ArrayList<>(levels);
         result.remove(0);
