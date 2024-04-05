@@ -10,6 +10,7 @@ import spharos.msg.domain.orders.dto.OrderRequest.OrderProductDetail;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderSheetDto;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderHistoryDto;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderPrice;
+import spharos.msg.domain.orders.dto.OrderResponse.OrderUserDto;
 import spharos.msg.domain.orders.entity.Orders;
 import spharos.msg.domain.orders.repository.OrderRepository;
 import spharos.msg.domain.product.entity.ProductOption;
@@ -30,28 +31,43 @@ public class OrderService {
     private final ProductOptionRepository productOptionRepository;
 
 
-    /*
-     TODO : 현재 수정해야 하는 로직
     public OrderUserDto findOrderUser(String uuid) {
+        Users user = usersRepository
+            .findByUuid(uuid)
+            .orElseThrow(() -> new OrderException(ErrorStatus.FIND_USER_INFO_FAIL));
+
         return OrderUserDto
             .builder()
             .loginId(user.getLoginId())
             .email(user.getEmail())
             .username(user.getUsername())
             .phoneNumber(user.getPhoneNumber())
-            .address(address)
+            .address(user.getAddress())
             .build();
     }
-    */
 
     @Transactional
-    public OrderResultDto saveOrder(OrderSheetDto orderSheetDto) {
-        Orders newOrder = orderRepository.save(toOrderEntity(orderSheetDto));
+    public Orders saveOrder(OrderSheetDto orderSheetDto) {
+        Orders newOrder = toOrderEntity(orderSheetDto);
         List<OrderProductDetail> orderProductDetails = orderSheetDto.getOrderProductDetails();
-        List<OrderPrice> orderPrices = createOrderPrice(orderProductDetails);
-
         orderProductDetails.forEach(this::decreaseStock);
-        return toOrderResultDto(newOrder, orderPrices);
+        return orderRepository.save(newOrder);
+    }
+
+    public OrderResultDto createOrderResult(Long orderId, List<OrderPrice> orderPrices) {
+        Orders orders = orderRepository
+            .findById(orderId)
+            .orElseThrow(() -> new OrderException(ErrorStatus.ORDER_ID_NOT_FOUND));
+
+        return OrderResultDto
+            .builder()
+            .orderPrices(orderPrices)
+            .createdAt(orders.getCreatedAt())
+            .address(orders.getAddress())
+            .username(orders.getUsername())
+            .totalPrice(orders.getTotalPrice())
+            .phoneNumber(orders.getUserPhoneNumber())
+            .build();
     }
 
     private void decreaseStock(OrderProductDetail product) {
@@ -74,13 +90,13 @@ public class OrderService {
         Users users = usersRepository.findByUuid(uuid)
             .orElseThrow(() -> new UsersException(ErrorStatus.NOT_USER));
 
-        return orderRepository.findAllByBuyerId(users.getId());
+        return orderRepository.findAllByUserId(users.getId());
     }
 
     private Orders toOrderEntity(OrderSheetDto orderSheetDto) {
         return Orders.builder()
             .userId(orderSheetDto.getBuyerId())
-            .userName(orderSheetDto.getBuyerName())
+            .username(orderSheetDto.getBuyerName())
             .userPhoneNumber(orderSheetDto.getBuyerPhoneNumber())
             .address(orderSheetDto.getAddress())
             .totalPrice(getTotalPrice(orderSheetDto.getOrderProductDetails()))
@@ -96,27 +112,6 @@ public class OrderService {
             totalPrice += productPrice + orderProductDetail.getOrderDeliveryFee();
         }
         return totalPrice;
-    }
-
-    private OrderResultDto toOrderResultDto(Orders newOrder, List<OrderPrice> orderPrices) {
-        return OrderResultDto
-            .builder()
-            .orderId(newOrder.getId())
-            .address(newOrder.getAddress())
-            .phoneNumber(newOrder.getUserPhoneNumber())
-            .totalPrice(newOrder.getTotalPrice())
-            .orderPrices(orderPrices)
-            .build();
-    }
-
-    private List<OrderPrice> createOrderPrice(List<OrderProductDetail> orderProductDetails) {
-        return orderProductDetails
-            .stream()
-            .map(orderProductDetail -> new OrderPrice(
-                orderProductDetail.getOrderDeliveryFee(),
-                orderProductDetail.getOriginPrice(),
-                orderProductDetail.getSalePrice()))
-            .toList();
     }
 
     /*
