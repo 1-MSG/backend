@@ -50,7 +50,7 @@ public class OrderProductService {
             .builder()
             .orderQuantity(orderProductDetail.getOrderQuantity())
             .ordersDeliveryFee(orderProductDetail.getOrderDeliveryFee())
-            .discountRatio(orderProductDetail.getDiscountRate())
+            .discountRate(orderProductDetail.getDiscountRate())
             .productPrice(orderProductDetail.getOriginPrice())
             .productId(orderProductDetail.getProductId())
             .orderIsCompleted(COMPLETED_DEFAULT)
