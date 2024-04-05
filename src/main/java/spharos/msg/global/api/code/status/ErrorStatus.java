@@ -38,6 +38,7 @@ public enum ErrorStatus implements BaseErrorCode {
     ADDRESS_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER415", "등록된 주소가 없습니다"),
     FIND_LOGIN_ID_FAIL(HttpStatus.BAD_REQUEST, "USER416", "가입된 아이디가 없습니다."),
     FIND_USER_INFO_FAIL(HttpStatus.BAD_REQUEST, "USER417", "유저 정보 조회 실패"),
+    WITHDRAW_USER_FAIL(HttpStatus.BAD_REQUEST, "USER418", "탈퇴된 회원 입니다."),
 
     INVALID_ORDER(HttpStatus.BAD_REQUEST, "ORDER400", "잘못된 주문 요청입니다"),
     INVALID_STOCK(HttpStatus.BAD_REQUEST, "ORDER406", "재고보다 더 많은 양을 뺄 수 없습니다."),

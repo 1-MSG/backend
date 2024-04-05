@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import spharos.msg.domain.admin.dto.AdminResponseDto;
-import spharos.msg.domain.admin.repository.CountUserRepository;
 import spharos.msg.domain.users.entity.LoginType;
 import spharos.msg.domain.users.entity.UserOAuthList;
 import spharos.msg.domain.users.entity.Users;
@@ -22,11 +21,10 @@ import spharos.msg.global.redis.RedisService;
 public class CountUserService {
 
     private final UsersRepository usersRepository;
-    private final CountUserRepository countUserRepository;
     private final UserOAuthListRepository userOAuthListRepository;
     private final RedisService redisService;
 
-    public List<AdminResponseDto.SearchAllInfo>SearchUsersInfo(Pageable pageable){
+    public List<AdminResponseDto.SearchAllInfo> SearchUsersInfo(Pageable pageable) {
         Page<Users> findUsers = usersRepository.findAll(pageable);
 
         return findUsers.map(m -> AdminResponseDto.SearchAllInfo
@@ -39,29 +37,29 @@ public class CountUserService {
                 .build()).getContent();
     }
 
-    private LoginType getLoginType(String uuid){
+    private LoginType getLoginType(String uuid) {
         List<UserOAuthList> userOAuthLists = userOAuthListRepository.findByUuid(uuid);
-        if(userOAuthLists.isEmpty()){
+        if (userOAuthLists.isEmpty()) {
             return LoginType.UNION;
         }
         return LoginType.EASY;
     }
 
-    public AdminResponseDto.ConnectCount countConnectUser(){
+    public AdminResponseDto.ConnectCount countConnectUser() {
         return AdminResponseDto.ConnectCount
                 .builder()
                 .connectCount(redisService.countConnectUser())
                 .build();
     }
 
-    public AdminResponseDto.UsersCount usersCount(){
+    public AdminResponseDto.UsersCount usersCount() {
         return AdminResponseDto.UsersCount
                 .builder()
                 .usersCount(usersRepository.count())
                 .build();
     }
 
-    public AdminResponseDto.UsersCount todaySignupCount(){
+    public AdminResponseDto.UsersCount todaySignupCount() {
         return AdminResponseDto.UsersCount
                 .builder()
                 .usersCount(usersRepository.countByCreatedAtAfter(LocalDate.now().atStartOfDay()))

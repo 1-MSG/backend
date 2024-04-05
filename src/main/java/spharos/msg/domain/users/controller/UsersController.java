@@ -34,7 +34,7 @@ public class UsersController {
     }
 
     @Operation(summary = "이메일 인증 확인",
-            description = "입력받은 SecretKey로 인증을 진행 합니다.")
+            description = "입력받은 Secret key 로 인증을 진행 합니다.")
     @PostMapping("/authenticate-email")
     public ApiResponse<?> authenticateEmail(
             @RequestBody EmailAuthRequestDto emailAuthRequestDto

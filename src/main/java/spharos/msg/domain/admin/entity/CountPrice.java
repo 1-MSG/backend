@@ -8,6 +8,7 @@ import spharos.msg.global.entity.BaseEntity;
 @Entity
 @Getter
 public class CountPrice {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "count_price_id")

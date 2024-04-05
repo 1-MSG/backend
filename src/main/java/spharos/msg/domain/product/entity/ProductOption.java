@@ -38,16 +38,16 @@ public class ProductOption extends BaseEntity {
     private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "option_id")
-    private Options option;
+    @JoinColumn(name = "options_id")
+    private Options options;
 
     public ProductOption(Long id, @NotNull Integer stock, Product product,
-        Options option) {
+        Options options) {
         validateStock(stock);
         this.id = id;
         this.stock = stock;
         this.product = product;
-        this.option = option;
+        this.options = options;
     }
 
     private void validateStock(int stock) {
