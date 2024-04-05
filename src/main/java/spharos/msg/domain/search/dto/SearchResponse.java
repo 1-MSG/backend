@@ -36,15 +36,13 @@ public class SearchResponse {
         private Long productId;
     }
 
-    @NoArgsConstructor
     @Builder
     @Getter
     @EqualsAndHashCode
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class SearchInputDto {
 
-        private String responseTime;
         private String productName;
     }
-
 }

@@ -121,7 +121,6 @@ public class SearchService {
             .stream()
             .map(word -> SearchInputDto
                 .builder()
-                .responseTime(LocalDateTime.now().toString())
                 .productName(word)
                 .build())
             .toList();
