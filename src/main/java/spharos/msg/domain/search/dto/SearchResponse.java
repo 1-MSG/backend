@@ -20,9 +20,11 @@ public class SearchResponse {
     @Builder
     public static class SearchProductDtos {
 
+        private String responseTime;
+
         @JsonProperty("isLast")
-        Boolean isLast = false;
-        List<SearchProductDto> searchProductDtos;
+        private Boolean isLast = false;
+        private List<SearchProductDto> searchProductDtos;
     }
 
     @NoArgsConstructor
@@ -31,7 +33,7 @@ public class SearchResponse {
     @AllArgsConstructor
     public static class SearchProductDto {
 
-        Long productId;
+        private Long productId;
     }
 
     @NoArgsConstructor
@@ -41,7 +43,8 @@ public class SearchResponse {
     @AllArgsConstructor
     public static class SearchInputDto {
 
-        String productName;
+        private String responseTime;
+        private String productName;
     }
 
 }
