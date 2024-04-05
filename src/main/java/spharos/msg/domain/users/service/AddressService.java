@@ -44,9 +44,6 @@ public class AddressService {
     @Transactional(readOnly = true)
     public List<SearchAddressOutDto> searchAllAddress(Long userId) {
         List<Address> findAddress = addressRepository.findByUsersId(userId);
-        if (findAddress.isEmpty()) {
-            throw new UsersException(ErrorStatus.ADDRESS_NOT_FOUND);
-        }
 
         return findAddress.stream()
                 .map(this::convertToSearchAddressDto)
