@@ -90,7 +90,7 @@ public class OrderController {
 
     @Operation(summary = "주문자 정보 조회", description = "토큰을 통해 주문자의 정보를 조회합니다.")
     @GetMapping("/user")
-    public ApiResponse<?> orderUserAPI(
+    public ApiResponse<OrderUserDto> orderUserAPI(
         @AuthenticationPrincipal UserDetails userDetails
     ) {
         String uuid = userDetails.getUsername();
