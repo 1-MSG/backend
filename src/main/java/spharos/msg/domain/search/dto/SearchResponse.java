@@ -39,7 +39,8 @@ public class SearchResponse {
     @Getter
     @EqualsAndHashCode
     @AllArgsConstructor
-    public static class SearchInputDto {
+    @ToString
+    public static class SearchTextDto {
 
         String productName;
     }
