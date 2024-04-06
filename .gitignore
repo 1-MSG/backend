@@ -119,3 +119,4 @@ modules.xml
 # End of https://www.toptal.com/developers/gitignore/api/intellij
 /.idea/codeStyles/codeStyleConfig.xml
 /src/main/generated/spharos/msg/
+/src/resources/application.yml
