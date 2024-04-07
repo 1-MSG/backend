@@ -1,12 +1,19 @@
 package spharos.msg.domain.admin.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import spharos.msg.global.entity.BaseEntity;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CountPrice {
 
     @Id
@@ -25,4 +32,5 @@ public class CountPrice {
     @NotNull
     @Column(name = "total_profit", nullable = false, columnDefinition = "bigint default 0")
     private Long totalProfit;
+    
 }

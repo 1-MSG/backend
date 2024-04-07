@@ -11,7 +11,6 @@ import spharos.msg.domain.orders.dto.OrderResponse.OrderPrice;
 import spharos.msg.domain.orders.entity.OrderProduct;
 import spharos.msg.domain.orders.entity.Orders;
 import spharos.msg.domain.orders.repository.OrderProductRepository;
-import spharos.msg.domain.orders.repository.OrderRepository;
 import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.repository.ProductRepository;
 import spharos.msg.global.api.code.status.ErrorStatus;
@@ -26,7 +25,6 @@ public class OrderProductService {
     private static final boolean COMPLETED_DEFAULT = false;
 
     private final OrderProductRepository orderProductRepository;
-    private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
 
     @Transactional
@@ -50,11 +48,12 @@ public class OrderProductService {
     }
 
     private OrderPrice toOrderPrice(OrderProduct orderProduct) {
+        Integer deliveryFee = orderProduct.getOrdersDeliveryFee();
         int discountRate = orderProduct.getDiscountRate().intValue();
         Long originPrice = orderProduct.getProductPrice();
         Long salePrice = originPrice * (100 - discountRate) / 100;
 
-        return new OrderPrice(discountRate, originPrice, salePrice);
+        return new OrderPrice(deliveryFee, originPrice, salePrice);
     }
 
     private OrderProduct toOrderProductEntity(OrderProductDetail orderProductDetail,
