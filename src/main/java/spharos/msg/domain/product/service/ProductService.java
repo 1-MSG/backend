@@ -155,6 +155,7 @@ public class ProductService {
                     .productId(product.getId())
                     .productName(product.getProductName())
                     .productBrand(product.getBrand().getBrandName())
+                    .productPrice(product.getProductPrice())
                     .productImage(productImage.getProductImageUrl())
                     .productSellTotalCount(product.getProductSalesInfo().getProductSellTotalCount())
                     .build();
