@@ -147,7 +147,15 @@ public class ProductService {
     public List<ProductResponse.ProductIdDto> getRandomProducts() {
         //최근 1달 주문 내역의 productId 불러오기
         List<Long> recentProducts = orderProductRepository.findProductIdsCreatedLastMonth();
-        // HashMap 생성
+        // 주문 내역이 없을 경우 랜덤 상품 반환
+        if (recentProducts.isEmpty()) {
+            return productRepository.findTop12RandomProducts().stream()
+                .map(product -> ProductResponse.ProductIdDto.builder().productId(product.getId())
+                    .build()).collect(
+                    Collectors.toList());
+        }
+
+        // 주문 내역이 있을 경우, HashMap 생성
         Map<Long, Integer> categoryCountMap = new HashMap<>();
         // 순회하면서 categoryId:cnt 추가해주기
         for (Long productId : recentProducts) {
@@ -157,6 +165,7 @@ public class ProductService {
         }
         // 가장 많은 빈도의 카테고리 id 찾기
         Long interestedCategoryId = getKeyWithMaxValue(categoryCountMap);
+
         // 해당 카테고리 id로 랜덤 상품 불러와서 리스트로 변환
         return categoryProductRepository.findRandomTop12ByCategoryId(interestedCategoryId).stream()
             .map(product -> ProductResponse.ProductIdDto.builder().productId(product.getId())
