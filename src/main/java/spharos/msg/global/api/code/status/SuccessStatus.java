@@ -36,6 +36,7 @@ public enum SuccessStatus implements BaseCode {
     ORDER_SUCCESS(HttpStatus.CREATED, "ORDER201", "상품 주문 성공"),
     ORDER_USER_SUCCESS(HttpStatus.OK, "ORDER202", "주문자 정보 조회 성공"),
     ORDER_HISTORY_SUCCESS(HttpStatus.OK, "ORDER203", "구매 내역 리스트 조회 성공"),
+    ORDER_COUNT_SUCCESS(HttpStatus.OK, "ORDER204", "누적 주문 횟수 조회 성공"),
     CART_PRODUCT_ADD_SUCCESS(HttpStatus.CREATED, "CART201", "장바구니 담기 성공"),
     CART_PRODUCT_GET_SUCCESS(HttpStatus.OK, "CART200", "장바구니 조회 성공"),
     CART_PRODUCT_UPDATE_SUCCESS(HttpStatus.OK, "CART202", "장바구니 수정 성공"),
