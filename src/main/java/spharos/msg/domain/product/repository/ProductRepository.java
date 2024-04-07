@@ -34,5 +34,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Page<Product> findAllByOrderByProductSalesInfoProductSellTotalCountDesc(Pageable pageable);
 
-    List<Product> findAllByOrderByProductSalesInfoProductSellTotalCountDesc();
+    List<Product> findTop11ByOrderByProductSalesInfoProductSellTotalCountDesc();
 }

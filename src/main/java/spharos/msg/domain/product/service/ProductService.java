@@ -144,9 +144,9 @@ public class ProductService {
 
     //어드민 베스트11 불러 오기
     public List<ProductResponse.Best11Dto> getBest11Products() {
-        List<Product> products = productRepository.findAllByOrderByProductSalesInfoProductSellTotalCountDesc();
+        List<Product> products = productRepository.findTop11ByOrderByProductSalesInfoProductSellTotalCountDesc();
 
-        return products.stream().limit(11)
+        return products.stream()
             .map(product -> {
                 ProductImage productImage = productImageRepository.findByProductAndImageIndex(product, 0)
                     .orElse(new ProductImage());
