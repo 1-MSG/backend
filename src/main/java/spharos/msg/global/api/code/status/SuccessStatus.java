@@ -54,6 +54,7 @@ public enum SuccessStatus implements BaseCode {
 
     PRODUCT_DETAIL_READ_SUCCESS(HttpStatus.OK, "PRODUCT200", "상품 상세 조회 성공"),
     PRODUCT_INFO_SUCCESS(HttpStatus.OK, "PRODUCT200", "상품 정보 조회 성공"),
+    PRODUCT_RANDOM_SUCCESS(HttpStatus.OK, "PRODUCT200", "랜덤 상품 조회 성공"),
 
     REVIEW_SAVE_SUCCESS(HttpStatus.CREATED, "REVIEW200", "상품 리뷰 작성 성공"),
     REVIEW_UPDATE_SUCCESS(HttpStatus.OK, "REVIEW200", "상품 리뷰 수정 성공"),

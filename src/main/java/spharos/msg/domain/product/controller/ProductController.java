@@ -1,6 +1,7 @@
 package spharos.msg.domain.product.controller;
 
 import static spharos.msg.global.api.code.status.SuccessStatus.PRODUCT_INFO_SUCCESS;
+import static spharos.msg.global.api.code.status.SuccessStatus.PRODUCT_RANDOM_SUCCESS;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -87,5 +88,12 @@ public class ProductController {
         @PageableDefault(size = 10, page = 0, sort = "id") Pageable pageable
     ) {
         return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getRankingProducts(pageable));
+    }
+
+    @Operation(summary = "랜덤 상품 목록 조회",
+        description = "랜덤 섹션의 상품 목록(최근 주문 내역을 바탕으로 관심 카테고리의 상품을 랜덤 반환합니다.)")
+    @GetMapping("/random")
+    public ApiResponse<List<ProductResponse.ProductIdDto>> getRandomProducts() {
+        return ApiResponse.of(PRODUCT_RANDOM_SUCCESS, productService.getRandomProducts());
     }
 }

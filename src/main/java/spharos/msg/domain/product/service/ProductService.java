@@ -2,24 +2,23 @@ package spharos.msg.domain.product.service;
 
 import jakarta.transaction.Transactional;
 import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 import spharos.msg.domain.category.entity.CategoryProduct;
 import spharos.msg.domain.category.repository.CategoryProductRepository;
-
+import spharos.msg.domain.orders.repository.OrderProductRepository;
 import spharos.msg.domain.product.dto.ProductResponse;
 import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductImage;
-
 import spharos.msg.domain.product.repository.ProductImageRepository;
 import spharos.msg.domain.product.repository.ProductRepository;
 import spharos.msg.domain.product.repository.ProductRepositoryCustom;
@@ -33,6 +32,7 @@ public class ProductService {
     private final CategoryProductRepository categoryProductRepository;
     private final ProductImageRepository productImageRepository;
     private final ProductRepositoryCustom productRepositoryCustom;
+    private final OrderProductRepository orderProductRepository;
 
     //id로 상품의 기본 정보 불러오기
     @Transactional
@@ -130,13 +130,38 @@ public class ProductService {
     //베스트 상품 목록 가져오기
     @Transactional
     public ProductResponse.BestProductsDto getRankingProducts(Pageable pageable) {
-        Page<Product> productPage = productRepository.findAllByOrderByProductSalesInfoProductSellTotalCountDesc(pageable);
+        Page<Product> productPage = productRepository.findAllByOrderByProductSalesInfoProductSellTotalCountDesc(
+            pageable);
 
         boolean isLast = !productPage.hasNext();
 
-        return ProductResponse.BestProductsDto.builder().productList(productPage.getContent().stream().map(
-                product -> ProductResponse.ProductIdDto.builder().productId(product.getId()).build())
-            .toList()).isLast(isLast).build();
+        return ProductResponse.BestProductsDto.builder()
+            .productList(productPage.getContent().stream().map(
+                    product -> ProductResponse.ProductIdDto.builder().productId(product.getId())
+                        .build())
+                .toList()).isLast(isLast).build();
+    }
+
+    //랜덤 상품 불러오기
+    @Transactional
+    public List<ProductResponse.ProductIdDto> getRandomProducts() {
+        //최근 1달 주문 내역의 productId 불러오기
+        List<Long> recentProducts = orderProductRepository.findProductIdsCreatedLastMonth();
+        // HashMap 생성
+        Map<Long, Integer> categoryCountMap = new HashMap<>();
+        // 순회하면서 categoryId:cnt 추가해주기
+        for (Long productId : recentProducts) {
+            Long categoryId = categoryProductRepository.findByProductId(productId).getCategory()
+                .getId();
+            categoryCountMap.put(categoryId, categoryCountMap.getOrDefault(categoryId, 0) + 1);
+        }
+        // 가장 많은 빈도의 카테고리 id 찾기
+        Long interestedCategoryId = getKeyWithMaxValue(categoryCountMap);
+        // 해당 카테고리 id로 랜덤 상품 불러와서 리스트로 변환
+        return categoryProductRepository.findRandomTop12ByCategoryId(interestedCategoryId).stream()
+            .map(product -> ProductResponse.ProductIdDto.builder().productId(product.getId())
+                .build()).collect(
+                Collectors.toList());
     }
 
     //할인가 계산하는 method
@@ -147,10 +172,25 @@ public class ProductService {
         }
 
         BigDecimal normalPrice = new BigDecimal(price);
-        BigDecimal discount = discountRate.divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP); //할인율을 백분율로 변환
+        BigDecimal discount = discountRate.divide(BigDecimal.valueOf(100),
+            RoundingMode.HALF_UP); //할인율을 백분율로 변환
         BigDecimal discountedPrice = normalPrice.multiply(
             BigDecimal.ONE.subtract(discount)); // 할인 적용 가격 계산
 
         return discountedPrice.intValue();
+    }
+
+    private Long getKeyWithMaxValue(Map<Long, Integer> map) {
+        Long maxKey = null;
+        Integer maxValue = Integer.MIN_VALUE;
+
+        for (Map.Entry<Long, Integer> entry : map.entrySet()) {
+            if (entry.getValue() > maxValue) {
+                maxValue = entry.getValue();
+                maxKey = entry.getKey();
+            }
+        }
+
+        return maxKey;
     }
 }
