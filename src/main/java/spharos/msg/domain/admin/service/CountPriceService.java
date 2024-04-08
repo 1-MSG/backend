@@ -20,4 +20,9 @@ public class CountPriceService {
         return countPriceRepository.findDataById(1L, AdminPriceResponseDto.TotalDeliveryFee.class)
                 .orElseThrow();
     }
+
+    public AdminPriceResponseDto.TotalProfit TotalProfit(){
+        return countPriceRepository.findDataById(1L, AdminPriceResponseDto.TotalProfit.class)
+                .orElseThrow();
+    }
 }

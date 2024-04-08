@@ -19,4 +19,11 @@ public class AdminPriceResponseDto {
     public static class TotalDeliveryFee {
         private Long totalDeliveryFee;
     }
+
+    @Builder
+    @AllArgsConstructor
+    @Getter
+    public static class TotalProfit {
+        private Long totalProfit;
+    }
 }
