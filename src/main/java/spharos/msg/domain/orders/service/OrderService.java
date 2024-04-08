@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spharos.msg.domain.orders.converter.OrdersConverter;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderProductDetail;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderSheetDto;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderHistoryDto;
@@ -36,14 +37,7 @@ public class OrderService {
             .findByUuid(uuid)
             .orElseThrow(() -> new OrderException(ErrorStatus.FIND_USER_INFO_FAIL));
 
-        return OrderUserDto
-            .builder()
-            .loginId(user.getLoginId())
-            .email(user.getEmail())
-            .username(user.getUsername())
-            .phoneNumber(user.getPhoneNumber())
-            .address(user.getAddress())
-            .build();
+        return OrdersConverter.toDto(user);
     }
 
     @Transactional
@@ -59,15 +53,7 @@ public class OrderService {
             .findById(orderId)
             .orElseThrow(() -> new OrderException(ErrorStatus.ORDER_ID_NOT_FOUND));
 
-        return OrderResultDto
-            .builder()
-            .orderPrices(orderPrices)
-            .createdAt(orders.getCreatedAt())
-            .address(orders.getAddress())
-            .username(orders.getUsername())
-            .totalPrice(orders.getTotalPrice())
-            .phoneNumber(orders.getUserPhoneNumber())
-            .build();
+        return OrdersConverter.toDto(orders, orderPrices);
     }
 
     private void decreaseStock(OrderProductDetail product) {
@@ -113,14 +99,4 @@ public class OrderService {
         }
         return totalPrice;
     }
-
-    /*
-    현재 사용되지 않음
-    private Product findProductByOption(Long optionId) {
-        return productOptionRepository
-            .findById(optionId)
-            .orElseThrow(() -> new OrderException(ErrorStatus.ORDER_PRODUCT_NOT_FOUND))
-            .getProduct();
-    }
-    */
 }

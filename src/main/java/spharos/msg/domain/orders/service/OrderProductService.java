@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spharos.msg.domain.orders.converter.OrdersConverter;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderProductDetail;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderSheetDto;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderPrice;
@@ -49,7 +50,7 @@ public class OrderProductService {
         List<OrderProduct> orderProducts = orderProductRepository.findAllByOrderId(orderId);
         return orderProducts
             .stream()
-            .map(this::toOrderPrice)
+            .map(OrdersConverter::toDto)
             .toList();
     }
 
@@ -61,6 +62,7 @@ public class OrderProductService {
             .productSellTotalCount(productSalesInfo.getProductSellTotalCount() + orderQuantity)
             .reviewCount(productSalesInfo.getReviewCount())
             .build();
+        
         productSalesInfoRepository.save(updated);
     }
 
@@ -86,14 +88,5 @@ public class OrderProductService {
             .productName(product.getProductName())
             .productImage("TEMP VALUE") //임시값 - 변경 예정
             .build();
-    }
-
-    private OrderPrice toOrderPrice(OrderProduct orderProduct) {
-        Integer deliveryFee = orderProduct.getOrdersDeliveryFee();
-        int discountRate = orderProduct.getDiscountRate().intValue();
-        Long originPrice = orderProduct.getProductPrice();
-        Long salePrice = originPrice * (100 - discountRate) / 100;
-
-        return new OrderPrice(deliveryFee, originPrice, salePrice);
     }
 }
