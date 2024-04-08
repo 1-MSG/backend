@@ -42,26 +42,7 @@ public class OrderProductService {
             OrderProduct orderProductEntity = toOrderProductEntity(detail, product, orders);
             orderProductEntities.add(orderProductEntity);
         }
-
         orderProductRepository.saveAll(orderProductEntities);
-    }
-
-    private void updateProductOrderQuantity(ProductSalesInfo productSalesInfo, int orderQuantity) {
-        ProductSalesInfo updated = ProductSalesInfo
-            .builder()
-            .id(productSalesInfo.getId())
-            .productStar(productSalesInfo.getProductStar())
-            .productSellTotalCount(productSalesInfo.getProductSellTotalCount() + orderQuantity)
-            .reviewCount(productSalesInfo.getReviewCount())
-            .build();
-
-        productSalesInfoRepository.save(updated);
-    }
-
-    private Product findProduct(OrderProductDetail detail) {
-        return productRepository
-            .findById(detail.getProductId())
-            .orElseThrow(() -> new ProductNotExistException(ErrorStatus.PRODUCT_ERROR));
     }
 
     public List<OrderPrice> createOrderPricesByOrderId(Long orderId) {
@@ -72,12 +53,21 @@ public class OrderProductService {
             .toList();
     }
 
-    private OrderPrice toOrderPrice(OrderProduct orderProduct) {
-        int discountRate = orderProduct.getDiscountRate().intValue();
-        Long originPrice = orderProduct.getProductPrice();
-        Long salePrice = originPrice * (100 - discountRate) / 100;
+    private void updateProductOrderQuantity(ProductSalesInfo productSalesInfo, int orderQuantity) {
+        ProductSalesInfo updated = ProductSalesInfo
+            .builder()
+            .id(productSalesInfo.getId())
+            .productStar(productSalesInfo.getProductStar())
+            .productSellTotalCount(productSalesInfo.getProductSellTotalCount() + orderQuantity)
+            .reviewCount(productSalesInfo.getReviewCount())
+            .build();
+        productSalesInfoRepository.save(updated);
+    }
 
-        return new OrderPrice(discountRate, originPrice, salePrice);
+    private Product findProduct(OrderProductDetail detail) {
+        return productRepository
+            .findById(detail.getProductId())
+            .orElseThrow(() -> new ProductNotExistException(ErrorStatus.PRODUCT_ERROR));
     }
 
     private OrderProduct toOrderProductEntity(OrderProductDetail orderProductDetail,
@@ -96,5 +86,14 @@ public class OrderProductService {
             .productName(product.getProductName())
             .productImage("TEMP VALUE") //임시값 - 변경 예정
             .build();
+    }
+
+    private OrderPrice toOrderPrice(OrderProduct orderProduct) {
+        Integer deliveryFee = orderProduct.getOrdersDeliveryFee();
+        int discountRate = orderProduct.getDiscountRate().intValue();
+        Long originPrice = orderProduct.getProductPrice();
+        Long salePrice = originPrice * (100 - discountRate) / 100;
+
+        return new OrderPrice(deliveryFee, originPrice, salePrice);
     }
 }
