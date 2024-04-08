@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spharos.msg.domain.users.converter.AuthConverter;
 import spharos.msg.domain.users.dto.request.AuthRequest;
 import spharos.msg.domain.users.dto.response.AuthResponse;
 import spharos.msg.domain.users.entity.UserStatus;
@@ -36,9 +37,9 @@ public class AuthServiceImpl implements AuthService {
 
         //중복회원 검색
         duplicateCheckLoginId(AuthRequest.DuplicationCheckDto
-                        .builder()
-                        .loginId(dto.getLoginId())
-                        .build());
+                .builder()
+                .loginId(dto.getLoginId())
+                .build());
 
         //탈퇴한 회원 검증.
         //한번 탈퇴하면 절대 회원가입/로그인 금지 되는 정책 적용 중.
@@ -51,17 +52,8 @@ public class AuthServiceImpl implements AuthService {
         Users user = new Users(uuid);
         user.passwordToHash(dto.getPassword());
 
-        usersRepository.save(Users
-                .builder()
-                .email(dto.getEmail())
-                .userName(dto.getUsername())
-                .loginId(dto.getLoginId())
-                .phoneNumber(dto.getPhoneNumber())
-                .password(user.getPassword())
-                .uuid(user.getUuid())
-                .address(dto.getAddress())
-                .status(UserStatus.UNION)
-                .build());
+        usersRepository.save(
+                AuthConverter.toEntity(dto, user));
     }
 
     @Transactional(readOnly = true)
@@ -86,15 +78,7 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtTokenProvider.createAccessToken(findUser);
         String refreshToken = jwtTokenProvider.createRefreshToken(findUser);
 
-        return AuthResponse.LoginResponseDto
-                .builder()
-                .userId(findUser.getId())
-                .uuid(findUser.getUuid())
-                .refreshToken(refreshToken)
-                .accessToken(accessToken)
-                .name(findUser.readUserName())
-                .email(findUser.getEmail())
-                .build();
+        return AuthConverter.toDto(findUser, accessToken, refreshToken);
     }
 
     public void logout(Long userId) {
@@ -119,11 +103,8 @@ public class AuthServiceImpl implements AuthService {
 
         String accessToken = jwtTokenProvider.createAccessToken(findUser);
         String refreshToken = jwtTokenProvider.createRefreshToken(findUser);
-        return AuthResponse.ReissueResponseDto
-                .builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+
+        return AuthConverter.toDto(accessToken, refreshToken);
     }
 
     @Transactional(readOnly = true)
@@ -140,18 +121,7 @@ public class AuthServiceImpl implements AuthService {
         Users findUser = usersRepository.findById(userId).orElseThrow(
                 () -> new UsersException(ErrorStatus.NOT_USER)
         );
-        usersRepository.save(Users
-                .builder()
-                .id(findUser.getId())
-                .email(findUser.getEmail())
-                .userName(findUser.readUserName())
-                .loginId(findUser.getLoginId())
-                .phoneNumber(findUser.getPhoneNumber())
-                .password(findUser.getPassword())
-                .uuid(findUser.getUuid())
-                .address(findUser.getAddress())
-                .status(UserStatus.NOT_USER)
-                .build());
+        usersRepository.save(AuthConverter.toEntity(findUser, UserStatus.NOT_USER));
     }
 
     @Transactional
@@ -165,18 +135,8 @@ public class AuthServiceImpl implements AuthService {
             throw new UsersException(ErrorStatus.SAME_PASSWORD);
         }
 
-        usersRepository.save(Users
-                .builder()
-                .id(findUser.getId())
-                .loginId(findUser.getLoginId())
-                .uuid(findUser.getUuid())
-                .password(hashPassword(dto.getModifyPassword()))
-                .phoneNumber(findUser.getPhoneNumber())
-                .email(findUser.getEmail())
-                .userName(findUser.readUserName())
-                .address(findUser.getAddress())
-                .status(findUser.getStatus())
-                .build());
+        usersRepository.save(
+                AuthConverter.toEntity(findUser, hashPassword(dto.getModifyPassword())));
     }
 
     private Boolean validatePassword(String oldPasswordHash, String newPassword) {
@@ -192,13 +152,10 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(readOnly = true)
     @Override
     public AuthResponse.FindIdResponseDto findLoginUnionId(String email) {
-        Users user = usersRepository.findByEmail(email).orElseThrow(
+        Users findUser = usersRepository.findByEmail(email).orElseThrow(
                 () -> new UsersException(ErrorStatus.FIND_LOGIN_ID_FAIL));
 
-        return AuthResponse.FindIdResponseDto
-                .builder()
-                .loginId(user.getLoginId())
-                .build();
+        return AuthConverter.toDto(findUser);
     }
 
     @Override
@@ -207,11 +164,6 @@ public class AuthServiceImpl implements AuthService {
                 () -> new UsersException(ErrorStatus.FIND_USER_INFO_FAIL)
         );
 
-        return AuthResponse.FindUserInfoResponseDto
-                .builder()
-                .userName(findUser.readUserName())
-                .email(findUser.getEmail())
-                .phoneNumber(findUser.getPhoneNumber())
-                .build();
+        return AuthConverter.toDtoForUserInfo(findUser);
     }
 }
