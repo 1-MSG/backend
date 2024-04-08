@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spharos.msg.domain.users.converter.AddressConverter;
 import spharos.msg.domain.users.dto.request.AddressRequest;
 import spharos.msg.domain.users.dto.response.AddressResponse;
 import spharos.msg.domain.users.entity.Address;
@@ -28,19 +29,11 @@ public class AddressServiceImpl implements AddressService {
     @Transactional
     @Override
     public void createAddress(AddressRequest.AddAddressDto dto, Long userId) {
-        Users users = usersRepository.findById(userId).orElseThrow(
+        Users findUser = usersRepository.findById(userId).orElseThrow(
                 () -> new UsersException(ErrorStatus.DELIVERY_ADDRESS_ADD_FAIL)
         );
 
-        addressRepository.save(Address
-                .builder()
-                .phoneNumber(dto.getMobileNumber())
-                .addressNickname(dto.getAddressName())
-                .recipientPhoneNumber(dto.getAddressPhoneNumber())
-                .recipient(dto.getRecipient())
-                .users(users)
-                .addressDetail(dto.getAddress())
-                .build());
+        addressRepository.save(AddressConverter.toEntity(dto, findUser));
     }
 
     @Transactional(readOnly = true)
@@ -48,26 +41,12 @@ public class AddressServiceImpl implements AddressService {
     public List<AddressResponse.SearchAddressDto> searchAllAddress(Long userId) {
         List<Address> findAddress = addressRepository.findByUsersId(userId);
 
-        return findAddress.stream()
-                .map(this::convertToSearchAddressDto)
-                .collect(Collectors.toList());
-    }
-
-    private AddressResponse.SearchAddressDto convertToSearchAddressDto(Address address) {
-        return AddressResponse.SearchAddressDto.builder()
-                .addressName(address.getAddressNickname())
-                .recipient(address.getRecipient())
-                .mobileNumber(address.getPhoneNumber())
-                .addressPhoneNumber(address.getRecipientPhoneNumber())
-                .address(address.getAddressDetail())
-                .addressId(address.getId())
-                .build();
+        return AddressConverter.toDto(findAddress);
     }
 
     @Transactional
     @Override
     public void deleteAddress(Long userId, Long addressId) {
-        //주소 있는지 검증 필요?
         Address findAddress = addressRepository.findByUsersIdAndId(userId, addressId).orElseThrow();
         addressRepository.delete(findAddress);
     }
