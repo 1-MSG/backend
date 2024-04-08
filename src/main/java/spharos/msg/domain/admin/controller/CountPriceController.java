@@ -18,9 +18,10 @@ import spharos.msg.global.api.code.status.SuccessStatus;
 public class CountPriceController {
 
     private final CountPriceService countPriceService;
+
     @Operation(summary = "총 주문 금액 반환 API", description = "총 주문 금액을 반환 합니다.")
     @GetMapping("/total-price")
     private ApiResponse<AdminPriceResponseDto.TotalSalesPrice> TotalSalesPriceApi() {
-        return ApiResponse.of(SuccessStatus.COUNT_CONNECT_USERS_SUCCESS, countPriceService.TotalSalesPrice());
+        return ApiResponse.of(SuccessStatus.TOTAL_SALES_PRICE_SUCCESS, countPriceService.TotalSalesPrice());
     }
 }
