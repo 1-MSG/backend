@@ -8,7 +8,6 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import spharos.msg.domain.users.dto.request.OAuthRequest;
-import spharos.msg.domain.users.dto.response.FindIdOutDto;
 import spharos.msg.domain.users.dto.response.OAuthResponse;
 import spharos.msg.domain.users.service.OAuthServiceImpl;
 import spharos.msg.global.api.ApiResponse;
@@ -43,7 +42,7 @@ public class OAuthController {
 
     @Operation(summary = "간편 회원 아이디 찾기", description = "입력받은 이메일로 간편회원의 로그인 아이디를 조회합니다.")
     @GetMapping("/find-id/{email}")
-    public ApiResponse<FindIdOutDto> findUserId(
+    public ApiResponse<OAuthResponse.FindEasyIdResponseDto> findUserId(
             @PathVariable("email") String email) {
         return ApiResponse.of(SuccessStatus.FIND_LOGIN_ID_SUCCESS,
                 oAuthService.findLoginEasyId(email));
