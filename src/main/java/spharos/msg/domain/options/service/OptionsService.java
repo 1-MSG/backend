@@ -14,6 +14,7 @@ import spharos.msg.domain.options.dto.OptionsNameDto;
 import spharos.msg.domain.options.dto.OptionsResponseDto;
 import spharos.msg.domain.options.entity.Options;
 import spharos.msg.domain.options.repository.OptionsRepository;
+import spharos.msg.domain.product.dto.ProductDetailReponse;
 import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductOption;
 import spharos.msg.domain.product.repository.ProductOptionRepository;
@@ -35,7 +36,7 @@ public class OptionsService {
     private final ProductRepository productRepository;
 
     //상품 옵션 종류 조회
-    public ApiResponse<?> getOptionsType(Long productId) {
+    public ApiResponse<List<OptionTypeDto>> getOptionsType(Long productId) {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new ProductNotExistException(ErrorStatus.NOT_EXIST_PRODUCT_ID));
 
@@ -61,7 +62,7 @@ public class OptionsService {
     }
 
     //최상위 옵션 조회
-    public ApiResponse<?> getFirstOptions(Long productId) {
+    public ApiResponse<List<OptionsResponseDto>> getFirstOptions(Long productId) {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new ProductNotExistException(ErrorStatus.NOT_EXIST_PRODUCT_ID));
 
@@ -80,8 +81,7 @@ public class OptionsService {
         if (parentOptionDetailList.isEmpty()) {
             return ApiResponse.of(SuccessStatus.OPTION_FIRST_SUCCESS, optionDetailList);
         }
-        return ApiResponse.of(SuccessStatus.OPTION_ID_SUCCESS,
-            parentOptionDetailList.stream().distinct());
+        return ApiResponse.of(SuccessStatus.OPTION_ID_SUCCESS, parentOptionDetailList.stream().distinct().toList());
     }
 
     //상품 옵션 조회
@@ -129,7 +129,7 @@ public class OptionsService {
     }
 
     //하위 옵션 데이터 조회
-    public ApiResponse<?> getChildOptions(Long optionsId) {
+    public ApiResponse<List<OptionsResponseDto>> getChildOptions(Long optionsId) {
         Options options = optionsRepository.findById(optionsId)
             .orElseThrow(() -> new OptionsException(ErrorStatus.NOT_EXIST_PRODUCT_OPTION));
         ProductOption productOption = productOptionRepository.findByOptions(options);
