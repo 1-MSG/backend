@@ -1,13 +1,16 @@
 package spharos.msg.domain.product.controller;
 
+import static spharos.msg.global.api.code.status.SuccessStatus.PRODUCT_BEST_SUCCESS;
 import static spharos.msg.global.api.code.status.SuccessStatus.PRODUCT_INFO_SUCCESS;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Pageable;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -76,5 +79,22 @@ public class ProductController {
             .toList();
 
         return ApiResponse.of(PRODUCT_INFO_SUCCESS,productService.getProductsDetails(idList));
+    }
+
+    @Operation(summary = "베스트 상품 목록 조회",
+        description = "베스트탭의 상품들을 반환합니다(sort는 빈문자열을 주시면 됩니다.)")
+    @GetMapping("/ranking")
+    public ApiResponse<ProductResponse.BestProductsDto> getRankingProducts(
+        @PageableDefault(size = 10, page = 0, sort = "id") Pageable pageable
+    ) {
+        return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getRankingProducts(pageable));
+    }
+
+    @Operation(summary = "베스트11 조회",
+        description = "베스트 상품 11 객체를 반환합니다")
+    @GetMapping("/ranking11")
+    public ApiResponse<List<ProductResponse.Best11Dto>> getBest11Products(
+    ) {
+        return ApiResponse.of(PRODUCT_BEST_SUCCESS, productService.getBest11Products());
     }
 }

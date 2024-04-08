@@ -1,5 +1,6 @@
 package spharos.msg.domain.product.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -14,44 +15,32 @@ import lombok.Setter;
 @Builder
 @Setter(AccessLevel.NONE)
 public class ProductResponse {
-    @Data
-    @Builder
-    public static class HomeCosmeRandomFoodDto {
-
-        private List<ProductInfoDto> cosmeticList;
-        private List<ProductInfoDto> randomList;
-        private List<ProductInfoDto> foodList;
-    }
-    @Data
-    @Builder
-    public static class HomeFashionDto {
-
-        private List<ProductInfoDto> fashionList;
-    }
 
     @Getter
     public static class ProductInfoDto {
 
         @Schema(description = "상품 브랜드")
-        private String productBrand;
+        private final String productBrand;
         @Schema(description = "상품 이름")
-        private String productName;
+        private final String productName;
         @Schema(description = "상품 정상가")
-        private Integer productPrice;
+        private final Integer productPrice;
         @Schema(description = "상품 할인율")
-        private BigDecimal discountRate;
+        private final BigDecimal discountRate;
         @Schema(description = "상품 할인가")
-        private Integer discountPrice;
+        private final Integer discountPrice;
         @Schema(description = "상품 별점")
-        private BigDecimal productStar;
+        private final BigDecimal productStar;
         @Schema(description = "상품 리뷰 개수")
-        private Long reviewCount;
+        private final Long reviewCount;
         @Schema(description = "상품 이미지")
-        private String productImage;
+        private final String productImage;
+        @Schema(description = "응답 시간")
+        private final String responseTime;
 
         @Builder
         private ProductInfoDto(String productBrand, String productName, Integer productPrice, String productImage,
-            BigDecimal productStar, Integer discountPrice, BigDecimal discountRate, Long reviewCount) {
+            BigDecimal productStar, Integer discountPrice, BigDecimal discountRate, Long reviewCount, String responseTime) {
 
             this.productBrand = productBrand;
             this.productName = productName;
@@ -61,17 +50,17 @@ public class ProductResponse {
             this.discountRate = discountRate;
             this.discountPrice = discountPrice;
             this.productImage = productImage;
+            this.responseTime = responseTime;
         }
     }
 
     @Getter
-    @Setter
     public static class ProductImage {
 
         @Schema(description = "이미지 설명")
-        private String productImageDescription;
+        private final String productImageDescription;
         @Schema(description = "이미지 url")
-        private String productImageUrl;
+        private final String productImageUrl;
 
         @Builder
         private ProductImage(String productImageDescription, String productImageUrl) {
@@ -82,13 +71,12 @@ public class ProductResponse {
     }
 
     @Getter
-    @Setter
     public static class ProductCategory {
 
         @Schema(description = "대카테고리")
-        private String categoryLarge;
+        private final String categoryLarge;
         @Schema(description = "중카테고리")
-        private String categoryMid;
+        private final String categoryMid;
 
         @Builder
         private ProductCategory(String categoryLarge, String categoryMid) {
@@ -97,4 +85,64 @@ public class ProductResponse {
             this.categoryMid = categoryMid;
         }
     }
+
+    @Getter
+    public static class BestProductsDto {
+        @Schema(description = "베스트 상품 리스트")
+        private final List<ProductResponse.ProductIdDto> productList;
+
+        @Schema(description = "마지막 페이지 여부")
+        @JsonProperty("isLast")
+        @Getter(AccessLevel.NONE)
+        private final boolean isLast;
+
+        @Builder
+        private BestProductsDto(List<ProductResponse.ProductIdDto> productList, boolean isLast) {
+
+            this.productList = productList;
+            this.isLast = isLast;
+        }
+    }
+
+    @Getter
+    public static class ProductIdDto {
+        @Schema(description = "상품id")
+        private final Long productId;
+
+        @Builder
+        private ProductIdDto(Long productId) {
+
+            this.productId = productId;
+        }
+    }
+
+    @Getter
+    public static class Best11Dto {
+
+        @Schema(description = "상품 id")
+        private final Long productId;
+        @Schema(description = "상품 브랜드")
+        private final String productBrand;
+        @Schema(description = "상품 이름")
+        private final String productName;
+        @Schema(description = "상품 이미지")
+        private final String productImage;
+        @Schema(description = "상품 가격")
+        private final Integer productPrice;
+        @Schema(description = "판매량")
+        private final Long productSellTotalCount;
+
+        @Builder
+        public Best11Dto(Long productId, String productBrand, String productName,
+            String productImage, Integer productPrice, Long productSellTotalCount) {
+            this.productId = productId;
+            this.productBrand = productBrand;
+            this.productName = productName;
+            this.productImage = productImage;
+            this.productPrice = productPrice;
+            this.productSellTotalCount = productSellTotalCount;
+        }
+
+    }
+
 }

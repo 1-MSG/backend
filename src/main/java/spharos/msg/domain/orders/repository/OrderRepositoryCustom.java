@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface OrderRepositoryCustom {
 
-    List<OrderHistoryDto> findAllByBuyerId(Long buyerId);
+    List<OrderHistoryDto> findAllByUserId(Long userId);
 }

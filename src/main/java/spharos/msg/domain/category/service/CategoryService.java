@@ -29,17 +29,17 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     public CategoryDto findCategories(Long parentId) {
-        Category parent = categoryRepository.findById(parentId)
+        Category currentCategory = categoryRepository.findById(parentId)
             .orElseThrow(
                 () -> new CategoryException(ErrorStatus.CATEGORY_NOT_FOUND));
         List<SubCategory> categories = categoryProductRepository.findCategoriesByParentId(parentId);
-        return createCategoryDto(parent, categories);
+        return createCategoryDto(currentCategory, categories);
     }
 
-    private CategoryDto createCategoryDto(Category parent, List<SubCategory> categories) {
-        return parent.getCategoryLevel() == LARGE_CATEGORY_LEVEL ?
+    private CategoryDto createCategoryDto(Category currentCategory, List<SubCategory> categories) {
+        return currentCategory.getCategoryLevel() == LARGE_CATEGORY_LEVEL ?
             toDtoWithoutParent(categories) :
-            toDtoWithParent(parent, categories);
+            toDtoWithParent(currentCategory.getParent(), categories);
     }
 
     private CategoryDto toDtoWithoutParent(List<SubCategory> categories) {
@@ -56,12 +56,8 @@ public class CategoryService {
             .build();
     }
 
-    public List<CategoryDto> findCategoriesByLevel(int level) {
-        List<CategoryDto> categories = categoryProductRepository.findCategoriesByLevel(level);
-        if (categories.isEmpty()) {
-            throw new CategoryException(ErrorStatus.CATEGORY_NOT_FOUND);
-        }
-        return categories;
+    public List<SubCategory> findCategoriesByLevel(int level) {
+        return categoryProductRepository.findCategoriesByLevel(level);
     }
 
     public CategoryProductDtos findCategoryProducts(Long categoryId, Pageable pageable) {

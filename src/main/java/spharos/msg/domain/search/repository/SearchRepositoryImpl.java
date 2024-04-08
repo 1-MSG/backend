@@ -2,6 +2,7 @@ package spharos.msg.domain.search.repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +15,8 @@ import spharos.msg.domain.brand.entity.QBrand;
 import spharos.msg.domain.category.entity.QCategory;
 import spharos.msg.domain.category.entity.QCategoryProduct;
 import spharos.msg.domain.product.entity.QProduct;
-import spharos.msg.domain.search.dto.SearchResponse.SearchInputDto;
 import spharos.msg.domain.search.dto.SearchResponse.SearchProductDto;
+import spharos.msg.domain.search.dto.SearchResponse.SearchTextDto;
 
 @Repository
 @RequiredArgsConstructor
@@ -75,23 +76,34 @@ public class SearchRepositoryImpl implements SearchRepository {
     }
 
     @Override
-    public List<SearchInputDto> searchAllKeyword(String keyword) {
+    public List<SearchTextDto> searchAllKeyword(String keyword) {
         QCategoryProduct categoryProduct = QCategoryProduct.categoryProduct;
         QProduct product = QProduct.product;
         QCategory category = QCategory.category;
+        List<String> searchResults = getSearchResults(keyword, categoryProduct, product, category);
+        return searchResults.stream()
+            .map(SearchTextDto::new)
+            .distinct()
+            .toList();
+    }
+
+    private List<String> getSearchResults(String keyword, QCategoryProduct categoryProduct,
+        QProduct product, QCategory category) {
         return jpaQueryFactory
-            .select(Projections.constructor(SearchInputDto.class,
-                product.productName))
+            .select(
+                new CaseBuilder()
+                    .when(category.categoryName.containsIgnoreCase(keyword))
+                    .then(category.categoryName)
+                    .when(product.productName.containsIgnoreCase(keyword))
+                    .then(product.productName)
+                    .otherwise((String) null)
+            )
             .from(categoryProduct)
             .innerJoin(categoryProduct.product, product)
             .innerJoin(categoryProduct.category, category)
-            .where(
-                product.productName.eq(keyword)
-                    .or(product.productName.containsIgnoreCase(keyword))
-                    .or(category.categoryName.contains(keyword))
-            )
+            .where(category.categoryName.containsIgnoreCase(keyword)
+                .or(product.productName.containsIgnoreCase(keyword)))
             .distinct()
-            .limit(SEARCH_PRODUCT_SIZE)
             .fetch();
     }
 }

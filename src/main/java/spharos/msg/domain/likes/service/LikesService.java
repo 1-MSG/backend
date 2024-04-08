@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.likes.dto.IsLikesDto;
-import spharos.msg.domain.likes.dto.LikesResponseDto;
 import spharos.msg.domain.likes.entity.Likes;
 import spharos.msg.domain.likes.repository.LikesRepository;
 import spharos.msg.domain.product.entity.Product;
@@ -54,7 +53,7 @@ public class LikesService {
         return ApiResponse.of(SuccessStatus.LIKES_LIST_GET_SUCCESS,
                 likesRepository.findByUsers(users)
                         .stream()
-                        .map(LikesResponseDto::new)
+                        .map(likes -> likes.getProduct().getId())
                         .toList());
     }
 
