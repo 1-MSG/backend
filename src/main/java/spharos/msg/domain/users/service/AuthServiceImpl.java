@@ -207,6 +207,8 @@ public class AuthServiceImpl implements AuthService {
         return FindUserInfoOutDto
                 .builder()
                 .userName(findUser.readUserName())
+                .phoneNumber(findUser.getPhoneNumber())
+                .email(findUser.getEmail())
                 .build();
     }
 }

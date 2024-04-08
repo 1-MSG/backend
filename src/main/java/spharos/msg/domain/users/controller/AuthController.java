@@ -99,7 +99,7 @@ public class AuthController {
         return ApiResponse.of(SuccessStatus.FIND_LOGIN_ID_SUCCESS, loginUnionId);
     }
 
-    @Operation(summary = "MyPage 사용자 정보 조회", description = "My Page 의 사용자 정보를 반환 합니다.")
+    @Operation(summary = "사용자 정보 조회", description = "사용자 정보를 반환 합니다.")
     @GetMapping("/users")
     public ApiResponse<FindUserInfoOutDto> findUserInfo(
             @AuthenticationPrincipal UserDetails userDetails) {
