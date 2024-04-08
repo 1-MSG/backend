@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spharos.msg.domain.users.converter.AuthConverter;
+import spharos.msg.domain.users.converter.OAuthConverter;
 import spharos.msg.domain.users.dto.request.OAuthRequest;
 import spharos.msg.domain.users.dto.response.OAuthResponse;
 import spharos.msg.domain.users.entity.UserOAuthList;
@@ -49,27 +51,9 @@ public class OAuthServiceImpl implements OAuthService {
                     .build()));
         }
 
-        //업데이트 처리
-        userOAuthListRepository.save(UserOAuthList
-                .builder()
-                .OAuthId(dto.getOauthId())
-                .OAuthName(dto.getOauthName())
-                .uuid(findUser.getUuid())
-                .build());
+        userOAuthListRepository.save(OAuthConverter.toEntity(dto, findUser.getUuid()));
 
-        userRepository.save(Users
-                .builder()
-                .id(findUser.getId())
-                .email(findUser.getEmail())
-                .userName(findUser.readUserName())
-                .loginId(findUser.getLoginId())
-                .phoneNumber(findUser.getPhoneNumber())
-                .password(findUser.getPassword())
-                .uuid(findUser.getUuid())
-                .address(findUser.getAddress())
-                .status(UserStatus.EASY)
-                .build()
-        );
+        userRepository.save(AuthConverter.toEntity(findUser, UserStatus.EASY));
 
         return Optional.empty();
     }
@@ -84,48 +68,27 @@ public class OAuthServiceImpl implements OAuthService {
         Users findUser = userRepository.findByUuid(userOAuthList.getUuid()).orElseThrow(
                 () -> new UsersException(ErrorStatus.NOT_UNION_USER));
 
-        //탈퇴 회원 검증 로직 추가
         if (findUser.getStatus().equals(UserStatus.NOT_USER)) {
             throw new UsersException(ErrorStatus.WITHDRAW_USER_FAIL);
         }
 
-        //todo : 인증처리 생각 할 것.
-//        authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(
-//                        findUser.getUsername(),
-//                        loginRequestDto.getPassword()
-//                )
-//        );
-
-        //토큰생성
         String refreshToken = jwtTokenProvider.createRefreshToken(findUser);
         String accessToken = jwtTokenProvider.createAccessToken(findUser);
 
-        return OAuthResponse.EasyLoginResponseDto
-                .builder()
-                .uuid(findUser.getUuid())
-                .refreshToken(refreshToken)
-                .accessToken(accessToken)
-                .name(findUser.readUserName())
-                .email(findUser.getEmail())
-                .userId(findUser.getId())
-                .build();
+        return OAuthConverter.toDtoEasy(findUser, refreshToken, accessToken);
     }
 
     @Transactional(readOnly = true)
     @Override
     public OAuthResponse.FindEasyIdResponseDto findLoginEasyId(String email) {
-        Users user = userRepository.findByEmail(email).orElseThrow(
+        Users findUser = userRepository.findByEmail(email).orElseThrow(
                 () -> new UsersException(ErrorStatus.FIND_LOGIN_ID_FAIL));
 
-        List<UserOAuthList> userOAuthList = userOAuthListRepository.findByUuid(user.getUuid());
+        List<UserOAuthList> userOAuthList = userOAuthListRepository.findByUuid(findUser.getUuid());
         if (userOAuthList.isEmpty()) {
             throw new UsersException(ErrorStatus.FIND_LOGIN_ID_FAIL);
         }
 
-        return OAuthResponse.FindEasyIdResponseDto
-                .builder()
-                .loginId(user.getLoginId())
-                .build();
+        return OAuthConverter.toDtoEasy(findUser);
     }
 }
