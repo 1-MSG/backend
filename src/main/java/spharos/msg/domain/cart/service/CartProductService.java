@@ -29,7 +29,7 @@ public class CartProductService {
     private final UsersRepository usersRepository;
 
     @Transactional
-    public ApiResponse<?> addCartProduct(Long productOptionId,
+    public ApiResponse<Void> addCartProduct(Long productOptionId,
         CartProductRequestDto cartProductRequestDto, int cartProductQuantity, String userUuid) {
         ProductOption productOption = productOptionRepository.findById(productOptionId)
                 .orElseThrow();
@@ -59,7 +59,7 @@ public class CartProductService {
     }
 
     @Transactional
-    public ApiResponse<SuccessStatus> deleteCart(Long cartId) {
+    public ApiResponse<Void> deleteCart(Long cartId) {
         CartProduct cartProduct = cartProductRepository.findById(cartId).orElseThrow();
         cartProductRepository.delete(cartProduct);
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_DELETE_SUCCESS, null);
@@ -76,9 +76,9 @@ public class CartProductService {
                         .toList());
     }
 
-    private ApiResponse<?> addCart(Users users, Long productOptionId,
-                                   CartProductRequestDto cartProductRequestDto, ProductOption productOption,
-                                   Integer productQuantity) {
+    private ApiResponse<Void> addCart(Users users, Long productOptionId,
+        CartProductRequestDto cartProductRequestDto, ProductOption productOption,
+        Integer productQuantity) {
         List<CartProduct> cartProducts = cartProductRepository.findByUsers(users);
         //이미 장바구니에 담긴 상품의 경우 개수 더해서 save하기
         for (CartProduct cartProduct : cartProducts) {

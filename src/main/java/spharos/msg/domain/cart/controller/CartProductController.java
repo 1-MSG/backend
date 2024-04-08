@@ -27,7 +27,7 @@ public class CartProductController {
     @Operation(summary = "장바구니 담기",
             description = "옵션에 해당되는 상품을 장바구니에 추가합니다.")
     @PostMapping("/option/{productOptionId}")
-    public ApiResponse<SuccessStatus> addCart(
+    public ApiResponse<Void> addCart(
             @PathVariable Long productOptionId,
             @RequestParam(defaultValue = "1") int cartProductQuantity,
             @RequestBody CartProductRequestDto cartProductRequestDto,
@@ -95,7 +95,7 @@ public class CartProductController {
     @Operation(summary = "장바구니 삭제",
             description = "장바구니에 담긴 상품을 삭제합니다.")
     @DeleteMapping("/{cartId}")
-    public ApiResponse<SuccessStatus> deleteCart(
+    public ApiResponse<Void> deleteCart(
             @PathVariable Long cartId
     ) {
         return cartProductService.deleteCart(cartId);
