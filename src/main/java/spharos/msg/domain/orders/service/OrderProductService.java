@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spharos.msg.domain.options.service.OptionsService;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderProductDetail;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderSheetDto;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderPrice;
@@ -30,6 +31,7 @@ public class OrderProductService {
     private final OrderProductRepository orderProductRepository;
     private final ProductRepository productRepository;
     private final ProductSalesInfoRepository productSalesInfoRepository;
+    private final OptionsService optionsService;
 
     @Transactional
     public void saveAllByOrderSheet(OrderSheetDto orderSheetDto, Orders orders) {
@@ -82,10 +84,15 @@ public class OrderProductService {
             .productId(orderProductDetail.getProductId())
             .orderIsCompleted(COMPLETED_DEFAULT)
             .orders(orders)
-            .productOption("옵션1 옵션2 옵션3") // 임시값 - 변경 예정
+            .productOption(getProductOptions(orderProductDetail))
             .productName(product.getProductName())
             .productImage("TEMP VALUE") //임시값 - 변경 예정
             .build();
+    }
+
+    private String getProductOptions(OrderProductDetail detail) {
+        Long productOptionId = detail.getProductOptionId();
+        return optionsService.getOptions(productOptionId);
     }
 
     private OrderPrice toOrderPrice(OrderProduct orderProduct) {
