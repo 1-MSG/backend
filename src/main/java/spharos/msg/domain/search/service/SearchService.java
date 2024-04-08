@@ -38,6 +38,7 @@ public class SearchService {
 
         return SearchProductDtos
             .builder()
+            .responseTime(String.valueOf(System.currentTimeMillis()))
             .searchProductDtos(searched.getContent())
             .isLast(searched.isLast())
             .build();
