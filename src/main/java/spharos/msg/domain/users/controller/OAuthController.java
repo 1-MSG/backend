@@ -26,27 +26,27 @@ public class OAuthController {
 
     @Operation(summary = "간편 회원가입", description = "간편회원 회원가입")
     @PostMapping("/signup")
-    public ApiResponse<?> signUpEasy(
+    public ApiResponse<Optional<LoginOutDto>> signUpEasy(
             @RequestBody EasySignUpRequestDto easySignUpRequestDto
     ) {
-        Optional<LoginOutDto> login = oAuthService.easySignUp(easySignUpRequestDto);
-        return ApiResponse.of(SuccessStatus.SIGN_UP_SUCCESS_EASY, login);
+        return ApiResponse.of(SuccessStatus.SIGN_UP_SUCCESS_EASY,
+                oAuthService.easySignUp(easySignUpRequestDto));
     }
 
     @Operation(summary = "간편 회원로그인", description = "간편회원 로그인")
     @PostMapping("/login")
-    public ApiResponse<?> loginEasy(
+    public ApiResponse<LoginOutDto> loginEasy(
             @RequestBody EasyLoginRequestDto easyLoginRequestDto
     ) {
-        LoginOutDto login = oAuthService.easyLogin(easyLoginRequestDto);
-        return ApiResponse.of(SuccessStatus.LOGIN_SUCCESS_EASY, login);
+        return ApiResponse.of(SuccessStatus.LOGIN_SUCCESS_EASY,
+                oAuthService.easyLogin(easyLoginRequestDto));
     }
 
     @Operation(summary = "간편 회원 아이디 찾기", description = "입력받은 이메일로 간편회원의 로그인 아이디를 조회합니다.")
     @GetMapping("/find-id/{email}")
     public ApiResponse<FindIdOutDto> findUserId(
             @PathVariable("email") String email) {
-        FindIdOutDto loginUnionId = oAuthService.findLoginEasyId(email);
-        return ApiResponse.of(SuccessStatus.FIND_LOGIN_ID_SUCCESS, loginUnionId);
+        return ApiResponse.of(SuccessStatus.FIND_LOGIN_ID_SUCCESS,
+                oAuthService.findLoginEasyId(email));
     }
 }

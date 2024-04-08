@@ -41,7 +41,8 @@ public class AuthController {
     public ApiResponse<LoginOutDto> loginUnion(
             @RequestBody LoginRequestDto loginRequestDto
     ) {
-        return ApiResponse.of(SuccessStatus.LOGIN_SUCCESS_UNION, authService.login(loginRequestDto));
+        return ApiResponse.of(SuccessStatus.LOGIN_SUCCESS_UNION,
+                authService.login(loginRequestDto));
     }
 
     @Operation(summary = "로그아웃", description = "로그인 회원 로그아웃")
@@ -58,7 +59,8 @@ public class AuthController {
     public ApiResponse<ReissueOutDto> reissueToken(
             @RequestHeader(AUTHORIZATION) String refreshToken
     ) {
-        return ApiResponse.of(SuccessStatus.TOKEN_REISSUE_COMPLETE, authService.reissueToken(refreshToken));
+        return ApiResponse.of(SuccessStatus.TOKEN_REISSUE_COMPLETE,
+                authService.reissueToken(refreshToken));
     }
 
     @Operation(summary = "아이디 중복확인", description = "입력받은 아이디의 중복 여부를 확인합니다.")
@@ -93,13 +95,15 @@ public class AuthController {
     @GetMapping("/find-id/{email}")
     public ApiResponse<FindIdOutDto> findUserId(
             @PathVariable(name = "email") String email) {
-        return ApiResponse.of(SuccessStatus.FIND_LOGIN_ID_SUCCESS, authService.findLoginUnionId(email));
+        return ApiResponse.of(SuccessStatus.FIND_LOGIN_ID_SUCCESS,
+                authService.findLoginUnionId(email));
     }
 
     @Operation(summary = "MyPage 사용자 정보 조회", description = "My Page 의 사용자 정보를 반환 합니다.")
     @GetMapping("/users")
     public ApiResponse<FindUserInfoOutDto> findUserInfo(
             @AuthenticationPrincipal UserDetails userDetails) {
-        return ApiResponse.of(SuccessStatus.FIND_USER_INFO_SUCCESS, authService.findUserInfo(userDetails.getUsername()));
+        return ApiResponse.of(SuccessStatus.FIND_USER_INFO_SUCCESS,
+                authService.findUserInfo(userDetails.getUsername()));
     }
 }

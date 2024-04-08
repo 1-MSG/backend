@@ -29,14 +29,14 @@ public class UsersController {
             @RequestBody EmailSendRequestDto emailSendRequestDto
     ) {
         usersService.duplicateCheckEmail(emailSendRequestDto);
-        EmailOutDto emailOutDto = usersService.sendMail(emailSendRequestDto);
-        return ApiResponse.of(SuccessStatus.EMAIL_SEND_SUCCESS, emailOutDto);
+        return ApiResponse.of(SuccessStatus.EMAIL_SEND_SUCCESS,
+                usersService.sendMail(emailSendRequestDto));
     }
 
     @Operation(summary = "이메일 인증 확인",
             description = "입력받은 Secret key 로 인증을 진행 합니다.")
     @PostMapping("/authenticate-email")
-    public ApiResponse<?> authenticateEmail(
+    public ApiResponse<Void> authenticateEmail(
             @RequestBody EmailAuthRequestDto emailAuthRequestDto
     ) {
         usersService.authenticateEmail(emailAuthRequestDto);
