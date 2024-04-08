@@ -42,7 +42,8 @@ public class OrderService {
 
     @Transactional
     public Orders saveOrder(OrderSheetDto orderSheetDto) {
-        Orders newOrder = toOrderEntity(orderSheetDto);
+        Long totalPrice = getTotalPrice(orderSheetDto.getOrderProductDetails());
+        Orders newOrder = OrdersConverter.toEntity(orderSheetDto, totalPrice);
         List<OrderProductDetail> orderProductDetails = orderSheetDto.getOrderProductDetails();
         orderProductDetails.forEach(this::decreaseStock);
         return orderRepository.save(newOrder);
@@ -78,18 +79,7 @@ public class OrderService {
 
         return orderRepository.findAllByUserId(users.getId());
     }
-
-    private Orders toOrderEntity(OrderSheetDto orderSheetDto) {
-        return Orders.builder()
-            .userId(orderSheetDto.getBuyerId())
-            .username(orderSheetDto.getBuyerName())
-            .userPhoneNumber(orderSheetDto.getBuyerPhoneNumber())
-            .address(orderSheetDto.getAddress())
-            .totalPrice(getTotalPrice(orderSheetDto.getOrderProductDetails()))
-            .build();
-    }
-
-
+    
     private Long getTotalPrice(List<OrderProductDetail> orderProductDetails) {
         Long totalPrice = 0L;
         for (OrderProductDetail orderProductDetail : orderProductDetails) {

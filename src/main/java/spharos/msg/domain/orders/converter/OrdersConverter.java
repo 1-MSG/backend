@@ -3,6 +3,7 @@ package spharos.msg.domain.orders.converter;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import spharos.msg.domain.orders.dto.OrderRequest.OrderSheetDto;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderPrice;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderResultDto;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderUserDto;
@@ -12,6 +13,16 @@ import spharos.msg.domain.users.entity.Users;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OrdersConverter {
+
+    public static Orders toEntity(OrderSheetDto orderSheetDto, Long totalPrice) {
+        return Orders.builder()
+            .userId(orderSheetDto.getBuyerId())
+            .username(orderSheetDto.getBuyerName())
+            .userPhoneNumber(orderSheetDto.getBuyerPhoneNumber())
+            .address(orderSheetDto.getAddress())
+            .totalPrice(totalPrice)
+            .build();
+    }
 
     public static OrderUserDto toDto(Users user) {
         return new OrderUserDto(
