@@ -11,17 +11,17 @@ public class CountPriceService {
 
     private final CountPriceRepository countPriceRepository;
 
-    public AdminPriceResponseDto.TotalSalesPrice TotalSalesPrice(){
+    public AdminPriceResponseDto.TotalSalesPrice TotalSalesPrice() {
         return countPriceRepository.findDataById(1L, AdminPriceResponseDto.TotalSalesPrice.class)
                 .orElseThrow();
     }
 
-    public AdminPriceResponseDto.TotalDeliveryFee TotalDeliveryFee(){
+    public AdminPriceResponseDto.TotalDeliveryFee TotalDeliveryFee() {
         return countPriceRepository.findDataById(1L, AdminPriceResponseDto.TotalDeliveryFee.class)
                 .orElseThrow();
     }
 
-    public AdminPriceResponseDto.TotalProfit TotalProfit(){
+    public AdminPriceResponseDto.TotalProfit TotalProfit() {
         return countPriceRepository.findDataById(1L, AdminPriceResponseDto.TotalProfit.class)
                 .orElseThrow();
     }

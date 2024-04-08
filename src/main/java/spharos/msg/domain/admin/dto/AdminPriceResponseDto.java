@@ -10,6 +10,7 @@ public class AdminPriceResponseDto {
     @AllArgsConstructor
     @Getter
     public static class TotalSalesPrice {
+
         private Long totalSalesPrice;
     }
 
@@ -17,6 +18,7 @@ public class AdminPriceResponseDto {
     @AllArgsConstructor
     @Getter
     public static class TotalDeliveryFee {
+
         private Long totalDeliveryFee;
     }
 
@@ -24,6 +26,7 @@ public class AdminPriceResponseDto {
     @AllArgsConstructor
     @Getter
     public static class TotalProfit {
+
         private Long totalProfit;
     }
 }
