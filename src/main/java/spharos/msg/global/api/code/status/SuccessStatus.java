@@ -26,9 +26,11 @@ public enum SuccessStatus implements BaseCode {
     FIND_USER_INFO_SUCCESS(HttpStatus.ACCEPTED, "USER217", "회원 정보 조회 성공"),
 
     SEARCH_USERS_INFO_SUCCESS(HttpStatus.ACCEPTED, "ADMIN001", "회원 정보 조회 성공"),
-    COUNT_CONNECT_USERS_SUCCESS(HttpStatus.ACCEPTED, "ADMIN002", "접속자 수 조회 성공"),
-    COUNT_TOTAL_USERS_SUCCESS(HttpStatus.ACCEPTED, "ADMIN002", "전체 회원 수 조회 성공"),
-    TODAY_SIGNUP_COUNT_SUCCESS(HttpStatus.ACCEPTED, "ADMIN002", "오늘 가입자 수 조회 성공"),
+    COUNT_CONNECT_USERS_SUCCESS(HttpStatus.ACCEPTED, "ADMIN003", "접속자 수 조회 성공"),
+    COUNT_TOTAL_USERS_SUCCESS(HttpStatus.ACCEPTED, "ADMIN004", "전체 회원 수 조회 성공"),
+    TODAY_SIGNUP_COUNT_SUCCESS(HttpStatus.ACCEPTED, "ADMIN005", "오늘 가입자 수 조회 성공"),
+    COUNT_SESSION_USERS_SUCCESS(HttpStatus.ACCEPTED, "ADMIN006", "전체 회원 탈퇴 수 조회 성공"),
+    COUNT_MONTHLY_ASSIGN_SUCCESS(HttpStatus.ACCEPTED, "ADMIN006", "월별 가입자 수 조회 성공"),
 
 
     ORDER_SUCCESS(HttpStatus.CREATED, "ORDER201", "상품 주문 성공"),
@@ -52,6 +54,7 @@ public enum SuccessStatus implements BaseCode {
 
     PRODUCT_DETAIL_READ_SUCCESS(HttpStatus.OK, "PRODUCT200", "상품 상세 조회 성공"),
     PRODUCT_INFO_SUCCESS(HttpStatus.OK, "PRODUCT200", "상품 정보 조회 성공"),
+    PRODUCT_BEST_SUCCESS(HttpStatus.OK, "PRODUCT200", "베스트 상품 조회 성공"),
 
     REVIEW_SAVE_SUCCESS(HttpStatus.CREATED, "REVIEW200", "상품 리뷰 작성 성공"),
     REVIEW_UPDATE_SUCCESS(HttpStatus.OK, "REVIEW200", "상품 리뷰 수정 성공"),

@@ -40,7 +40,7 @@ public class Orders extends BaseEntity {
     private String address;
 
     @NotBlank
-    private String userName;
+    private String username;
 
     @NotBlank
     private String userPhoneNumber;

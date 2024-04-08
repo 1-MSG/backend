@@ -16,7 +16,7 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<OrderHistoryDto> findAllByBuyerId(Long buyerId) {
+    public List<OrderHistoryDto> findAllByUserId(Long userId) {
         QOrders orders = QOrders.orders;
         return jpaQueryFactory
             .select(Projections.constructor(OrderHistoryDto.class,
@@ -24,7 +24,7 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
                 orders.totalPrice,
                 orders.createdAt))
             .from(orders)
-            .where(orders.userId.eq(buyerId))
+            .where(orders.userId.eq(userId))
             .orderBy(orders.createdAt.desc())
             .distinct()
             .fetch();

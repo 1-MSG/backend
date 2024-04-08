@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import spharos.msg.domain.search.dto.SearchResponse.SearchInputDto;
 import spharos.msg.domain.search.dto.SearchResponse.SearchProductDtos;
+import spharos.msg.domain.search.dto.SearchResponse.SearchTextDto;
 import spharos.msg.domain.search.service.SearchService;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
@@ -34,10 +34,10 @@ public class SearchController {
     }
 
     @GetMapping("search-list")
-    public ApiResponse<List<SearchInputDto>> searchInputDto(
+    public ApiResponse<List<SearchTextDto>> searchInputDto(
         @RequestParam(value = "keyword") String keyword
     ) {
-        List<SearchInputDto> searchInputDtos = searchService.findExpectedKeywords(keyword);
-        return ApiResponse.of(SuccessStatus.SEARCH_INPUT_SUCCESS, searchInputDtos);
+        List<SearchTextDto> searchTextDtos = searchService.findExpectedKeywords(keyword);
+        return ApiResponse.of(SuccessStatus.SEARCH_INPUT_SUCCESS, searchTextDtos);
     }
 }

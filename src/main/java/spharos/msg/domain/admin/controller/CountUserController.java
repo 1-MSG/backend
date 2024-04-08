@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import spharos.msg.domain.admin.dto.AdminResponseDto;
+import spharos.msg.domain.admin.dto.AdminResponseDto.MonthlySignupCount;
 import spharos.msg.domain.admin.service.CountUserService;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
@@ -60,9 +61,25 @@ public class CountUserController {
 
     @Operation(summary = "오늘 가입자 수 조회 API", description = "오늘 가입한 회원 수를 반환합니다.")
     @GetMapping("/count-today-user")
-    private ApiResponse<AdminResponseDto.UsersCount> todaySignupCount() {
+    private ApiResponse<AdminResponseDto.UsersCount> todaySignupCountApi() {
         return ApiResponse.of(
                 SuccessStatus.TODAY_SIGNUP_COUNT_SUCCESS,
                 countUserService.todaySignupCount());
+    }
+
+    @Operation(summary = "전체 탈퇴 회원 수 조회 API", description = "전체 탈퇴 회원의 수를 반환합니다.")
+    @GetMapping("/count-secession-user")
+    private ApiResponse<AdminResponseDto.SecessionCount> UsersSecessionCountApi() {
+        return ApiResponse.of(
+                SuccessStatus.COUNT_SESSION_USERS_SUCCESS,
+                countUserService.secessionCount());
+    }
+
+
+    @Operation(summary = "월별 가입자 회원 수 조회 API", description = "월별 가입자 회원의 수를 반환합니다.")
+    @GetMapping("/count-monthly-assign")
+    private ApiResponse<List<List<AdminResponseDto.MonthlySignupCount>>> MonthlyAssignCountApi() {
+        List<List<MonthlySignupCount>> result = countUserService.monthSignupCount();
+        return ApiResponse.of(SuccessStatus.COUNT_MONTHLY_ASSIGN_SUCCESS, result);
     }
 }
