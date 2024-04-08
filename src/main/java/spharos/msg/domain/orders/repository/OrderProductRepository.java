@@ -63,5 +63,15 @@ public class OrderProductRepository {
             .from(orderProduct)
             .where(orderProduct.createdAt.goe(startDate))
             .fetch();
+  }
+    public List<OrderProduct> findAllByOrderId(Long orderId) {
+        QOrderProduct orderProduct = QOrderProduct.orderProduct;
+        QOrders orders = QOrders.orders;
+
+        return jpaQueryFactory
+            .selectFrom(orderProduct)
+            .innerJoin(orderProduct.orders, orders)
+            .where(orders.id.eq(orderId))
+            .fetch();
     }
 }

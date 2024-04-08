@@ -21,8 +21,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.product.repository.ProductRepository;
-import spharos.msg.domain.search.dto.SearchResponse.SearchInputDto;
 import spharos.msg.domain.search.dto.SearchResponse.SearchProductDtos;
+import spharos.msg.domain.search.dto.SearchResponse.SearchTextDto;
 import spharos.msg.global.api.exception.SearchException;
 
 @SpringBootTest
@@ -47,10 +47,10 @@ class SearchServiceTest {
     }
 
     private List<String> getSearchResult(String keyword) {
-        List<SearchInputDto> expectedKeywords = searchService.findExpectedKeywords(keyword);
+        List<SearchTextDto> expectedKeywords = searchService.findExpectedKeywords(keyword);
         return expectedKeywords
             .stream()
-            .map(SearchInputDto::getProductName)
+            .map(SearchTextDto::getProductName)
             .toList();
     }
 
@@ -72,6 +72,7 @@ class SearchServiceTest {
         List<String> keywords = getSearchResult(keyword);
         Pattern pattern = Pattern.compile("[^a-zA-Z가-힣0-9\\s-]");
 
+        System.out.println("keywords = " + keywords);
         assertThat(keywords)
             .isNotEmpty()
             .noneMatch(e -> pattern.matcher(e).find());
@@ -179,5 +180,15 @@ class SearchServiceTest {
         assertThatThrownBy(
             () -> searchService.findExpectedKeywords(keyword))
             .isInstanceOf(SearchException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"바나나", "우유", "탑텐"})
+    @DisplayName("연관검색어에 검색했던 단어가 무조건 다 들어가 있어야 한다.")
+    void 연관검색어_포함_테스트(String keyword) {
+        List<SearchTextDto> results = searchService.findExpectedKeywords(keyword);
+        assertThat(results)
+            .isNotEmpty()
+            .allMatch(e -> e.getProductName().contains(keyword));
     }
 }

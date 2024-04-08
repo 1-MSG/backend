@@ -50,6 +50,7 @@ public class ProductService {
             .productStar(product.getProductSalesInfo().getProductStar())
             .discountRate(product.getDiscountRate())
             .discountPrice(discountPrice)
+            .responseTime(String.valueOf(System.currentTimeMillis()))
             .build();
     }
 
@@ -171,6 +172,27 @@ public class ProductService {
             .map(product -> ProductResponse.ProductIdDto.builder().productId(product.getId())
                 .build()).collect(
                 Collectors.toList());
+    }
+  
+    //어드민 베스트11 불러 오기
+    public List<ProductResponse.Best11Dto> getBest11Products() {
+        List<Product> products = productRepository.findTop11ByOrderByProductSalesInfoProductSellTotalCountDesc();
+
+        return products.stream()
+            .map(product -> {
+                ProductImage productImage = productImageRepository.findByProductAndImageIndex(product, 0)
+                    .orElse(new ProductImage());
+
+                return ProductResponse.Best11Dto.builder()
+                    .productId(product.getId())
+                    .productName(product.getProductName())
+                    .productBrand(product.getBrand().getBrandName())
+                    .productPrice(product.getProductPrice())
+                    .productImage(productImage.getProductImageUrl())
+                    .productSellTotalCount(product.getProductSalesInfo().getProductSellTotalCount())
+                    .build();
+            })
+            .toList();
     }
 
     //할인가 계산하는 method
