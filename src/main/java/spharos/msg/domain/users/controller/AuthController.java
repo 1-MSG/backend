@@ -30,7 +30,7 @@ public class AuthController {
 
     @Operation(summary = "통합회원가입", description = "통합회원 회원가입")
     @PostMapping("/signup")
-    public ApiResponse<?> signUpUnion(
+    public ApiResponse<Void> signUpUnion(
             @RequestBody SignUpRequestDto signUpRequestDto) {
         authService.signUp(signUpRequestDto);
         return ApiResponse.of(SuccessStatus.SIGN_UP_SUCCESS_UNION, null);
@@ -41,13 +41,12 @@ public class AuthController {
     public ApiResponse<LoginOutDto> loginUnion(
             @RequestBody LoginRequestDto loginRequestDto
     ) {
-        LoginOutDto login = authService.login(loginRequestDto);
-        return ApiResponse.of(SuccessStatus.LOGIN_SUCCESS_UNION, login);
+        return ApiResponse.of(SuccessStatus.LOGIN_SUCCESS_UNION, authService.login(loginRequestDto));
     }
 
     @Operation(summary = "로그아웃", description = "로그인 회원 로그아웃")
     @DeleteMapping("/logout/{userId}")
-    public ApiResponse<?> logout(
+    public ApiResponse<Void> logout(
             @PathVariable(name = "userId") Long userId
     ) {
         authService.logout(userId);
@@ -56,16 +55,15 @@ public class AuthController {
 
     @Operation(summary = "Reissue Token", description = "Access Token 재발급")
     @GetMapping("/reissue")
-    public ApiResponse<?> reissueToken(
+    public ApiResponse<ReissueOutDto> reissueToken(
             @RequestHeader(AUTHORIZATION) String refreshToken
     ) {
-        ReissueOutDto reissueOutDto = authService.reissueToken(refreshToken);
-        return ApiResponse.of(SuccessStatus.TOKEN_REISSUE_COMPLETE, reissueOutDto);
+        return ApiResponse.of(SuccessStatus.TOKEN_REISSUE_COMPLETE, authService.reissueToken(refreshToken));
     }
 
     @Operation(summary = "아이디 중복확인", description = "입력받은 아이디의 중복 여부를 확인합니다.")
     @PostMapping("/check-duplicate-id")
-    public ApiResponse<?> duplicateCheckLoginId(
+    public ApiResponse<Void> duplicateCheckLoginId(
             @RequestBody DuplicationCheckRequestDto duplicationCheckRequestDto
     ) {
         authService.duplicateCheckLoginId(duplicationCheckRequestDto);
@@ -74,7 +72,7 @@ public class AuthController {
 
     @Operation(summary = "회원 탈퇴", description = "회원을 탈퇴 시킵니다.")
     @DeleteMapping("/secession/{userId}")
-    public ApiResponse<?> withdrawMember(
+    public ApiResponse<Void> withdrawMember(
             @PathVariable(name = "userId") Long userId
     ) {
         authService.withdrawMember(userId);
@@ -83,7 +81,7 @@ public class AuthController {
 
     @Operation(summary = "비밀번호 변경", description = "비밀번호를 변경 합니다")
     @PatchMapping("/change-password")
-    public ApiResponse<?> changePassword(
+    public ApiResponse<Void> changePassword(
             @RequestBody ChangePasswordRequestDto changePasswordRequestDto
     ) {
         authService.changePassword(changePasswordRequestDto);
@@ -95,15 +93,13 @@ public class AuthController {
     @GetMapping("/find-id/{email}")
     public ApiResponse<FindIdOutDto> findUserId(
             @PathVariable(name = "email") String email) {
-        FindIdOutDto loginUnionId = authService.findLoginUnionId(email);
-        return ApiResponse.of(SuccessStatus.FIND_LOGIN_ID_SUCCESS, loginUnionId);
+        return ApiResponse.of(SuccessStatus.FIND_LOGIN_ID_SUCCESS, authService.findLoginUnionId(email));
     }
 
     @Operation(summary = "MyPage 사용자 정보 조회", description = "My Page 의 사용자 정보를 반환 합니다.")
     @GetMapping("/users")
     public ApiResponse<FindUserInfoOutDto> findUserInfo(
             @AuthenticationPrincipal UserDetails userDetails) {
-        FindUserInfoOutDto userInfo = authService.findUserInfo(userDetails.getUsername());
-        return ApiResponse.of(SuccessStatus.FIND_USER_INFO_SUCCESS, userInfo);
+        return ApiResponse.of(SuccessStatus.FIND_USER_INFO_SUCCESS, authService.findUserInfo(userDetails.getUsername()));
     }
 }

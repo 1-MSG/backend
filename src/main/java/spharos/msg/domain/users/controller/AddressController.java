@@ -43,7 +43,7 @@ public class AddressController {
 
     @Operation(summary = "배송지 삭제", description = "해당 회원의 선택된 배송지를 삭제합니다.")
     @DeleteMapping("/{userId}/{addressId}")
-    public ApiResponse<?> deleteAddress(
+    public ApiResponse<Void> deleteAddress(
             @PathVariable("userId") Long userId,
             @PathVariable("addressId") Long addressId
     ) {
