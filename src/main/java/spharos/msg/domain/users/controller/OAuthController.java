@@ -7,8 +7,7 @@ import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import spharos.msg.domain.users.dto.request.EasyLoginRequestDto;
-import spharos.msg.domain.users.dto.request.EasySignUpRequestDto;
+import spharos.msg.domain.users.dto.request.OAuthRequest;
 import spharos.msg.domain.users.dto.response.FindIdOutDto;
 import spharos.msg.domain.users.dto.response.LoginOutDto;
 import spharos.msg.domain.users.service.OAuthServiceImpl;
@@ -27,19 +26,19 @@ public class OAuthController {
     @Operation(summary = "간편 회원가입", description = "간편회원 회원가입")
     @PostMapping("/signup")
     public ApiResponse<Optional<LoginOutDto>> signUpEasy(
-            @RequestBody EasySignUpRequestDto easySignUpRequestDto
+            @RequestBody OAuthRequest.EasySignUpDto dto
     ) {
         return ApiResponse.of(SuccessStatus.SIGN_UP_SUCCESS_EASY,
-                oAuthService.easySignUp(easySignUpRequestDto));
+                oAuthService.easySignUp(dto));
     }
 
     @Operation(summary = "간편 회원로그인", description = "간편회원 로그인")
     @PostMapping("/login")
     public ApiResponse<LoginOutDto> loginEasy(
-            @RequestBody EasyLoginRequestDto easyLoginRequestDto
+            @RequestBody OAuthRequest.LoginDto dto
     ) {
         return ApiResponse.of(SuccessStatus.LOGIN_SUCCESS_EASY,
-                oAuthService.easyLogin(easyLoginRequestDto));
+                oAuthService.easyLogin(dto));
     }
 
     @Operation(summary = "간편 회원 아이디 찾기", description = "입력받은 이메일로 간편회원의 로그인 아이디를 조회합니다.")
