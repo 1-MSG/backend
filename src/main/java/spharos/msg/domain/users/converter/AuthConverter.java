@@ -56,7 +56,7 @@ public class AuthConverter {
                 .builder()
                 .phoneNumber(user.getPhoneNumber())
                 .email(user.getEmail())
-                .userName(user.getUsername())
+                .userName(user.readUserName())
                 .build();
     }
 
