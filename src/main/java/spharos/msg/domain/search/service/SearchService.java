@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spharos.msg.domain.search.converter.SearchConverter;
 import spharos.msg.domain.search.dto.SearchResponse.SearchProductDto;
 import spharos.msg.domain.search.dto.SearchResponse.SearchProductDtos;
 import spharos.msg.domain.search.dto.SearchResponse.SearchTextDto;
@@ -35,13 +36,7 @@ public class SearchService {
         }
 
         Page<SearchProductDto> searched = searchRepository.searchAllProduct(keyword, pageable);
-
-        return SearchProductDtos
-            .builder()
-            .responseTime(String.valueOf(System.currentTimeMillis()))
-            .searchProductDtos(searched.getContent())
-            .isLast(searched.isLast())
-            .build();
+        return SearchConverter.toDto(searched, String.valueOf(System.currentTimeMillis()));
     }
 
     public List<SearchTextDto> findExpectedKeywords(String keyword) {
@@ -70,7 +65,8 @@ public class SearchService {
 
         for (String text : splitedText) {
             if (originText.indexOf(text) >= startIndex) {
-                result.add(addSearchText(searchText, text));
+                SearchTextDto madeText = makeText(searchText, text);
+                result.add(madeText);
             }
         }
         return result;
@@ -84,7 +80,7 @@ public class SearchService {
         return index;
     }
 
-    private SearchTextDto addSearchText(StringBuilder searchText, String text) {
+    private SearchTextDto makeText(StringBuilder searchText, String text) {
         StringBuilder addWord = (searchText.length() == FIRST_WORD) ?
             searchText.append(text) :
             searchText.append(KEYWORD_DELIMITER + text);
