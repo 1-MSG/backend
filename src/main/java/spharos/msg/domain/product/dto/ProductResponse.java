@@ -35,10 +35,12 @@ public class ProductResponse {
         private final Long reviewCount;
         @Schema(description = "상품 이미지")
         private final String productImage;
+        @Schema(description = "응답 시간")
+        private final String responseTime;
 
         @Builder
         private ProductInfoDto(String productBrand, String productName, Integer productPrice, String productImage,
-            BigDecimal productStar, Integer discountPrice, BigDecimal discountRate, Long reviewCount) {
+            BigDecimal productStar, Integer discountPrice, BigDecimal discountRate, Long reviewCount, String responseTime) {
 
             this.productBrand = productBrand;
             this.productName = productName;
@@ -48,6 +50,7 @@ public class ProductResponse {
             this.discountRate = discountRate;
             this.discountPrice = discountPrice;
             this.productImage = productImage;
+            this.responseTime = responseTime;
         }
     }
 
@@ -112,4 +115,34 @@ public class ProductResponse {
             this.productId = productId;
         }
     }
+
+    @Getter
+    public static class Best11Dto {
+
+        @Schema(description = "상품 id")
+        private final Long productId;
+        @Schema(description = "상품 브랜드")
+        private final String productBrand;
+        @Schema(description = "상품 이름")
+        private final String productName;
+        @Schema(description = "상품 이미지")
+        private final String productImage;
+        @Schema(description = "상품 가격")
+        private final Integer productPrice;
+        @Schema(description = "판매량")
+        private final Long productSellTotalCount;
+
+        @Builder
+        public Best11Dto(Long productId, String productBrand, String productName,
+            String productImage, Integer productPrice, Long productSellTotalCount) {
+            this.productId = productId;
+            this.productBrand = productBrand;
+            this.productName = productName;
+            this.productImage = productImage;
+            this.productPrice = productPrice;
+            this.productSellTotalCount = productSellTotalCount;
+        }
+
+    }
+
 }

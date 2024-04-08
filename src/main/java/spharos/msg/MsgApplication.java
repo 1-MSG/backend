@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 @OpenAPIDefinition(
     servers = {
-        @Server(url = "https://sssg.shop", description = "Default Server URL"),
+//        @Server(url = "https://sssg.shop", description = "Default Server URL"),
         @Server(url = "http://localhost:8282", description = "Local Test Server URL")
     }
 )

@@ -1,5 +1,6 @@
 package spharos.msg.domain.product.controller;
 
+import static spharos.msg.global.api.code.status.SuccessStatus.PRODUCT_BEST_SUCCESS;
 import static spharos.msg.global.api.code.status.SuccessStatus.PRODUCT_INFO_SUCCESS;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -87,5 +88,13 @@ public class ProductController {
         @PageableDefault(size = 10, page = 0, sort = "id") Pageable pageable
     ) {
         return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getRankingProducts(pageable));
+    }
+
+    @Operation(summary = "베스트11 조회",
+        description = "베스트 상품 11 객체를 반환합니다")
+    @GetMapping("/ranking11")
+    public ApiResponse<List<ProductResponse.Best11Dto>> getBest11Products(
+    ) {
+        return ApiResponse.of(PRODUCT_BEST_SUCCESS, productService.getBest11Products());
     }
 }
