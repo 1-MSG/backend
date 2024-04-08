@@ -64,7 +64,6 @@ public class OrderProduct extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Orders orders;
-
     private String productName;
 
     private String productImage;

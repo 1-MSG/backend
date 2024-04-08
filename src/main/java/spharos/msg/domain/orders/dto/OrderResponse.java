@@ -23,9 +23,9 @@ public class OrderResponse {
         private Long totalPrice;
         private String address;
         private String phoneNumber;
-        private Long orderId;
+        private String username;
+        private LocalDateTime createdAt;
         List<OrderPrice> orderPrices;
-
     }
 
     @Getter
