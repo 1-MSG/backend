@@ -50,6 +50,7 @@ public class ProductService {
             .productStar(product.getProductSalesInfo().getProductStar())
             .discountRate(product.getDiscountRate())
             .discountPrice(discountPrice)
+            .responseTime(String.valueOf(System.currentTimeMillis()))
             .build();
     }
 

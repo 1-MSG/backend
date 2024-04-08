@@ -35,10 +35,12 @@ public class ProductResponse {
         private final Long reviewCount;
         @Schema(description = "상품 이미지")
         private final String productImage;
+        @Schema(description = "응답 시간")
+        private final String responseTime;
 
         @Builder
         private ProductInfoDto(String productBrand, String productName, Integer productPrice, String productImage,
-            BigDecimal productStar, Integer discountPrice, BigDecimal discountRate, Long reviewCount) {
+            BigDecimal productStar, Integer discountPrice, BigDecimal discountRate, Long reviewCount, String responseTime) {
 
             this.productBrand = productBrand;
             this.productName = productName;
@@ -48,6 +50,7 @@ public class ProductResponse {
             this.discountRate = discountRate;
             this.discountPrice = discountPrice;
             this.productImage = productImage;
+            this.responseTime = responseTime;
         }
     }
 
