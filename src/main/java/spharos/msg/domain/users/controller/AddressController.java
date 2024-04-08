@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import spharos.msg.domain.users.dto.request.AddressRequestDto;
+import spharos.msg.domain.users.dto.request.AddressRequest;
 import spharos.msg.domain.users.dto.response.SearchAddressOutDto;
 import spharos.msg.domain.users.service.AddressService;
 import spharos.msg.global.api.ApiResponse;
@@ -25,10 +25,10 @@ public class AddressController {
     @Operation(summary = "배송지 추가", description = "해당 회원의 배송지를 추가 합니다.")
     @PostMapping("/{userId}")
     public ApiResponse<Void> addAddress(
-            @RequestBody AddressRequestDto addressRequestDto,
+            @RequestBody AddressRequest.AddAddressDto dto,
             @PathVariable(name = "userId") Long userId
     ) {
-        addressService.createAddress(addressRequestDto, userId);
+        addressService.createAddress(dto, userId);
         return ApiResponse.of(SuccessStatus.DELIVERY_ADDRESS_ADD_SUCCESS, null);
     }
 

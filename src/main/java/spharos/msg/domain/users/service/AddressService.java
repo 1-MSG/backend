@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spharos.msg.domain.users.dto.request.AddressRequestDto;
+import spharos.msg.domain.users.dto.request.AddressRequest;
 import spharos.msg.domain.users.dto.response.SearchAddressOutDto;
 import spharos.msg.domain.users.entity.Address;
 import spharos.msg.domain.users.entity.Users;
@@ -25,19 +25,19 @@ public class AddressService {
     private final UsersRepository usersRepository;
 
     @Transactional
-    public void createAddress(AddressRequestDto addressRequestDto, Long userId) {
+    public void createAddress(AddressRequest.AddAddressDto dto, Long userId) {
         Users users = usersRepository.findById(userId).orElseThrow(
                 () -> new UsersException(ErrorStatus.DELIVERY_ADDRESS_ADD_FAIL)
         );
 
         addressRepository.save(Address
                 .builder()
-                .phoneNumber(addressRequestDto.getMobileNumber())
-                .addressNickname(addressRequestDto.getAddressName())
-                .recipientPhoneNumber(addressRequestDto.getAddressPhoneNumber())
-                .recipient(addressRequestDto.getRecipient())
+                .phoneNumber(dto.getMobileNumber())
+                .addressNickname(dto.getAddressName())
+                .recipientPhoneNumber(dto.getAddressPhoneNumber())
+                .recipient(dto.getRecipient())
                 .users(users)
-                .addressDetail(addressRequestDto.getAddress())
+                .addressDetail(dto.getAddress())
                 .build());
     }
 
