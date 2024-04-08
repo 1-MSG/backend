@@ -41,7 +41,8 @@ public class SearchResponse {
     @EqualsAndHashCode
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SearchInputDto {
+    @ToString
+    public static class SearchTextDto {
 
         private String productName;
     }
