@@ -8,14 +8,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spharos.msg.domain.users.dto.request.ChangePasswordRequestDto;
-import spharos.msg.domain.users.dto.request.DuplicationCheckRequestDto;
-import spharos.msg.domain.users.dto.request.LoginRequestDto;
+import spharos.msg.domain.users.dto.request.AuthRequest;
 import spharos.msg.domain.users.dto.response.FindIdOutDto;
 import spharos.msg.domain.users.dto.response.FindUserInfoOutDto;
 import spharos.msg.domain.users.dto.response.LoginOutDto;
 import spharos.msg.domain.users.dto.response.ReissueOutDto;
-import spharos.msg.domain.users.dto.request.SignUpRequestDto;
 import spharos.msg.domain.users.entity.UserStatus;
 import spharos.msg.domain.users.entity.Users;
 import spharos.msg.domain.users.repository.UsersRepository;
@@ -37,42 +34,42 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public void signUp(SignUpRequestDto signUpRequestDto) {
+    public void signUp(AuthRequest.SignUpDto dto) {
 
         //중복회원 검색
-        duplicateCheckLoginId(DuplicationCheckRequestDto
+        duplicateCheckLoginId(AuthRequest.DuplicationCheckDto
                         .builder()
-                        .loginId(signUpRequestDto.getLoginId())
+                        .loginId(dto.getLoginId())
                         .build());
 
         //탈퇴한 회원 검증.
         //한번 탈퇴하면 절대 회원가입/로그인 금지 되는 정책 적용 중.
-        if (usersRepository.findByLoginId(signUpRequestDto.getLoginId())
+        if (usersRepository.findByLoginId(dto.getLoginId())
                 .filter(m -> m.getStatus() == UserStatus.NOT_USER).isPresent()) {
             throw new UsersException(ErrorStatus.WITHDRAW_USER_FAIL);
         }
 
         String uuid = UUID.randomUUID().toString();
         Users user = new Users(uuid);
-        user.passwordToHash(signUpRequestDto.getPassword());
+        user.passwordToHash(dto.getPassword());
 
         usersRepository.save(Users
                 .builder()
-                .email(signUpRequestDto.getEmail())
-                .userName(signUpRequestDto.getUsername())
-                .loginId(signUpRequestDto.getLoginId())
-                .phoneNumber(signUpRequestDto.getPhoneNumber())
+                .email(dto.getEmail())
+                .userName(dto.getUsername())
+                .loginId(dto.getLoginId())
+                .phoneNumber(dto.getPhoneNumber())
                 .password(user.getPassword())
                 .uuid(user.getUuid())
-                .address(signUpRequestDto.getAddress())
+                .address(dto.getAddress())
                 .status(UserStatus.UNION)
                 .build());
     }
 
     @Transactional(readOnly = true)
     @Override
-    public LoginOutDto login(LoginRequestDto loginRequestDto) {
-        Users findUser = usersRepository.findByLoginId(loginRequestDto.getLoginId())
+    public LoginOutDto login(AuthRequest.LoginDto dto) {
+        Users findUser = usersRepository.findByLoginId(dto.getLoginId())
                 .orElseThrow(() -> new UsersException(ErrorStatus.LOG_IN_UNION_FAIL));
 
         //탈퇴 회원 검증 로직 추가
@@ -83,7 +80,7 @@ public class AuthServiceImpl implements AuthService {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         findUser.getUsername(),
-                        loginRequestDto.getPassword()
+                        dto.getPassword()
                 )
         );
 
@@ -133,8 +130,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional(readOnly = true)
     @Override
-    public void duplicateCheckLoginId(DuplicationCheckRequestDto duplicationCheckRequestDto) {
-        if (usersRepository.existsByLoginId(duplicationCheckRequestDto.getLoginId())) {
+    public void duplicateCheckLoginId(AuthRequest.DuplicationCheckDto dto) {
+        if (usersRepository.existsByLoginId(dto.getLoginId())) {
             throw new UsersException(ErrorStatus.DUPLICATION_LOGIN_ID);
         }
     }
@@ -161,12 +158,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public void changePassword(ChangePasswordRequestDto changePasswordRequestDto) {
-        Users findUser = usersRepository.findByLoginId(changePasswordRequestDto.getLoginId())
+    public void changePassword(AuthRequest.ChangePasswordDto dto) {
+        Users findUser = usersRepository.findByLoginId(dto.getLoginId())
                 .orElseThrow();
 
         if (validatePassword(findUser.getPassword(),
-                changePasswordRequestDto.getModifyPassword())) {
+                dto.getModifyPassword())) {
             throw new UsersException(ErrorStatus.SAME_PASSWORD);
         }
 
@@ -175,7 +172,7 @@ public class AuthServiceImpl implements AuthService {
                 .id(findUser.getId())
                 .loginId(findUser.getLoginId())
                 .uuid(findUser.getUuid())
-                .password(hashPassword(changePasswordRequestDto.getModifyPassword()))
+                .password(hashPassword(dto.getModifyPassword()))
                 .phoneNumber(findUser.getPhoneNumber())
                 .email(findUser.getEmail())
                 .userName(findUser.readUserName())

@@ -8,10 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import spharos.msg.domain.users.dto.request.ChangePasswordRequestDto;
-import spharos.msg.domain.users.dto.request.DuplicationCheckRequestDto;
-import spharos.msg.domain.users.dto.request.LoginRequestDto;
-import spharos.msg.domain.users.dto.request.SignUpRequestDto;
+import spharos.msg.domain.users.dto.request.AuthRequest;
 import spharos.msg.domain.users.dto.response.FindIdOutDto;
 import spharos.msg.domain.users.dto.response.FindUserInfoOutDto;
 import spharos.msg.domain.users.dto.response.LoginOutDto;
@@ -31,18 +28,18 @@ public class AuthController {
     @Operation(summary = "통합회원가입", description = "통합회원 회원가입")
     @PostMapping("/signup")
     public ApiResponse<Void> signUpUnion(
-            @RequestBody SignUpRequestDto signUpRequestDto) {
-        authService.signUp(signUpRequestDto);
+            @RequestBody AuthRequest.SignUpDto dto) {
+        authService.signUp(dto);
         return ApiResponse.of(SuccessStatus.SIGN_UP_SUCCESS_UNION, null);
     }
 
     @Operation(summary = "로그인", description = "통합회원 로그인")
     @PostMapping("/login")
     public ApiResponse<LoginOutDto> loginUnion(
-            @RequestBody LoginRequestDto loginRequestDto
+            @RequestBody AuthRequest.LoginDto dto
     ) {
         return ApiResponse.of(SuccessStatus.LOGIN_SUCCESS_UNION,
-                authService.login(loginRequestDto));
+                authService.login(dto));
     }
 
     @Operation(summary = "로그아웃", description = "로그인 회원 로그아웃")
@@ -66,9 +63,9 @@ public class AuthController {
     @Operation(summary = "아이디 중복확인", description = "입력받은 아이디의 중복 여부를 확인합니다.")
     @PostMapping("/check-duplicate-id")
     public ApiResponse<Void> duplicateCheckLoginId(
-            @RequestBody DuplicationCheckRequestDto duplicationCheckRequestDto
+            @RequestBody AuthRequest.DuplicationCheckDto dto
     ) {
-        authService.duplicateCheckLoginId(duplicationCheckRequestDto);
+        authService.duplicateCheckLoginId(dto);
         return ApiResponse.of(SuccessStatus.DUPLICATION_CHECK_SUCCESS, null);
     }
 
@@ -84,9 +81,9 @@ public class AuthController {
     @Operation(summary = "비밀번호 변경", description = "비밀번호를 변경 합니다")
     @PatchMapping("/change-password")
     public ApiResponse<Void> changePassword(
-            @RequestBody ChangePasswordRequestDto changePasswordRequestDto
+            @RequestBody AuthRequest.ChangePasswordDto dto
     ) {
-        authService.changePassword(changePasswordRequestDto);
+        authService.changePassword(dto);
         return ApiResponse.of(SuccessStatus.CHANGE_PASSWORD_SUCCESS, null);
     }
 
