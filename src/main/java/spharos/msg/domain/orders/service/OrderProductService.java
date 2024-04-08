@@ -15,6 +15,7 @@ import spharos.msg.domain.orders.dto.OrderResponse.OrderPrice;
 import spharos.msg.domain.orders.entity.OrderProduct;
 import spharos.msg.domain.orders.entity.Orders;
 import spharos.msg.domain.orders.repository.OrderProductRepository;
+import spharos.msg.domain.product.converter.ProductSalesInfoConverter;
 import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductSalesInfo;
 import spharos.msg.domain.product.repository.ProductRepository;
@@ -44,6 +45,7 @@ public class OrderProductService {
             OrderProduct orderProductEntity = createOrderEntity(detail, product, orders);
             orderProductEntities.add(orderProductEntity);
         }
+
         orderProductRepository.saveAll(orderProductEntities);
     }
 
@@ -56,13 +58,8 @@ public class OrderProductService {
     }
 
     private void updateProductOrderQuantity(ProductSalesInfo productSalesInfo, int orderQuantity) {
-        ProductSalesInfo updated = ProductSalesInfo
-            .builder()
-            .id(productSalesInfo.getId())
-            .productStar(productSalesInfo.getProductStar())
-            .productSellTotalCount(productSalesInfo.getProductSellTotalCount() + orderQuantity)
-            .reviewCount(productSalesInfo.getReviewCount())
-            .build();
+        ProductSalesInfo updated = ProductSalesInfoConverter
+            .toEntity(productSalesInfo, orderQuantity);
 
         productSalesInfoRepository.save(updated);
     }
