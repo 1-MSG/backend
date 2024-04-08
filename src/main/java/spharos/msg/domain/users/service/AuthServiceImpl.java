@@ -142,7 +142,9 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     @Override
     public void withdrawMember(Long userId) {
-        Users findUser = usersRepository.findById(userId).orElseThrow();
+        Users findUser = usersRepository.findById(userId).orElseThrow(
+                () -> new UsersException(ErrorStatus.NOT_USER)
+        );
         usersRepository.save(Users
                 .builder()
                 .id(findUser.getId())
