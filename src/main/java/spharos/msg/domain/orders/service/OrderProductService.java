@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spharos.msg.domain.options.service.OptionsService;
 import spharos.msg.domain.orders.converter.OrderProductConverter;
 import spharos.msg.domain.orders.converter.OrdersConverter;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderProductDetail;
@@ -30,6 +31,7 @@ public class OrderProductService {
     private final OrderProductRepository orderProductRepository;
     private final ProductRepository productRepository;
     private final ProductSalesInfoRepository productSalesInfoRepository;
+    private final OptionsService optionsService;
 
     @Transactional
     public void saveAllByOrderSheet(OrderSheetDto orderSheetDto, Orders orders) {
@@ -39,8 +41,7 @@ public class OrderProductService {
         for (OrderProductDetail detail : orderProductDetails) {
             Product product = findProduct(detail);
             updateProductOrderQuantity(product.getProductSalesInfo(), detail.getOrderQuantity());
-            OrderProduct orderProductEntity = OrderProductConverter.toEntity(detail, product,
-                orders);
+            OrderProduct orderProductEntity = createOrderEntity(detail, product, orders);
             orderProductEntities.add(orderProductEntity);
         }
         orderProductRepository.saveAll(orderProductEntities);
@@ -70,5 +71,16 @@ public class OrderProductService {
         return productRepository
             .findById(detail.getProductId())
             .orElseThrow(() -> new ProductNotExistException(ErrorStatus.PRODUCT_ERROR));
+    }
+
+    private OrderProduct createOrderEntity(OrderProductDetail orderProductDetail,
+        Product product, Orders orders) {
+        String productOptions = getProductOptions(orderProductDetail);
+        return OrderProductConverter.toEntity(orderProductDetail, product, orders, productOptions);
+    }
+
+    private String getProductOptions(OrderProductDetail detail) {
+        Long productOptionId = detail.getProductOptionId();
+        return optionsService.getOptions(productOptionId);
     }
 }

@@ -13,7 +13,8 @@ public class OrderProductConverter {
     private static final boolean COMPLETED_DEFAULT = false;
 
     public static OrderProduct toEntity(
-        OrderProductDetail orderProductDetail, Product product, Orders orders) {
+        OrderProductDetail orderProductDetail, Product product, Orders orders,
+        String productOptions) {
         return OrderProduct
             .builder()
             .orderQuantity(orderProductDetail.getOrderQuantity())
@@ -23,7 +24,7 @@ public class OrderProductConverter {
             .productId(orderProductDetail.getProductId())
             .orderIsCompleted(COMPLETED_DEFAULT)
             .orders(orders)
-            .productOption("옵션1 옵션2 옵션3") // 임시값 - 변경 예정
+            .productOption(productOptions)
             .productName(product.getProductName())
             .productImage("TEMP VALUE") //임시값 - 변경 예정
             .build();
