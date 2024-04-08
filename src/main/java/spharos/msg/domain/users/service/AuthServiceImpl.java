@@ -39,8 +39,14 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void signUp(SignUpRequestDto signUpRequestDto) {
 
+        //중복회원 검색
+        duplicateCheckLoginId(DuplicationCheckRequestDto
+                        .builder()
+                        .loginId(signUpRequestDto.getLoginId())
+                        .build());
+
         //탈퇴한 회원 검증.
-        //한번 탈퇴하면 절떄로 회원가입/로그인 금지 되는 정책.
+        //한번 탈퇴하면 절대 회원가입/로그인 금지 되는 정책 적용 중.
         if (usersRepository.findByLoginId(signUpRequestDto.getLoginId())
                 .filter(m -> m.getStatus() == UserStatus.NOT_USER).isPresent()) {
             throw new UsersException(ErrorStatus.WITHDRAW_USER_FAIL);

@@ -13,5 +13,4 @@ public class SignUpRequestDto {
     public String address;
     public String phoneNumber;
     public String email;
-//    public Boolean isEasy;
 }
