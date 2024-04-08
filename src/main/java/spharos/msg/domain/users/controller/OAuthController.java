@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import spharos.msg.domain.users.dto.request.OAuthRequest;
 import spharos.msg.domain.users.dto.response.OAuthResponse;
-import spharos.msg.domain.users.service.OAuthServiceImpl;
+import spharos.msg.domain.users.service.OAuthService;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
@@ -20,7 +20,7 @@ import spharos.msg.global.api.code.status.SuccessStatus;
 @Tag(name = "OAuth", description = "간편 로그인 관련 API")
 public class OAuthController {
 
-    private final OAuthServiceImpl oAuthService;
+    private final OAuthService oAuthService;
 
     @Operation(summary = "간편 회원가입", description = "간편회원 회원가입")
     @PostMapping("/signup")

@@ -1,4 +1,4 @@
-package spharos.msg.domain.users.service;
+package spharos.msg.domain.users.service.impl;
 
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +13,7 @@ import spharos.msg.domain.users.dto.response.AuthResponse;
 import spharos.msg.domain.users.entity.UserStatus;
 import spharos.msg.domain.users.entity.Users;
 import spharos.msg.domain.users.repository.UsersRepository;
+import spharos.msg.domain.users.service.AuthService;
 import spharos.msg.global.api.code.status.ErrorStatus;
 import spharos.msg.global.api.exception.JwtTokenException;
 import spharos.msg.global.api.exception.UsersException;

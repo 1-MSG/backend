@@ -1,4 +1,4 @@
-package spharos.msg.domain.users.service;
+package spharos.msg.domain.users.service.impl;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +14,7 @@ import spharos.msg.domain.users.entity.UserStatus;
 import spharos.msg.domain.users.entity.Users;
 import spharos.msg.domain.users.repository.UserOAuthListRepository;
 import spharos.msg.domain.users.repository.UsersRepository;
+import spharos.msg.domain.users.service.OAuthService;
 import spharos.msg.global.api.code.status.ErrorStatus;
 import spharos.msg.global.api.exception.UsersException;
 import spharos.msg.global.security.JwtTokenProvider;
