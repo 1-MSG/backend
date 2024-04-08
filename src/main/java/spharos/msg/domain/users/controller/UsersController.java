@@ -6,8 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import spharos.msg.domain.users.dto.request.EmailAuthRequestDto;
-import spharos.msg.domain.users.dto.request.EmailSendRequestDto;
+import spharos.msg.domain.users.dto.request.UsersRequest;
 import spharos.msg.domain.users.dto.response.EmailOutDto;
 import spharos.msg.domain.users.service.UsersService;
 import spharos.msg.global.api.ApiResponse;
@@ -26,20 +25,20 @@ public class UsersController {
             description = "이메일 중복 확인 후, 이메일 인증을 위한 이메일을 발송 합니다.")
     @PostMapping("/send-mail")
     public ApiResponse<EmailOutDto> sendEmail(
-            @RequestBody EmailSendRequestDto emailSendRequestDto
+            @RequestBody UsersRequest.EmailSendDto dto
     ) {
-        usersService.duplicateCheckEmail(emailSendRequestDto);
+        usersService.duplicateCheckEmail(dto);
         return ApiResponse.of(SuccessStatus.EMAIL_SEND_SUCCESS,
-                usersService.sendMail(emailSendRequestDto));
+                usersService.sendMail(dto));
     }
 
     @Operation(summary = "이메일 인증 확인",
             description = "입력받은 Secret key 로 인증을 진행 합니다.")
     @PostMapping("/authenticate-email")
     public ApiResponse<Void> authenticateEmail(
-            @RequestBody EmailAuthRequestDto emailAuthRequestDto
+            @RequestBody UsersRequest.EmailAuthenticationDto dto
     ) {
-        usersService.authenticateEmail(emailAuthRequestDto);
+        usersService.authenticateEmail(dto);
         return ApiResponse.of(SuccessStatus.EMAIL_AUTH_SUCCESS, null);
     }
 }

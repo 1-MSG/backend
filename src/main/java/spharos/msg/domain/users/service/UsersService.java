@@ -12,8 +12,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spharos.msg.domain.users.dto.request.EmailAuthRequestDto;
-import spharos.msg.domain.users.dto.request.EmailSendRequestDto;
+import spharos.msg.domain.users.dto.request.UsersRequest;
 import spharos.msg.domain.users.dto.response.EmailOutDto;
 import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.global.api.code.status.ErrorStatus;
@@ -37,11 +36,11 @@ public class UsersService {
     @Value("${spring.mail.stringSize}")
     private int stringSize;
 
-    public EmailOutDto sendMail(EmailSendRequestDto emailSendRequestDto) {
+    public EmailOutDto sendMail(UsersRequest.EmailSendDto dto) {
         MimeMessage message = mailSender.createMimeMessage();
         String secretKey = createKey();
         try {
-            String email = emailSendRequestDto.getEmail();
+            String email = dto.getEmail();
 
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true, "UTF-8");
             mimeMessageHelper.setFrom(username);
@@ -73,18 +72,18 @@ public class UsersService {
                 .toString();
     }
 
-    public void authenticateEmail(EmailAuthRequestDto emailAuthRequestDto) {
-        String findSecretKey = redisService.getEmailSecretKey(emailAuthRequestDto.getEmail());
-        if (!Objects.equals(findSecretKey, emailAuthRequestDto.getSecretKey())) {
+    public void authenticateEmail(UsersRequest.EmailAuthenticationDto dto) {
+        String findSecretKey = redisService.getEmailSecretKey(dto.getEmail());
+        if (!Objects.equals(findSecretKey, dto.getSecretKey())) {
             throw new UsersException(ErrorStatus.EMAIL_VALIDATE_FAIL);
         }
-        redisService.deleteEmailSecretKey(emailAuthRequestDto.getEmail());
+        redisService.deleteEmailSecretKey(dto.getEmail());
     }
 
     //Email 중복 확인
     @Transactional(readOnly = true)
-    public void duplicateCheckEmail(EmailSendRequestDto emailRequestDto) {
-        if (userRepository.existsByEmail(emailRequestDto.getEmail())) {
+    public void duplicateCheckEmail(UsersRequest.EmailSendDto dto) {
+        if (userRepository.existsByEmail(dto.getEmail())) {
             throw new UsersException(ErrorStatus.ALREADY_EXIST_EMAIL);
         }
     }
