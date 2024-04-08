@@ -26,7 +26,7 @@ public class CouponService {
     private final UsersCouponRepository usersCouponRepository;
 
     @Transactional
-    public ApiResponse<?> getCoupon() {
+    public ApiResponse<List<CouponResponseDto>> getCoupon() {
         return ApiResponse.of(SuccessStatus.COUPON_LIST_GET_SUCCESS,
                couponRepository.findAll()
                        .stream()
@@ -35,7 +35,7 @@ public class CouponService {
     }
 
     @Transactional
-    public ApiResponse<?> downloadCoupon(String userUuid, Long couponId) {
+    public ApiResponse<Void> downloadCoupon(String userUuid, Long couponId) {
         Coupon coupon = couponRepository.findById(couponId).orElseThrow();
         Users users = usersRepository.findByUuid(userUuid).orElseThrow();
 
@@ -59,7 +59,7 @@ public class CouponService {
     }
 
     @Transactional
-    public ApiResponse<?> getUsersCoupon(String userUuid) {
+    public ApiResponse<List<CouponResponseDto>> getUsersCoupon(String userUuid) {
         Users users = usersRepository.findByUuid(userUuid).orElseThrow();
 
         return ApiResponse.of(SuccessStatus.COUPON_GET_USERS_SUCCESS,
