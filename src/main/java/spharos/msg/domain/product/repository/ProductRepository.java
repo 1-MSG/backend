@@ -32,4 +32,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findById(Long productId);
 
     Page<Product> findAllByOrderByProductSalesInfoProductSellTotalCountDesc(Pageable pageable);
+
+    List<Product> findTop11ByOrderByProductSalesInfoProductSellTotalCountDesc();
 }

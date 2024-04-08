@@ -131,13 +131,37 @@ public class ProductService {
     //베스트 상품 목록 가져오기
     @Transactional
     public ProductResponse.BestProductsDto getRankingProducts(Pageable pageable) {
-        Page<Product> productPage = productRepository.findAllByOrderByProductSalesInfoProductSellTotalCountDesc(pageable);
+        Page<Product> productPage = productRepository.findAllByOrderByProductSalesInfoProductSellTotalCountDesc(
+            pageable);
 
         boolean isLast = !productPage.hasNext();
 
-        return ProductResponse.BestProductsDto.builder().productList(productPage.getContent().stream().map(
-                product -> ProductResponse.ProductIdDto.builder().productId(product.getId()).build())
-            .toList()).isLast(isLast).build();
+        return ProductResponse.BestProductsDto.builder()
+            .productList(productPage.getContent().stream().map(
+                    product -> ProductResponse.ProductIdDto.builder().productId(product.getId())
+                        .build())
+                .toList()).isLast(isLast).build();
+    }
+
+    //어드민 베스트11 불러 오기
+    public List<ProductResponse.Best11Dto> getBest11Products() {
+        List<Product> products = productRepository.findTop11ByOrderByProductSalesInfoProductSellTotalCountDesc();
+
+        return products.stream()
+            .map(product -> {
+                ProductImage productImage = productImageRepository.findByProductAndImageIndex(product, 0)
+                    .orElse(new ProductImage());
+
+                return ProductResponse.Best11Dto.builder()
+                    .productId(product.getId())
+                    .productName(product.getProductName())
+                    .productBrand(product.getBrand().getBrandName())
+                    .productPrice(product.getProductPrice())
+                    .productImage(productImage.getProductImageUrl())
+                    .productSellTotalCount(product.getProductSalesInfo().getProductSellTotalCount())
+                    .build();
+            })
+            .toList();
     }
 
     //할인가 계산하는 method
@@ -148,7 +172,8 @@ public class ProductService {
         }
 
         BigDecimal normalPrice = new BigDecimal(price);
-        BigDecimal discount = discountRate.divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP); //할인율을 백분율로 변환
+        BigDecimal discount = discountRate.divide(BigDecimal.valueOf(100),
+            RoundingMode.HALF_UP); //할인율을 백분율로 변환
         BigDecimal discountedPrice = normalPrice.multiply(
             BigDecimal.ONE.subtract(discount)); // 할인 적용 가격 계산
 
