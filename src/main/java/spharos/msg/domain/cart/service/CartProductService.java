@@ -2,7 +2,6 @@ package spharos.msg.domain.cart.service;
 
 import java.util.List;
 import java.util.stream.IntStream;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,11 +29,8 @@ public class CartProductService {
     private final UsersRepository usersRepository;
 
     @Transactional
-    public ApiResponse<?> addCartProduct(
-            Long productOptionId,
-            CartProductRequestDto cartProductRequestDto,
-            int cartProductQuantity,
-            String userUuid) {
+    public ApiResponse<?> addCartProduct(Long productOptionId,
+        CartProductRequestDto cartProductRequestDto, int cartProductQuantity, String userUuid) {
         ProductOption productOption = productOptionRepository.findById(productOptionId)
                 .orElseThrow();
         Users users = usersRepository.findByUuid(userUuid).orElseThrow();
@@ -47,30 +43,30 @@ public class CartProductService {
     }
 
     @Transactional
-    public ApiResponse<?> getCart(String userUuid) {
+    public ApiResponse<List<CartProductResponseDto>> getCart(String userUuid) {
         Users users = usersRepository.findByUuid(userUuid).orElseThrow();
 
         List<CartProductResponseDto> cartProductResponseDtos = cartProductRepository.findByUsers(
-                        users)
-                .stream()
-                .map(CartProductResponseDto::new)
-                .toList();
+                users)
+            .stream()
+            .map(CartProductResponseDto::new)
+            .toList();
 
         IntStream.range(0, cartProductResponseDtos.size())
-                .forEach(index -> cartProductResponseDtos.get(index).setId(index));
+            .forEach(index -> cartProductResponseDtos.get(index).setId(index));
 
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_GET_SUCCESS, cartProductResponseDtos);
     }
 
     @Transactional
-    public ApiResponse<?> deleteCart(Long cartId) {
+    public ApiResponse<SuccessStatus> deleteCart(Long cartId) {
         CartProduct cartProduct = cartProductRepository.findById(cartId).orElseThrow();
         cartProductRepository.delete(cartProduct);
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_DELETE_SUCCESS, null);
     }
 
     @Transactional(readOnly = true)
-    public ApiResponse<?> getCartOption(Long productId) {
+    public ApiResponse<List<CartProductOptionResponseDto>> getCartOption(Long productId) {
         Product product = productRepository.findById(productId).orElseThrow();
 
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_OPTION_SUCCESS,

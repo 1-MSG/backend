@@ -18,7 +18,7 @@ public class CartProductUpdateService {
     private final CartProductRepository cartProductRepository;
 
     @Transactional
-    public ApiResponse<?> updateCartProductOption(Long productOptionId, Long cartId) {
+    public ApiResponse<CartProductResponseDto> updateCartProductOption(Long productOptionId, Long cartId) {
         CartProduct cartProduct = getCartProduct(cartId);
         ProductOption productOption = productOptionRepository.findById(productOptionId).orElseThrow();
 
@@ -35,7 +35,7 @@ public class CartProductUpdateService {
     }
 
     @Transactional
-    public ApiResponse<?> addCartProductQuantity(Long cartId) {
+    public ApiResponse<CartProductResponseDto> addCartProductQuantity(Long cartId) {
         CartProduct cartProduct = getCartProduct(cartId);
 
         cartProductRepository.save(CartProduct.builder()
@@ -51,7 +51,7 @@ public class CartProductUpdateService {
     }
 
     @Transactional
-    public ApiResponse<?> minusCartProductQuantity(Long cartId) {
+    public ApiResponse<CartProductResponseDto> minusCartProductQuantity(Long cartId) {
         CartProduct cartProduct = getCartProduct(cartId);
 
         cartProductRepository.save(CartProduct.builder()
@@ -67,7 +67,7 @@ public class CartProductUpdateService {
     }
 
     @Transactional
-    public ApiResponse<?> checkCartProduct(Long cartId) {
+    public ApiResponse<CartProductResponseDto> checkCartProduct(Long cartId) {
         CartProduct cartProduct = getCartProduct(cartId);
 
         cartProductRepository.save(CartProduct.builder()
@@ -84,7 +84,7 @@ public class CartProductUpdateService {
     }
 
     @Transactional
-    public ApiResponse<?> notCheckCartProduct(Long cartId) {
+    public ApiResponse<CartProductResponseDto> notCheckCartProduct(Long cartId) {
         CartProduct cartProduct = getCartProduct(cartId);
 
         cartProductRepository.save(CartProduct.builder()
