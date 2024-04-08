@@ -8,8 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.users.dto.request.OAuthRequest;
-import spharos.msg.domain.users.dto.response.FindIdOutDto;
-import spharos.msg.domain.users.dto.response.LoginOutDto;
+import spharos.msg.domain.users.dto.response.OAuthResponse;
 import spharos.msg.domain.users.entity.UserOAuthList;
 import spharos.msg.domain.users.entity.UserStatus;
 import spharos.msg.domain.users.entity.Users;
@@ -30,7 +29,7 @@ public class OAuthServiceImpl implements OAuthService {
 
     @Transactional
     @Override
-    public Optional<LoginOutDto> easySignUp(OAuthRequest.EasySignUpDto dto) {
+    public Optional<OAuthResponse.EasyLoginResponseDto> easySignUp(OAuthRequest.EasySignUpRequestDto dto) {
         Users findUser = userRepository.findByEmail(dto.getEmail()).orElseThrow(
                 () -> new UsersException(ErrorStatus.NOT_UNION_USER)
         );
@@ -42,7 +41,7 @@ public class OAuthServiceImpl implements OAuthService {
         if (Boolean.TRUE.equals(userOAuthListRepository.existsByUuid(findUser.getUuid())) &&
                 findUser.getStatus().equals(UserStatus.EASY)) {
             log.info("기존 가입된 회원이라 바로 로그인 처리");
-            return Optional.of(easyLogin(OAuthRequest.LoginDto
+            return Optional.of(easyLogin(OAuthRequest.EasyLoginRequestDto
                     .builder()
                     .oauthId(dto.getOauthId())
                     .oauthName(dto.getOauthName())
@@ -76,7 +75,7 @@ public class OAuthServiceImpl implements OAuthService {
 
     @Transactional(readOnly = true)
     @Override
-    public LoginOutDto easyLogin(OAuthRequest.LoginDto dto) {
+    public OAuthResponse.EasyLoginResponseDto easyLogin(OAuthRequest.EasyLoginRequestDto dto) {
         UserOAuthList userOAuthList = userOAuthListRepository.findByOAuthIdAndOAuthName(
                 dto.getOauthId(), dto.getOauthName()).orElseThrow(
                 () -> new UsersException(ErrorStatus.LOG_IN_EASY_FAIL));
@@ -101,7 +100,7 @@ public class OAuthServiceImpl implements OAuthService {
         String refreshToken = jwtTokenProvider.createRefreshToken(findUser);
         String accessToken = jwtTokenProvider.createAccessToken(findUser);
 
-        return LoginOutDto
+        return OAuthResponse.EasyLoginResponseDto
                 .builder()
                 .uuid(findUser.getUuid())
                 .refreshToken(refreshToken)
@@ -114,7 +113,7 @@ public class OAuthServiceImpl implements OAuthService {
 
     @Transactional(readOnly = true)
     @Override
-    public FindIdOutDto findLoginEasyId(String email) {
+    public OAuthResponse.FindEasyIdResponseDto findLoginEasyId(String email) {
         Users user = userRepository.findByEmail(email).orElseThrow(
                 () -> new UsersException(ErrorStatus.FIND_LOGIN_ID_FAIL));
 
@@ -123,7 +122,7 @@ public class OAuthServiceImpl implements OAuthService {
             throw new UsersException(ErrorStatus.FIND_LOGIN_ID_FAIL);
         }
 
-        return FindIdOutDto
+        return OAuthResponse.FindEasyIdResponseDto
                 .builder()
                 .loginId(user.getLoginId())
                 .build();

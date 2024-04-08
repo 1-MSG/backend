@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import spharos.msg.domain.users.dto.request.UsersRequest;
-import spharos.msg.domain.users.dto.response.EmailOutDto;
+import spharos.msg.domain.users.dto.response.UsersResponse;
 import spharos.msg.domain.users.service.UsersService;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
@@ -24,7 +24,7 @@ public class UsersController {
     @Operation(summary = "이메일 발송",
             description = "이메일 중복 확인 후, 이메일 인증을 위한 이메일을 발송 합니다.")
     @PostMapping("/send-mail")
-    public ApiResponse<EmailOutDto> sendEmail(
+    public ApiResponse<UsersResponse.EmailResponseDto> sendEmail(
             @RequestBody UsersRequest.EmailSendDto dto
     ) {
         usersService.duplicateCheckEmail(dto);

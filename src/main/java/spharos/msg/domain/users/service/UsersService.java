@@ -13,7 +13,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.users.dto.request.UsersRequest;
-import spharos.msg.domain.users.dto.response.EmailOutDto;
+import spharos.msg.domain.users.dto.response.UsersResponse;
 import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.global.api.code.status.ErrorStatus;
 import spharos.msg.global.api.exception.UsersException;
@@ -36,7 +36,7 @@ public class UsersService {
     @Value("${spring.mail.stringSize}")
     private int stringSize;
 
-    public EmailOutDto sendMail(UsersRequest.EmailSendDto dto) {
+    public UsersResponse.EmailResponseDto sendMail(UsersRequest.EmailSendDto dto) {
         MimeMessage message = mailSender.createMimeMessage();
         String secretKey = createKey();
         try {
@@ -58,7 +58,7 @@ public class UsersService {
             throw new RuntimeException(e);
         }
 
-        return EmailOutDto.builder().secretKey(secretKey).build();
+        return UsersResponse.EmailResponseDto.builder().secretKey(secretKey).build();
     }
 
     private String createKey() {

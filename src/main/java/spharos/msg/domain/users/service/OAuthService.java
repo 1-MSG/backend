@@ -2,14 +2,13 @@ package spharos.msg.domain.users.service;
 
 import java.util.Optional;
 import spharos.msg.domain.users.dto.request.OAuthRequest;
-import spharos.msg.domain.users.dto.response.FindIdOutDto;
-import spharos.msg.domain.users.dto.response.LoginOutDto;
+import spharos.msg.domain.users.dto.response.OAuthResponse;
 
 public interface OAuthService {
 
-    Optional<LoginOutDto> easySignUp(OAuthRequest.EasySignUpDto dto);
+    Optional<OAuthResponse.EasyLoginResponseDto> easySignUp(OAuthRequest.EasySignUpRequestDto dto);
 
-    LoginOutDto easyLogin(OAuthRequest.LoginDto dto);
+    OAuthResponse.EasyLoginResponseDto easyLogin(OAuthRequest.EasyLoginRequestDto dto);
 
-    FindIdOutDto findLoginEasyId(String email);
+    OAuthResponse.FindEasyIdResponseDto findLoginEasyId(String email);
 }

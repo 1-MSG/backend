@@ -9,10 +9,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import spharos.msg.domain.users.dto.request.AuthRequest;
-import spharos.msg.domain.users.dto.response.FindIdOutDto;
-import spharos.msg.domain.users.dto.response.FindUserInfoOutDto;
-import spharos.msg.domain.users.dto.response.LoginOutDto;
-import spharos.msg.domain.users.dto.response.ReissueOutDto;
+import spharos.msg.domain.users.dto.response.AuthResponse;
+
 import spharos.msg.domain.users.service.AuthService;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
@@ -28,15 +26,15 @@ public class AuthController {
     @Operation(summary = "통합회원가입", description = "통합회원 회원가입")
     @PostMapping("/signup")
     public ApiResponse<Void> signUpUnion(
-            @RequestBody AuthRequest.SignUpDto dto) {
+            @RequestBody AuthRequest.SignUpRequestDto dto) {
         authService.signUp(dto);
         return ApiResponse.of(SuccessStatus.SIGN_UP_SUCCESS_UNION, null);
     }
 
     @Operation(summary = "로그인", description = "통합회원 로그인")
     @PostMapping("/login")
-    public ApiResponse<LoginOutDto> loginUnion(
-            @RequestBody AuthRequest.LoginDto dto
+    public ApiResponse<AuthResponse.LoginResponseDto> loginUnion(
+            @RequestBody AuthRequest.LoginRequestDto dto
     ) {
         return ApiResponse.of(SuccessStatus.LOGIN_SUCCESS_UNION,
                 authService.login(dto));
@@ -53,7 +51,7 @@ public class AuthController {
 
     @Operation(summary = "Reissue Token", description = "Access Token 재발급")
     @GetMapping("/reissue")
-    public ApiResponse<ReissueOutDto> reissueToken(
+    public ApiResponse<AuthResponse.ReissueResponseDto> reissueToken(
             @RequestHeader(AUTHORIZATION) String refreshToken
     ) {
         return ApiResponse.of(SuccessStatus.TOKEN_REISSUE_COMPLETE,
@@ -90,15 +88,15 @@ public class AuthController {
 
     @Operation(summary = "아이디 찾기", description = "입력받은 이메일로 로그인 아이디를 조회합니다.")
     @GetMapping("/find-id/{email}")
-    public ApiResponse<FindIdOutDto> findUserId(
+    public ApiResponse<AuthResponse.FindIdResponseDto> findUserId(
             @PathVariable(name = "email") String email) {
         return ApiResponse.of(SuccessStatus.FIND_LOGIN_ID_SUCCESS,
                 authService.findLoginUnionId(email));
     }
 
-    @Operation(summary = "MyPage 사용자 정보 조회", description = "My Page 의 사용자 정보를 반환 합니다.")
+    @Operation(summary = "사용자 정보 조회", description = "사용자 정보를 반환 합니다.")
     @GetMapping("/users")
-    public ApiResponse<FindUserInfoOutDto> findUserInfo(
+    public ApiResponse<AuthResponse.FindUserInfoResponseDto> findUserInfo(
             @AuthenticationPrincipal UserDetails userDetails) {
         return ApiResponse.of(SuccessStatus.FIND_USER_INFO_SUCCESS,
                 authService.findUserInfo(userDetails.getUsername()));

@@ -1,20 +1,17 @@
 package spharos.msg.domain.users.service;
 
 import spharos.msg.domain.users.dto.request.AuthRequest;
-import spharos.msg.domain.users.dto.response.FindIdOutDto;
-import spharos.msg.domain.users.dto.response.FindUserInfoOutDto;
-import spharos.msg.domain.users.dto.response.ReissueOutDto;
-import spharos.msg.domain.users.dto.response.LoginOutDto;
+import spharos.msg.domain.users.dto.response.AuthResponse;
 
 public interface AuthService {
 
-    void signUp(AuthRequest.SignUpDto dto);
+    void signUp(AuthRequest.SignUpRequestDto dto);
 
-    LoginOutDto login(AuthRequest.LoginDto dto);
+    AuthResponse.LoginResponseDto login(AuthRequest.LoginRequestDto dto);
 
     void logout(Long userId);
 
-    ReissueOutDto reissueToken(String token);
+    AuthResponse.ReissueResponseDto reissueToken(String token);
 
     void duplicateCheckLoginId(AuthRequest.DuplicationCheckDto dto);
 
@@ -22,7 +19,7 @@ public interface AuthService {
 
     void changePassword(AuthRequest.ChangePasswordDto dto);
 
-    FindIdOutDto findLoginUnionId(String email);
+    AuthResponse.FindIdResponseDto findLoginUnionId(String email);
 
-    FindUserInfoOutDto findUserInfo(String uuid);
+    AuthResponse.FindUserInfoResponseDto findUserInfo(String uuid);
 }

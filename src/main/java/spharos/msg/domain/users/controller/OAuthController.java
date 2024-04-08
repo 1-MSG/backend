@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import spharos.msg.domain.users.dto.request.OAuthRequest;
 import spharos.msg.domain.users.dto.response.FindIdOutDto;
-import spharos.msg.domain.users.dto.response.LoginOutDto;
+import spharos.msg.domain.users.dto.response.OAuthResponse;
 import spharos.msg.domain.users.service.OAuthServiceImpl;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
@@ -25,8 +25,8 @@ public class OAuthController {
 
     @Operation(summary = "간편 회원가입", description = "간편회원 회원가입")
     @PostMapping("/signup")
-    public ApiResponse<Optional<LoginOutDto>> signUpEasy(
-            @RequestBody OAuthRequest.EasySignUpDto dto
+    public ApiResponse<Optional<OAuthResponse.EasyLoginResponseDto>> signUpEasy(
+            @RequestBody OAuthRequest.EasySignUpRequestDto dto
     ) {
         return ApiResponse.of(SuccessStatus.SIGN_UP_SUCCESS_EASY,
                 oAuthService.easySignUp(dto));
@@ -34,8 +34,8 @@ public class OAuthController {
 
     @Operation(summary = "간편 회원로그인", description = "간편회원 로그인")
     @PostMapping("/login")
-    public ApiResponse<LoginOutDto> loginEasy(
-            @RequestBody OAuthRequest.LoginDto dto
+    public ApiResponse<OAuthResponse.EasyLoginResponseDto> loginEasy(
+            @RequestBody OAuthRequest.EasyLoginRequestDto dto
     ) {
         return ApiResponse.of(SuccessStatus.LOGIN_SUCCESS_EASY,
                 oAuthService.easyLogin(dto));

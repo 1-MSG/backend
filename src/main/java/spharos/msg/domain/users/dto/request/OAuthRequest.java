@@ -11,7 +11,7 @@ public class OAuthRequest {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class LoginDto {
+    public static class EasyLoginRequestDto {
         private String oauthName;
         private String oauthId;
     }
@@ -20,7 +20,7 @@ public class OAuthRequest {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class EasySignUpDto {
+    public static class EasySignUpRequestDto {
         private String email;
         private String oauthName;
         private String oauthId;

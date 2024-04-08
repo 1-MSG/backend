@@ -9,10 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.users.dto.request.AuthRequest;
-import spharos.msg.domain.users.dto.response.FindIdOutDto;
-import spharos.msg.domain.users.dto.response.FindUserInfoOutDto;
-import spharos.msg.domain.users.dto.response.LoginOutDto;
-import spharos.msg.domain.users.dto.response.ReissueOutDto;
+import spharos.msg.domain.users.dto.response.AuthResponse;
 import spharos.msg.domain.users.entity.UserStatus;
 import spharos.msg.domain.users.entity.Users;
 import spharos.msg.domain.users.repository.UsersRepository;
@@ -34,7 +31,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public void signUp(AuthRequest.SignUpDto dto) {
+    public void signUp(AuthRequest.SignUpRequestDto dto) {
 
         //중복회원 검색
         duplicateCheckLoginId(AuthRequest.DuplicationCheckDto
@@ -68,7 +65,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional(readOnly = true)
     @Override
-    public LoginOutDto login(AuthRequest.LoginDto dto) {
+    public AuthResponse.LoginResponseDto login(AuthRequest.LoginRequestDto dto) {
         Users findUser = usersRepository.findByLoginId(dto.getLoginId())
                 .orElseThrow(() -> new UsersException(ErrorStatus.LOG_IN_UNION_FAIL));
 
@@ -88,7 +85,7 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtTokenProvider.createAccessToken(findUser);
         String refreshToken = jwtTokenProvider.createRefreshToken(findUser);
 
-        return LoginOutDto
+        return AuthResponse.LoginResponseDto
                 .builder()
                 .userId(findUser.getId())
                 .uuid(findUser.getUuid())
@@ -108,7 +105,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional(readOnly = true)
     @Override
-    public ReissueOutDto reissueToken(String oldRefreshToken) {
+    public AuthResponse.ReissueResponseDto reissueToken(String oldRefreshToken) {
         String uuid = jwtTokenProvider.getUuid(oldRefreshToken);
         String oldToken = oldRefreshToken.substring(7);
 
@@ -121,7 +118,7 @@ public class AuthServiceImpl implements AuthService {
 
         String accessToken = jwtTokenProvider.createAccessToken(findUser);
         String refreshToken = jwtTokenProvider.createRefreshToken(findUser);
-        return ReissueOutDto
+        return AuthResponse.ReissueResponseDto
                 .builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -193,25 +190,27 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional(readOnly = true)
     @Override
-    public FindIdOutDto findLoginUnionId(String email) {
+    public AuthResponse.FindIdResponseDto findLoginUnionId(String email) {
         Users user = usersRepository.findByEmail(email).orElseThrow(
                 () -> new UsersException(ErrorStatus.FIND_LOGIN_ID_FAIL));
 
-        return FindIdOutDto
+        return AuthResponse.FindIdResponseDto
                 .builder()
                 .loginId(user.getLoginId())
                 .build();
     }
 
     @Override
-    public FindUserInfoOutDto findUserInfo(String uuid) {
+    public AuthResponse.FindUserInfoResponseDto findUserInfo(String uuid) {
         Users findUser = usersRepository.findByUuid(uuid).orElseThrow(
                 () -> new UsersException(ErrorStatus.FIND_USER_INFO_FAIL)
         );
 
-        return FindUserInfoOutDto
+        return AuthResponse.FindUserInfoResponseDto
                 .builder()
                 .userName(findUser.readUserName())
+                .email(findUser.getEmail())
+                .phoneNumber(findUser.getPhoneNumber())
                 .build();
     }
 }

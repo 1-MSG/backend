@@ -28,7 +28,7 @@ public class AuthRequest {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class SignUpDto {
+    public static class SignUpRequestDto {
         public String loginId;
         public String username;
         public String password;
@@ -41,7 +41,7 @@ public class AuthRequest {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class LoginDto {
+    public static class LoginRequestDto {
         public String loginId;
         public String password;
     }
