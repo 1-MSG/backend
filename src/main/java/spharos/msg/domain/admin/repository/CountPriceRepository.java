@@ -7,5 +7,5 @@ import spharos.msg.domain.admin.entity.CountPrice;
 
 @Repository
 public interface CountPriceRepository extends JpaRepository<CountPrice, Long> {
-    <T> Optional<T> findTotalSalesPriceById(Long id, Class<T> type);
+    <T> Optional<T> findDataById(Long id, Class<T> type);
 }

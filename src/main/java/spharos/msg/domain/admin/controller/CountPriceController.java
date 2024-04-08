@@ -24,4 +24,10 @@ public class CountPriceController {
     private ApiResponse<AdminPriceResponseDto.TotalSalesPrice> TotalSalesPriceApi() {
         return ApiResponse.of(SuccessStatus.TOTAL_SALES_PRICE_SUCCESS, countPriceService.TotalSalesPrice());
     }
+
+    @Operation(summary = "총 배송 금액 반환 API", description = "총 배송 금액을 반환 합니다.")
+    @GetMapping("/total-delivery-fee")
+    private ApiResponse<AdminPriceResponseDto.TotalDeliveryFee> TotalDeliveryFeeApi() {
+        return ApiResponse.of(SuccessStatus.TOTAL_DELIVERY_FEE_SUCCESS, countPriceService.TotalDeliveryFee());
+    }
 }

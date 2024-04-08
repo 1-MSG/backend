@@ -12,7 +12,12 @@ public class CountPriceService {
     private final CountPriceRepository countPriceRepository;
 
     public AdminPriceResponseDto.TotalSalesPrice TotalSalesPrice(){
-        return countPriceRepository.findTotalSalesPriceById(1L, AdminPriceResponseDto.TotalSalesPrice.class)
+        return countPriceRepository.findDataById(1L, AdminPriceResponseDto.TotalSalesPrice.class)
+                .orElseThrow();
+    }
+
+    public AdminPriceResponseDto.TotalDeliveryFee TotalDeliveryFee(){
+        return countPriceRepository.findDataById(1L, AdminPriceResponseDto.TotalDeliveryFee.class)
                 .orElseThrow();
     }
 }
