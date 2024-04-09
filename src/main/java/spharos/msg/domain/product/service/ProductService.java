@@ -47,12 +47,14 @@ public class ProductService {
             product.getDiscountRate());
 
         return ProductResponse.ProductInfoDto.builder()
-            .productBrand(product.getBrand().getBrandName())
+            .brandName(product.getBrand().getBrandName())
+            .brandId(product.getBrand().getId())
             .productName(product.getProductName())
             .productPrice(product.getProductPrice())
             .productStar(product.getProductSalesInfo().getProductStar())
             .discountRate(product.getDiscountRate())
             .discountPrice(discountPrice)
+            .reviewCount(product.getProductSalesInfo().getReviewCount())
             .responseTime(String.valueOf(System.currentTimeMillis()))
             .build();
     }
@@ -119,7 +121,8 @@ public class ProductService {
 
             return ProductResponse.ProductInfoDto.builder()
                 .productName(product.getProductName())
-                .productBrand(product.getBrand().getBrandName())
+                .brandName(product.getBrand().getBrandName())
+                .brandId(product.getBrand().getId())
                 .productImage(productImage.getProductImageUrl())
                 .productPrice(product.getProductPrice())
                 .discountRate(product.getDiscountRate())
