@@ -9,7 +9,15 @@ import spharos.msg.domain.users.entity.Users;
 public class CartConverter {
     static public CartProductResponseDto CartEntityToDto(CartProduct cartProduct){
 
-        return new CartProductResponseDto(cartProduct);
+        return CartProductResponseDto.builder()
+                .cartProductQuantity(cartProduct.getCartProductQuantity())
+                .productOptionId(cartProduct.getProductOption().getId())
+                .cartIsChecked(cartProduct.getCartIsChecked())
+                .cartIsPinned(cartProduct.getCartIsPinned())
+                .productId(cartProduct.getProductId())
+                .brandId(cartProduct.getBrandId())
+                .cartId(cartProduct.getId())
+                .build();
     }
 
     static public CartProduct CartDtoToEntity(Users users,
@@ -37,6 +45,18 @@ public class CartConverter {
                 .productId(cartProduct.getProductId())
                 .brandId(cartProduct.getBrandId())
                 .users(cartProduct.getUsers())
+                .build();
+    }
+    static public CartProduct CartDtoToEntity(Long cartId, CartProduct cartProduct, int cartProductQuantity, ProductOption productOption){
+        return CartProduct.builder()
+                .cartProductQuantity(cartProductQuantity)
+                .cartIsChecked(cartProduct.getCartIsChecked())
+                .cartIsPinned(cartProduct.getCartIsPinned())
+                .productId(cartProduct.getProductId())
+                .brandId(cartProduct.getBrandId())
+                .users(cartProduct.getUsers())
+                .productOption(productOption)
+                .id(cartId)
                 .build();
     }
 }

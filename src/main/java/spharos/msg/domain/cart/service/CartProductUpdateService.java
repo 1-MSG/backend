@@ -11,6 +11,9 @@ import spharos.msg.domain.product.repository.ProductOptionRepository;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
+import static spharos.msg.domain.cart.converter.CartConverter.CartDtoToEntity;
+import static spharos.msg.domain.cart.converter.CartConverter.CartEntityToDto;
+
 @Service
 @RequiredArgsConstructor
 public class CartProductUpdateService {
@@ -22,29 +25,33 @@ public class CartProductUpdateService {
         CartProduct cartProduct = getCartProduct(cartId);
         ProductOption productOption = productOptionRepository.findById(productOptionId).orElseThrow();
 
-        cartProductRepository.save(CartProduct.builder()
-                .id(cartId)
-                .cartProductQuantity(cartProduct.getCartProductQuantity())
-                .productOption(productOption)
-                .cartIsChecked(cartProduct.getCartIsChecked())
-                .users(cartProduct.getUsers())
-                .build());
+        cartProductRepository.save(CartDtoToEntity(cartId,cartProduct, cartProduct.getCartProductQuantity(), productOption));
+//                CartProduct.builder()
+//                .id(cartId)
+//                .cartProductQuantity(cartProduct.getCartProductQuantity())
+//                .productOption(productOption)
+//                .cartIsChecked(cartProduct.getCartIsChecked())
+//                .users(cartProduct.getUsers())
+//                .build());
 
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_UPDATE_SUCCESS,
-                new CartProductResponseDto(cartProduct));
+                CartEntityToDto(cartProduct));
+
     }
 
     @Transactional
     public ApiResponse<CartProductResponseDto> addCartProductQuantity(Long cartId) {
         CartProduct cartProduct = getCartProduct(cartId);
 
-        cartProductRepository.save(CartProduct.builder()
-                .id(cartId)
-                .cartProductQuantity(cartProduct.getCartProductQuantity()+1)
-                .productOption(cartProduct.getProductOption())
-                .cartIsChecked(cartProduct.getCartIsChecked())
-                .users(cartProduct.getUsers())
-                .build());
+        cartProductRepository.save(CartDtoToEntity(cartId,cartProduct,cartProduct.getCartProductQuantity()+1, cartProduct.getProductOption()));
+
+//                CartProduct.builder()
+//                .id(cartId)
+//                .cartProductQuantity(cartProduct.getCartProductQuantity()+1)
+//                .productOption(cartProduct.getProductOption())
+//                .cartIsChecked(cartProduct.getCartIsChecked())
+//                .users(cartProduct.getUsers())
+//                .build());
 
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_UPDATE_SUCCESS,
                 new CartProductResponseDto(cartProduct));
