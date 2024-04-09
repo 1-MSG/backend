@@ -61,14 +61,14 @@ public class ProductService {
 
     //id로 상품 썸네일 이미지 불러오기
     @Transactional
-    public ProductResponse.ProductImage getProductImage(Long productId) {
+    public ProductResponse.ProductImageDto getProductImage(Long productId) {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new NotFoundException(productId + "해당 상품을 찾을 수 없음"));
 
         ProductImage productImage = productImageRepository.findByProductAndImageIndex(product, 0)
             .orElseThrow(() -> new NotFoundException("해당 상품에 대한 index가 0인 이미지를 찾을 수 없음"));
 
-        return ProductResponse.ProductImage.builder()
+        return ProductResponse.ProductImageDto.builder()
             .productImageUrl(productImage.getProductImageUrl())
             .productImageDescription(productImage.getProductImageDescription())
             .build();
@@ -76,13 +76,13 @@ public class ProductService {
 
     //id로 상품 이미지들 불러오기
     @Transactional
-    public List<ProductResponse.ProductImage> getProductImages(Long productId) {
+    public List<ProductResponse.ProductImageDto> getProductImages(Long productId) {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new NotFoundException(productId + "해당 상품을 찾을 수 없음"));
 
         List<ProductImage> productImages = productImageRepository.findByProduct(product);
 
-        return productImages.stream().map(productImage -> ProductResponse.ProductImage.builder()
+        return productImages.stream().map(productImage -> ProductResponse.ProductImageDto.builder()
             .productImageUrl(productImage.getProductImageUrl())
             .productImageDescription(productImage.getProductImageDescription())
             .build()).toList();
@@ -99,12 +99,12 @@ public class ProductService {
 
     //id로 상품 상세 카테고리 정보 불러오기
     @Transactional
-    public ProductResponse.ProductCategory getProductCategory(Long productId) {
+    public ProductResponse.ProductCategoryDto getProductCategory(Long productId) {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new NotFoundException(productId + "해당 상품을 찾을 수 없음"));
         CategoryProduct categoryProduct = categoryProductRepository.findByProduct(product);
 
-        return ProductResponse.ProductCategory.builder()
+        return ProductResponse.ProductCategoryDto.builder()
             .categoryMid(categoryProduct.getCategory().getCategoryName())
             .categoryLarge(categoryProduct.getCategory().getParent().getCategoryName())
             .build();
