@@ -69,10 +69,13 @@ public class ProductController {
         description = "상품들에 대한 상세 정보를 조회합니다")
     @GetMapping("/products")
     public ApiResponse<List<ProductResponse.ProductInfoDto>> getProductsDetails(
-        @RequestParam(value = "productIds", defaultValue = "1,2,3") String productIds
+        @RequestParam(value = "productIds", defaultValue = "[1,2,3]") String productIds
     ) {
+        // 대괄호 제거
+        String cleanProductIds = productIds.replaceAll("^\\[|]$", "");
+
         // 쉼표로 구분된 문자열을 배열로 변환
-        String[] idArray = productIds.split(",");
+        String[] idArray = cleanProductIds.split(",");
 
         // 배열을 Long 형식의 리스트로 변환
         List<Long> idList = Arrays.stream(idArray)
