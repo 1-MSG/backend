@@ -41,6 +41,11 @@ public class OptionsService {
         List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
         List<OptionTypeDto> optionTypeDtos = new ArrayList<>();
 
+        //옵션 없는 상품
+        if(productOptions.get(0).getOptions().getOptionName()==null){
+            return ApiResponse.of(SuccessStatus.OPTION_TYPE_SUCCESS, optionTypeDtos);
+        }
+
         OptionTypeDto optionTypeDto = new OptionTypeDto(productOptions.get(0).getOptions());
 
         if (optionTypeDto.getOptionType() != null) {
