@@ -105,7 +105,7 @@ public class ProductService {
             .build();
     }
 
-    //id리스트로 상품 객체 불러오기
+    //id리스트로 여러 상품 불러오기
     @Transactional
     public List<ProductResponse.ProductInfoDto> getProductsDetails(List<Long> idList) {
         List<Product> products = productRepositoryCustom.findProductsByIdList(idList);
@@ -124,6 +124,7 @@ public class ProductService {
                     getDiscountedPrice(product.getProductPrice(), product.getDiscountRate()))
                 .productStar(product.getProductSalesInfo().getProductStar())
                 .reviewCount(product.getProductSalesInfo().getReviewCount())
+                .responseTime(String.valueOf(System.currentTimeMillis()))
                 .build();
         }).toList();
     }
