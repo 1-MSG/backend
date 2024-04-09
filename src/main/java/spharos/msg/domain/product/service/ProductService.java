@@ -1,5 +1,7 @@
 package spharos.msg.domain.product.service;
 
+import static spharos.msg.global.api.code.status.ErrorStatus.NOT_EXIST_PRODUCT;
+
 import jakarta.transaction.Transactional;
 import java.math.RoundingMode;
 import java.util.HashMap;
@@ -22,6 +24,7 @@ import spharos.msg.domain.product.entity.ProductImage;
 import spharos.msg.domain.product.repository.ProductImageRepository;
 import spharos.msg.domain.product.repository.ProductRepository;
 import spharos.msg.domain.product.repository.ProductRepositoryCustom;
+import spharos.msg.global.api.exception.ProductNotExistException;
 
 @Service
 @RequiredArgsConstructor
@@ -193,6 +196,16 @@ public class ProductService {
                     .build();
             })
             .toList();
+    }
+
+    //상품의 배송정보 불러 오기
+    public ProductResponse.ProductDeliveryDto getProductDeliveryInfo(Long productId) {
+        Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotExistException(NOT_EXIST_PRODUCT));
+
+        return ProductResponse.ProductDeliveryDto.builder()
+            .deliveryFee(product.getDeliveryFee())
+            .minDeliveryFee(product.getBrand().getMinDeliveryFee())
+            .build();
     }
 
     //할인가 계산하는 method

@@ -117,6 +117,21 @@ public class ProductResponse {
     }
 
     @Getter
+    public static class ProductDeliveryDto {
+        @Schema(description = "기본배송비")
+        private final Integer deliveryFee;
+        @Schema(description = "무료배송 최소금액")
+        private final Integer minDeliveryFee;
+
+        @Builder
+        private ProductDeliveryDto(Integer deliveryFee, Integer minDeliveryFee) {
+
+            this.deliveryFee = deliveryFee;
+            this.minDeliveryFee = minDeliveryFee;
+        }
+    }
+
+    @Getter
     public static class Best11Dto {
 
         @Schema(description = "상품 id")

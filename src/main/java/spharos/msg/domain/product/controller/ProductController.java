@@ -105,4 +105,11 @@ public class ProductController {
     ) {
         return ApiResponse.of(PRODUCT_BEST_SUCCESS, productService.getBest11Products());
     }
+
+    @Operation(summary = "상품 배송정보 조회",
+        description = "특정 상품에 대한 배송정보(기본배송비, 무료배송 최소금액)를 반환합니다")
+    @GetMapping("/product/{productId}/deliveryinfo")
+    public ApiResponse<ProductResponse.ProductDeliveryDto> getProductDeliveryInfo(@PathVariable("productId") Long productId) {
+        return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductDeliveryInfo(productId));
+    }
 }
