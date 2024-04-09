@@ -19,6 +19,11 @@ import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
+import static spharos.msg.domain.cart.converter.CartConverter.CartDtoToEntity;
+
 @Service
 @RequiredArgsConstructor
 public class CartProductService {
@@ -83,29 +88,13 @@ public class CartProductService {
         //이미 장바구니에 담긴 상품의 경우 개수 더해서 save하기
         for (CartProduct cartProduct : cartProducts) {
             if (cartProduct.getProductOption().getId().equals(productOptionId)) {
-                cartProductRepository.save(CartProduct.builder()
-                        .id(cartProduct.getId())
-                        .cartProductQuantity(cartProduct.getCartProductQuantity() + productQuantity)
-                        .productOption(cartProduct.getProductOption())
-                        .cartIsChecked(cartProduct.getCartIsChecked())
-                        .cartIsPinned(cartProduct.getCartIsPinned())
-                        .productId(cartProduct.getProductId())
-                        .brandId(cartProduct.getBrandId())
-                        .users(cartProduct.getUsers())
-                        .build());
+                cartProductRepository.save(CartDtoToEntity(cartProduct,productQuantity));
                 return ApiResponse.of(SuccessStatus.CART_PRODUCT_ADD_SUCCESS, null);
             }
         }
         //새롭게 담는 상품의 경우 새로 생성하기
-        cartProductRepository.save(CartProduct.builder()
-                .productId(cartProductRequestDto.getProductId())
-                .brandId(cartProductRequestDto.getBrandId())
-                .cartProductQuantity(productQuantity)
-                .productOption(productOption)
-                .cartIsChecked(false)
-                .cartIsPinned(false)
-                .users(users)
-                .build());
+
+        cartProductRepository.save(CartDtoToEntity(users,cartProductRequestDto,productOption,productQuantity));
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_ADD_SUCCESS, null);
     }
 }
