@@ -18,12 +18,15 @@ import org.webjars.NotFoundException;
 import spharos.msg.domain.category.entity.CategoryProduct;
 import spharos.msg.domain.category.repository.CategoryProductRepository;
 import spharos.msg.domain.orders.repository.OrderProductRepository;
+import spharos.msg.domain.product.convertor.ProductConvertor;
 import spharos.msg.domain.product.dto.ProductResponse;
+import spharos.msg.domain.product.dto.ProductResponse.ProductCategoryDto;
 import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductImage;
 import spharos.msg.domain.product.repository.ProductImageRepository;
 import spharos.msg.domain.product.repository.ProductRepository;
 import spharos.msg.domain.product.repository.ProductRepositoryCustom;
+import spharos.msg.global.api.code.status.ErrorStatus;
 import spharos.msg.global.api.exception.ProductNotExistException;
 
 @Service
@@ -41,58 +44,42 @@ public class ProductService {
     @Transactional
     public ProductResponse.ProductInfoDto getProductInfo(Long productId) {
         Product product = productRepository.findById(productId)
-            .orElseThrow(() -> new NotFoundException(productId + "해당 상품을 찾을 수 없음"));
+            .orElseThrow(() -> new ProductNotExistException(NOT_EXIST_PRODUCT));
 
         Integer discountPrice = getDiscountedPrice(product.getProductPrice(),
             product.getDiscountRate());
 
-        return ProductResponse.ProductInfoDto.builder()
-            .brandName(product.getBrand().getBrandName())
-            .brandId(product.getBrand().getId())
-            .productName(product.getProductName())
-            .productPrice(product.getProductPrice())
-            .productStar(product.getProductSalesInfo().getProductStar())
-            .discountRate(product.getDiscountRate())
-            .discountPrice(discountPrice)
-            .reviewCount(product.getProductSalesInfo().getReviewCount())
-            .responseTime(String.valueOf(System.currentTimeMillis()))
-            .build();
+        return ProductConvertor.toDto(product, discountPrice);
     }
 
     //id로 상품 썸네일 이미지 불러오기
     @Transactional
     public ProductResponse.ProductImageDto getProductImage(Long productId) {
         Product product = productRepository.findById(productId)
-            .orElseThrow(() -> new NotFoundException(productId + "해당 상품을 찾을 수 없음"));
+            .orElseThrow(() -> new ProductNotExistException(NOT_EXIST_PRODUCT));
 
         ProductImage productImage = productImageRepository.findByProductAndImageIndex(product, 0)
             .orElseThrow(() -> new NotFoundException("해당 상품에 대한 index가 0인 이미지를 찾을 수 없음"));
 
-        return ProductResponse.ProductImageDto.builder()
-            .productImageUrl(productImage.getProductImageUrl())
-            .productImageDescription(productImage.getProductImageDescription())
-            .build();
+        return ProductConvertor.toDto(productImage);
     }
 
     //id로 상품 이미지들 불러오기
     @Transactional
     public List<ProductResponse.ProductImageDto> getProductImages(Long productId) {
         Product product = productRepository.findById(productId)
-            .orElseThrow(() -> new NotFoundException(productId + "해당 상품을 찾을 수 없음"));
+            .orElseThrow(() -> new ProductNotExistException(NOT_EXIST_PRODUCT));
 
         List<ProductImage> productImages = productImageRepository.findByProduct(product);
 
-        return productImages.stream().map(productImage -> ProductResponse.ProductImageDto.builder()
-            .productImageUrl(productImage.getProductImageUrl())
-            .productImageDescription(productImage.getProductImageDescription())
-            .build()).toList();
+        return productImages.stream().map(ProductConvertor::toDto).toList();
     }
 
     //id로 상품 상세 html 불러오기
     @Transactional
     public String getProductDetail(Long productId) {
         Product product = productRepository.findById(productId)
-            .orElseThrow(() -> new NotFoundException(productId + "해당 상품을 찾을 수 없음"));
+            .orElseThrow(() -> new ProductNotExistException(NOT_EXIST_PRODUCT));
 
         return product.getProductInfoDetail().getProductInfoDetailContent();
     }
@@ -101,13 +88,10 @@ public class ProductService {
     @Transactional
     public ProductResponse.ProductCategoryDto getProductCategory(Long productId) {
         Product product = productRepository.findById(productId)
-            .orElseThrow(() -> new NotFoundException(productId + "해당 상품을 찾을 수 없음"));
+            .orElseThrow(() -> new ProductNotExistException(NOT_EXIST_PRODUCT));
         CategoryProduct categoryProduct = categoryProductRepository.findByProduct(product);
 
-        return ProductResponse.ProductCategoryDto.builder()
-            .categoryMid(categoryProduct.getCategory().getCategoryName())
-            .categoryLarge(categoryProduct.getCategory().getParent().getCategoryName())
-            .build();
+        return ProductConvertor.toDto(categoryProduct);
     }
 
     //id리스트로 여러 상품 불러오기
@@ -119,19 +103,9 @@ public class ProductService {
                     0)
                 .orElseGet(ProductImage::new); // 이미지를 찾을 수 없을 때 빈 ProductImage 객체를 생성하여 반환
 
-            return ProductResponse.ProductInfoDto.builder()
-                .productName(product.getProductName())
-                .brandName(product.getBrand().getBrandName())
-                .brandId(product.getBrand().getId())
-                .productImage(productImage.getProductImageUrl())
-                .productPrice(product.getProductPrice())
-                .discountRate(product.getDiscountRate())
-                .discountPrice(
-                    getDiscountedPrice(product.getProductPrice(), product.getDiscountRate()))
-                .productStar(product.getProductSalesInfo().getProductStar())
-                .reviewCount(product.getProductSalesInfo().getReviewCount())
-                .responseTime(String.valueOf(System.currentTimeMillis()))
-                .build();
+            Integer discountPrice = getDiscountedPrice(product.getProductPrice(), product.getDiscountRate());
+
+            return ProductConvertor.toDto(product,productImage,discountPrice);
         }).toList();
     }
 
@@ -143,11 +117,11 @@ public class ProductService {
 
         boolean isLast = !productPage.hasNext();
 
-        return ProductResponse.BestProductsDto.builder()
-            .productList(productPage.getContent().stream().map(
-                    product -> ProductResponse.ProductIdDto.builder().productId(product.getId())
-                        .build())
-                .toList()).isLast(isLast).build();
+        List<ProductResponse.ProductIdDto> productList = productPage.getContent().stream().map(
+                ProductConvertor::toDto)
+            .toList();
+
+        return ProductConvertor.toDto(productList, isLast);
     }
 
     //랜덤 상품 불러오기
@@ -157,28 +131,12 @@ public class ProductService {
         List<Long> recentProducts = orderProductRepository.findProductIdsCreatedLastMonth();
         // 주문 내역이 없을 경우 랜덤 상품 반환
         if (recentProducts.isEmpty()) {
-            return productRepository.findTop12RandomProducts().stream()
-                .map(product -> ProductResponse.ProductIdDto.builder().productId(product.getId())
-                    .build()).collect(
-                    Collectors.toList());
+            return productRepository.findRandomProducts(12).stream()
+                .map(ProductConvertor::toDto).toList();
         }
 
-        // 주문 내역이 있을 경우, HashMap 생성
-        Map<Long, Integer> categoryCountMap = new HashMap<>();
-        // 순회하면서 categoryId:cnt 추가해주기
-        for (Long productId : recentProducts) {
-            Long categoryId = categoryProductRepository.findByProductId(productId).getCategory()
-                .getId();
-            categoryCountMap.put(categoryId, categoryCountMap.getOrDefault(categoryId, 0) + 1);
-        }
-        // 가장 많은 빈도의 카테고리 id 찾기
-        Long interestedCategoryId = getKeyWithMaxValue(categoryCountMap);
-
-        // 해당 카테고리 id로 랜덤 상품 불러와서 리스트로 변환
-        return categoryProductRepository.findRandomTop12ByCategoryId(interestedCategoryId).stream()
-            .map(product -> ProductResponse.ProductIdDto.builder().productId(product.getId())
-                .build()).collect(
-                Collectors.toList());
+        // 주문 내역이 있을 경우
+        return getRandomProductsByInterestedCategory(recentProducts);
     }
 
     //어드민 베스트11 불러 오기
@@ -226,6 +184,42 @@ public class ProductService {
 
         // 계산된 할인 가격을 정수로 변환하여 반환
         return discountedPrice.setScale(0, RoundingMode.HALF_UP).intValue();
+    }
+
+    private List<ProductResponse.ProductIdDto> getRandomProductsByInterestedCategory(List<Long> recentProducts) {
+        Map<Long, Integer> categoryCountMap = new HashMap<>();
+
+        for (Long productId : recentProducts) {
+            Long categoryId = categoryProductRepository.findByProductId(productId).getCategory().getId();
+            categoryCountMap.put(categoryId, categoryCountMap.getOrDefault(categoryId, 0) + 1);
+        }
+
+        Long interestedCategoryId = getKeyWithMaxValue(categoryCountMap);
+
+        List<CategoryProduct> categoryProducts = categoryProductRepository.findRandomByCategoryId(interestedCategoryId);
+
+        List<ProductResponse.ProductIdDto> resultProducts = categoryProducts.stream()
+            .map(categoryProduct -> ProductConvertor.toDto(categoryProduct.getProduct()))
+            .toList();
+
+        // 현재 카테고리 상품의 개수
+        int currentSize = resultProducts.size();
+        int desiredSize = 12; // 원하는 리스트의 최종 크기
+
+        if (currentSize < desiredSize) {
+            // 부족한 개수만큼 랜덤 상품을 추가로 가져오기
+            int additionalProductsNeeded = desiredSize - currentSize;
+            List<Product> additionalRandomProducts = productRepository.findRandomProducts(additionalProductsNeeded);
+
+            // 추가된 랜덤 상품을 결과 리스트에 추가
+            List<ProductResponse.ProductIdDto> additionalProducts = additionalRandomProducts.stream()
+                .map(ProductConvertor::toDto)
+                .toList();
+
+            resultProducts.addAll(additionalProducts);
+        }
+
+        return resultProducts;
     }
 
     private Long getKeyWithMaxValue(Map<Long, Integer> map) {
