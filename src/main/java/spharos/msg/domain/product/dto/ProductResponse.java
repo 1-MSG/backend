@@ -58,7 +58,7 @@ public class ProductResponse {
     }
 
     @Getter
-    public static class ProductImage {
+    public static class ProductImageDto {
 
         @Schema(description = "이미지 설명")
         private final String productImageDescription;
@@ -66,7 +66,7 @@ public class ProductResponse {
         private final String productImageUrl;
 
         @Builder
-        private ProductImage(String productImageDescription, String productImageUrl) {
+        private ProductImageDto(String productImageDescription, String productImageUrl) {
 
             this.productImageDescription = productImageDescription;
             this.productImageUrl = productImageUrl;
@@ -74,7 +74,7 @@ public class ProductResponse {
     }
 
     @Getter
-    public static class ProductCategory {
+    public static class ProductCategoryDto {
 
         @Schema(description = "대카테고리")
         private final String categoryLarge;
@@ -82,7 +82,7 @@ public class ProductResponse {
         private final String categoryMid;
 
         @Builder
-        private ProductCategory(String categoryLarge, String categoryMid) {
+        private ProductCategoryDto(String categoryLarge, String categoryMid) {
 
             this.categoryLarge = categoryLarge;
             this.categoryMid = categoryMid;
