@@ -174,7 +174,7 @@ public class ProductService {
                 .build()).collect(
                 Collectors.toList());
     }
-  
+
     //어드민 베스트11 불러 오기
     public List<ProductResponse.Best11Dto> getBest11Products() {
         List<Product> products = productRepository.findTop11ByOrderByProductSalesInfoProductSellTotalCountDesc();
@@ -203,13 +203,13 @@ public class ProductService {
             return price;
         }
 
-        BigDecimal normalPrice = new BigDecimal(price);
-        BigDecimal discount = discountRate.divide(BigDecimal.valueOf(100),
-            RoundingMode.HALF_UP); //할인율을 백분율로 변환
-        BigDecimal discountedPrice = normalPrice.multiply(
-            BigDecimal.ONE.subtract(discount)); // 할인 적용 가격 계산
+        // BigDecimal로 원래 가격과 할인율을 계산
+        BigDecimal normalPrice = BigDecimal.valueOf(price);
+        BigDecimal discount = discountRate.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP); // 할인율을 백분율로 변환
+        BigDecimal discountedPrice = normalPrice.multiply(BigDecimal.ONE.subtract(discount)); // 할인 가격 계산
 
-        return discountedPrice.intValue();
+        // 계산된 할인 가격을 정수로 변환하여 반환
+        return discountedPrice.setScale(0, RoundingMode.HALF_UP).intValue();
     }
 
     private Long getKeyWithMaxValue(Map<Long, Integer> map) {
