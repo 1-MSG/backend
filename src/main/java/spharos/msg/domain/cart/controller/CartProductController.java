@@ -90,7 +90,23 @@ public class CartProductController {
     ) {
         return cartProductUpdateService.notCheckCartProduct(cartId);
     }
+    @Operation(summary = "장바구니 핀 수정",
+            description = "장바구니에 담긴 상품을 체크합니다.")
+    @PatchMapping("/pin/{cartId}")
+    public ApiResponse<CartProductResponseDto> pinCartProduct(
+            @PathVariable Long cartId
+    ) {
+        return cartProductUpdateService.pinCartProduct(cartId);
+    }
 
+    @Operation(summary = "장바구니 핀 수정",
+            description = "장바구니에 담긴 상품을 체크해제합니다.")
+    @PatchMapping("/not-pin/{cartId}")
+    public ApiResponse<CartProductResponseDto> notPinCartProduct(
+            @PathVariable Long cartId
+    ) {
+        return cartProductUpdateService.notPinCartProduct(cartId);
+    }
 
     @Operation(summary = "장바구니 삭제",
             description = "장바구니에 담긴 상품을 삭제합니다.")

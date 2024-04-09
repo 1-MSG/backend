@@ -105,6 +105,21 @@ public class CartProductUpdateService {
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_UPDATE_SUCCESS,
                 new CartProductResponseDto(cartProduct));
     }
+    @Transactional
+    public ApiResponse<CartProductResponseDto> pinCartProduct(Long cartId) {
+        CartProduct cartProduct = getCartProduct(cartId);
+        cartProductRepository.save(CartDtoToEntity(cartId,true,cartProduct));
+        return ApiResponse.of(SuccessStatus.CART_PRODUCT_UPDATE_SUCCESS,
+                CartEntityToDto(cartProduct));
+    }
+
+    @Transactional
+    public ApiResponse<CartProductResponseDto> notPinCartProduct(Long cartId) {
+        CartProduct cartProduct = getCartProduct(cartId);
+        cartProductRepository.save(CartDtoToEntity(cartId,false,cartProduct));
+        return ApiResponse.of(SuccessStatus.CART_PRODUCT_UPDATE_SUCCESS,
+                CartEntityToDto(cartProduct));
+    }
 
     private CartProduct getCartProduct(Long cartId) {
         return cartProductRepository.findById(cartId).orElseThrow();
