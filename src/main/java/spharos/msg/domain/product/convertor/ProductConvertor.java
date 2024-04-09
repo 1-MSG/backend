@@ -69,5 +69,16 @@ public class ProductConvertor {
         return ProductResponse.BestProductsDto.builder()
             .productList(productList).isLast(isLast).build();
     }
+
+    public static Best11Dto toDto(Product product, ProductImage productImage){
+        return ProductResponse.Best11Dto.builder()
+            .productId(product.getId())
+            .productName(product.getProductName())
+            .productBrand(product.getBrand().getBrandName())
+            .productPrice(product.getProductPrice())
+            .productImage(productImage.getProductImageUrl())
+            .productSellTotalCount(product.getProductSalesInfo().getProductSellTotalCount())
+            .build();
+    }
     
 }

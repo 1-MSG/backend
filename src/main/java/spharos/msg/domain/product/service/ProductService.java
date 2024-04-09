@@ -3,16 +3,15 @@ package spharos.msg.domain.product.service;
 import static spharos.msg.global.api.code.status.ErrorStatus.NOT_EXIST_PRODUCT;
 
 import jakarta.transaction.Transactional;
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 import spharos.msg.domain.category.entity.CategoryProduct;
@@ -20,13 +19,11 @@ import spharos.msg.domain.category.repository.CategoryProductRepository;
 import spharos.msg.domain.orders.repository.OrderProductRepository;
 import spharos.msg.domain.product.convertor.ProductConvertor;
 import spharos.msg.domain.product.dto.ProductResponse;
-import spharos.msg.domain.product.dto.ProductResponse.ProductCategoryDto;
 import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductImage;
 import spharos.msg.domain.product.repository.ProductImageRepository;
 import spharos.msg.domain.product.repository.ProductRepository;
 import spharos.msg.domain.product.repository.ProductRepositoryCustom;
-import spharos.msg.global.api.code.status.ErrorStatus;
 import spharos.msg.global.api.exception.ProductNotExistException;
 
 @Service
@@ -124,17 +121,16 @@ public class ProductService {
         return ProductConvertor.toDto(productList, isLast);
     }
 
-    //랜덤 상품 불러오기
+    //랜덤 상품 불러 오기
     @Transactional
     public List<ProductResponse.ProductIdDto> getRandomProducts() {
-        //최근 1달 주문 내역의 productId 불러오기
+        //최근 1달 주문 내역의 productId 불러 오기
         List<Long> recentProducts = orderProductRepository.findProductIdsCreatedLastMonth();
-        // 주문 내역이 없을 경우 랜덤 상품 반환
+        // 주문 내역이 없을 경우
         if (recentProducts.isEmpty()) {
             return productRepository.findRandomProducts(12).stream()
                 .map(ProductConvertor::toDto).toList();
         }
-
         // 주문 내역이 있을 경우
         return getRandomProductsByInterestedCategory(recentProducts);
     }
@@ -148,14 +144,7 @@ public class ProductService {
                 ProductImage productImage = productImageRepository.findByProductAndImageIndex(product, 0)
                     .orElse(new ProductImage());
 
-                return ProductResponse.Best11Dto.builder()
-                    .productId(product.getId())
-                    .productName(product.getProductName())
-                    .productBrand(product.getBrand().getBrandName())
-                    .productPrice(product.getProductPrice())
-                    .productImage(productImage.getProductImageUrl())
-                    .productSellTotalCount(product.getProductSalesInfo().getProductSellTotalCount())
-                    .build();
+                return ProductConvertor.toDto(product,productImage);
             })
             .toList();
     }
@@ -186,42 +175,6 @@ public class ProductService {
         return discountedPrice.setScale(0, RoundingMode.HALF_UP).intValue();
     }
 
-    private List<ProductResponse.ProductIdDto> getRandomProductsByInterestedCategory(List<Long> recentProducts) {
-        Map<Long, Integer> categoryCountMap = new HashMap<>();
-
-        for (Long productId : recentProducts) {
-            Long categoryId = categoryProductRepository.findByProductId(productId).getCategory().getId();
-            categoryCountMap.put(categoryId, categoryCountMap.getOrDefault(categoryId, 0) + 1);
-        }
-
-        Long interestedCategoryId = getKeyWithMaxValue(categoryCountMap);
-
-        List<CategoryProduct> categoryProducts = categoryProductRepository.findRandomByCategoryId(interestedCategoryId);
-
-        List<ProductResponse.ProductIdDto> resultProducts = categoryProducts.stream()
-            .map(categoryProduct -> ProductConvertor.toDto(categoryProduct.getProduct()))
-            .toList();
-
-        // 현재 카테고리 상품의 개수
-        int currentSize = resultProducts.size();
-        int desiredSize = 12; // 원하는 리스트의 최종 크기
-
-        if (currentSize < desiredSize) {
-            // 부족한 개수만큼 랜덤 상품을 추가로 가져오기
-            int additionalProductsNeeded = desiredSize - currentSize;
-            List<Product> additionalRandomProducts = productRepository.findRandomProducts(additionalProductsNeeded);
-
-            // 추가된 랜덤 상품을 결과 리스트에 추가
-            List<ProductResponse.ProductIdDto> additionalProducts = additionalRandomProducts.stream()
-                .map(ProductConvertor::toDto)
-                .toList();
-
-            resultProducts.addAll(additionalProducts);
-        }
-
-        return resultProducts;
-    }
-
     private Long getKeyWithMaxValue(Map<Long, Integer> map) {
         Long maxKey = null;
         Integer maxValue = Integer.MIN_VALUE;
@@ -234,5 +187,40 @@ public class ProductService {
         }
 
         return maxKey;
+    }
+
+    private List<ProductResponse.ProductIdDto> getRandomProductsByInterestedCategory(List<Long> recentProducts) {
+        Map<Long, Integer> categoryCountMap = new HashMap<>();
+
+        for (Long productId : recentProducts) {
+            Long categoryId = categoryProductRepository.findByProductId(productId).getCategory().getId();
+            categoryCountMap.put(categoryId, categoryCountMap.getOrDefault(categoryId, 0) + 1);
+        }
+
+        Long interestedCategoryId = getKeyWithMaxValue(categoryCountMap);
+
+        List<CategoryProduct> categoryProducts = categoryProductRepository.findRandomByCategoryId(interestedCategoryId);
+
+        List<ProductResponse.ProductIdDto> resultProducts = new java.util.ArrayList<>(
+            categoryProducts.stream()
+                .map(categoryProduct -> ProductConvertor.toDto(categoryProduct.getProduct()))
+                .toList());
+
+        // 현재 카테고리 상품의 개수
+        int currentSize = resultProducts.size();
+        int desiredSize = 12; // 원하는 리스트의 최종 크기
+        log.info("현재 길이는"+currentSize);
+        if (currentSize < desiredSize) {
+            // 부족한 개수만큼 랜덤 상품을 추가로 가져오기
+            int additionalProductsNeeded = desiredSize - currentSize;
+            List<Product> additionalRandomProducts = productRepository.findRandomProducts(additionalProductsNeeded);
+            // 추가된 랜덤 상품을 결과 리스트에 추가
+            List<ProductResponse.ProductIdDto> additionalProducts = additionalRandomProducts.stream()
+                .map(ProductConvertor::toDto)
+                .toList();
+            resultProducts.addAll(additionalProducts);
+        }
+
+        return resultProducts;
     }
 }
