@@ -1,10 +1,9 @@
 package spharos.msg.domain.cart.service;
 
-import java.util.List;
-import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spharos.msg.domain.cart.converter.CartConverter;
 import spharos.msg.domain.cart.dto.CartProductOptionResponseDto;
 import spharos.msg.domain.cart.dto.CartProductRequestDto;
 import spharos.msg.domain.cart.dto.CartProductResponseDto;
@@ -34,16 +33,16 @@ public class CartProductService {
     private final UsersRepository usersRepository;
 
     @Transactional
-    public ApiResponse<Void> addCartProduct(Long productOptionId,
-        CartProductRequestDto cartProductRequestDto, int cartProductQuantity, String userUuid) {
+    public ApiResponse<Void> addCartProduct(
+            Long productOptionId,
+            CartProductRequestDto cartProductRequestDto,
+            int cartProductQuantity,
+            String userUuid) {
         ProductOption productOption = productOptionRepository.findById(productOptionId)
                 .orElseThrow();
         Users users = usersRepository.findByUuid(userUuid).orElseThrow();
 
-        return addCart(users,
-                productOptionId,
-                cartProductRequestDto,
-                productOption,
+        return addCart(users, productOptionId, cartProductRequestDto, productOption,
                 cartProductQuantity);
     }
 
@@ -51,14 +50,13 @@ public class CartProductService {
     public ApiResponse<List<CartProductResponseDto>> getCart(String userUuid) {
         Users users = usersRepository.findByUuid(userUuid).orElseThrow();
 
-        List<CartProductResponseDto> cartProductResponseDtos = cartProductRepository.findByUsers(
-                users)
-            .stream()
-            .map(CartProductResponseDto::new)
-            .toList();
+        List<CartProductResponseDto> cartProductResponseDtos = cartProductRepository.findByUsers(users)
+                .stream()
+                .map(CartConverter::CartEntityToDto)
+                .toList();
 
         IntStream.range(0, cartProductResponseDtos.size())
-            .forEach(index -> cartProductResponseDtos.get(index).setId(index));
+                .forEach(index -> cartProductResponseDtos.get(index).setId(index));
 
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_GET_SUCCESS, cartProductResponseDtos);
     }
@@ -82,19 +80,18 @@ public class CartProductService {
     }
 
     private ApiResponse<Void> addCart(Users users, Long productOptionId,
-        CartProductRequestDto cartProductRequestDto, ProductOption productOption,
-        Integer productQuantity) {
+                                      CartProductRequestDto cartProductRequestDto, ProductOption productOption,
+                                      Integer productQuantity) {
         List<CartProduct> cartProducts = cartProductRepository.findByUsers(users);
         //이미 장바구니에 담긴 상품의 경우 개수 더해서 save하기
         for (CartProduct cartProduct : cartProducts) {
             if (cartProduct.getProductOption().getId().equals(productOptionId)) {
-                cartProductRepository.save(CartDtoToEntity(cartProduct,productQuantity));
+                cartProductRepository.save(CartDtoToEntity(cartProduct, productQuantity));
                 return ApiResponse.of(SuccessStatus.CART_PRODUCT_ADD_SUCCESS, null);
             }
         }
         //새롭게 담는 상품의 경우 새로 생성하기
-
-        cartProductRepository.save(CartDtoToEntity(users,cartProductRequestDto,productOption,productQuantity));
+        cartProductRepository.save(CartDtoToEntity(users, cartProductRequestDto, productOption, productQuantity));
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_ADD_SUCCESS, null);
     }
 }

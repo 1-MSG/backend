@@ -21,16 +21,6 @@ public class CartProductResponseDto {
     private boolean cartIsChecked;
     private boolean cartIsPinned;
 
-    public CartProductResponseDto(CartProduct cartProduct) {
-        this.cartId = cartProduct.getId();
-        this.productId = cartProduct.getProductId();
-        this.cartProductQuantity = cartProduct.getCartProductQuantity();
-        this.cartIsChecked = cartProduct.getCartIsChecked();
-        this.cartIsPinned = cartProduct.getCartIsPinned();
-        this.productOptionId = cartProduct.getProductOption().getId();
-        this.brandId = cartProduct.getBrandId();
-    }
-
     public void setId(int id) {
         this.id = id;
     }

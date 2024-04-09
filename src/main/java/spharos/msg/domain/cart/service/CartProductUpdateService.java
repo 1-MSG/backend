@@ -24,86 +24,38 @@ public class CartProductUpdateService {
     public ApiResponse<CartProductResponseDto> updateCartProductOption(Long productOptionId, Long cartId) {
         CartProduct cartProduct = getCartProduct(cartId);
         ProductOption productOption = productOptionRepository.findById(productOptionId).orElseThrow();
-
-        cartProductRepository.save(CartDtoToEntity(cartId,cartProduct, cartProduct.getCartProductQuantity(), productOption));
-//                CartProduct.builder()
-//                .id(cartId)
-//                .cartProductQuantity(cartProduct.getCartProductQuantity())
-//                .productOption(productOption)
-//                .cartIsChecked(cartProduct.getCartIsChecked())
-//                .users(cartProduct.getUsers())
-//                .build());
-
+        cartProductRepository.save(CartDtoToEntity(cartId,cartProduct, productOption));
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_UPDATE_SUCCESS,
                 CartEntityToDto(cartProduct));
-
     }
-
     @Transactional
     public ApiResponse<CartProductResponseDto> addCartProductQuantity(Long cartId) {
         CartProduct cartProduct = getCartProduct(cartId);
-
-        cartProductRepository.save(CartDtoToEntity(cartId,cartProduct,cartProduct.getCartProductQuantity()+1, cartProduct.getProductOption()));
-
-//                CartProduct.builder()
-//                .id(cartId)
-//                .cartProductQuantity(cartProduct.getCartProductQuantity()+1)
-//                .productOption(cartProduct.getProductOption())
-//                .cartIsChecked(cartProduct.getCartIsChecked())
-//                .users(cartProduct.getUsers())
-//                .build());
-
+        cartProductRepository.save(CartDtoToEntity(cartId,cartProduct,cartProduct.getCartProductQuantity()+1));
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_UPDATE_SUCCESS,
-                new CartProductResponseDto(cartProduct));
+                CartEntityToDto(cartProduct));
     }
-
     @Transactional
     public ApiResponse<CartProductResponseDto> minusCartProductQuantity(Long cartId) {
         CartProduct cartProduct = getCartProduct(cartId);
-
-        cartProductRepository.save(CartProduct.builder()
-                .id(cartId)
-                .cartProductQuantity(cartProduct.getCartProductQuantity()-1)
-                .productOption(cartProduct.getProductOption())
-                .cartIsChecked(cartProduct.getCartIsChecked())
-                .users(cartProduct.getUsers())
-                .build());
-
+        cartProductRepository.save(CartDtoToEntity(cartId,cartProduct,cartProduct.getCartProductQuantity()-1));
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_UPDATE_SUCCESS,
-                new CartProductResponseDto(cartProduct));
+                CartEntityToDto(cartProduct));
     }
-
     @Transactional
     public ApiResponse<CartProductResponseDto> checkCartProduct(Long cartId) {
         CartProduct cartProduct = getCartProduct(cartId);
-
-        cartProductRepository.save(CartProduct.builder()
-                .id(cartId)
-                .cartProductQuantity(cartProduct.getCartProductQuantity())
-                .productOption(cartProduct.getProductOption())
-                .cartIsChecked(true)
-                .users(cartProduct.getUsers())
-                .build());
-
+        cartProductRepository.save(CartDtoToEntity(cartId,cartProduct,true));
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_UPDATE_SUCCESS,
-                new CartProductResponseDto(cartProduct));
-
+                CartEntityToDto(cartProduct));
     }
 
     @Transactional
     public ApiResponse<CartProductResponseDto> notCheckCartProduct(Long cartId) {
         CartProduct cartProduct = getCartProduct(cartId);
-
-        cartProductRepository.save(CartProduct.builder()
-                .id(cartId)
-                .cartProductQuantity(cartProduct.getCartProductQuantity())
-                .productOption(cartProduct.getProductOption())
-                .cartIsChecked(false)
-                .users(cartProduct.getUsers())
-                .build());
-
+        cartProductRepository.save(CartDtoToEntity(cartId,cartProduct,false));
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_UPDATE_SUCCESS,
-                new CartProductResponseDto(cartProduct));
+                CartEntityToDto(cartProduct));
     }
     @Transactional
     public ApiResponse<CartProductResponseDto> pinCartProduct(Long cartId) {

@@ -7,8 +7,7 @@ import spharos.msg.domain.product.entity.ProductOption;
 import spharos.msg.domain.users.entity.Users;
 
 public class CartConverter {
-    static public CartProductResponseDto CartEntityToDto(CartProduct cartProduct){
-
+    static public CartProductResponseDto CartEntityToDto(CartProduct cartProduct) {
         return CartProductResponseDto.builder()
                 .cartProductQuantity(cartProduct.getCartProductQuantity())
                 .productOptionId(cartProduct.getProductOption().getId())
@@ -20,10 +19,11 @@ public class CartConverter {
                 .build();
     }
 
-    static public CartProduct CartDtoToEntity(Users users,
-                                          CartProductRequestDto cartProductRequestDto,
-                                          ProductOption productOption,
-                                          Integer productQuantity){
+    static public CartProduct CartDtoToEntity(
+            Users users,
+            CartProductRequestDto cartProductRequestDto,
+            ProductOption productOption,
+            Integer productQuantity) {
         return CartProduct.builder()
                 .productId(cartProductRequestDto.getProductId())
                 .brandId(cartProductRequestDto.getBrandId())
@@ -34,8 +34,10 @@ public class CartConverter {
                 .users(users)
                 .build();
     }
-    static public CartProduct CartDtoToEntity(CartProduct cartProduct,
-                                              Integer productQuantity){
+    //장바구니 담을 때
+    static public CartProduct CartDtoToEntity(
+            CartProduct cartProduct,
+            Integer productQuantity) {
         return CartProduct.builder()
                 .id(cartProduct.getId())
                 .cartProductQuantity(cartProduct.getCartProductQuantity() + productQuantity)
@@ -47,9 +49,11 @@ public class CartConverter {
                 .users(cartProduct.getUsers())
                 .build();
     }
-    static public CartProduct CartDtoToEntity(Long cartId, CartProduct cartProduct, int cartProductQuantity, ProductOption productOption){
+
+    //옵션 수정
+    static public CartProduct CartDtoToEntity(Long cartId, CartProduct cartProduct, ProductOption productOption) {
         return CartProduct.builder()
-                .cartProductQuantity(cartProductQuantity)
+                .cartProductQuantity(cartProduct.getCartProductQuantity())
                 .cartIsChecked(cartProduct.getCartIsChecked())
                 .cartIsPinned(cartProduct.getCartIsPinned())
                 .productId(cartProduct.getProductId())
@@ -59,4 +63,48 @@ public class CartConverter {
                 .id(cartId)
                 .build();
     }
+
+    //개수 수정
+    static public CartProduct CartDtoToEntity(Long cartId, CartProduct cartProduct, int cartProductQuantity) {
+        return CartProduct.builder()
+                .cartProductQuantity(cartProductQuantity)
+                .cartIsChecked(cartProduct.getCartIsChecked())
+                .cartIsPinned(cartProduct.getCartIsPinned())
+                .productId(cartProduct.getProductId())
+                .brandId(cartProduct.getBrandId())
+                .users(cartProduct.getUsers())
+                .productOption(cartProduct.getProductOption())
+                .id(cartId)
+                .build();
+    }
+
+    //체크 수정
+    static public CartProduct CartDtoToEntity(Long cartId, CartProduct cartProduct, boolean isChecked) {
+        return CartProduct.builder()
+                .cartProductQuantity(cartProduct.getCartProductQuantity())
+                .cartIsChecked(isChecked)
+                .cartIsPinned(cartProduct.getCartIsPinned())
+                .productId(cartProduct.getProductId())
+                .brandId(cartProduct.getBrandId())
+                .users(cartProduct.getUsers())
+                .productOption(cartProduct.getProductOption())
+                .id(cartId)
+                .build();
+    }
+
+    //핀 수정
+    static public CartProduct CartDtoToEntity(Long cartId, boolean isPinned, CartProduct cartProduct) {
+        return CartProduct.builder()
+                .cartProductQuantity(cartProduct.getCartProductQuantity())
+                .cartIsChecked(cartProduct.getCartIsChecked())
+                .cartIsPinned(isPinned)
+                .productId(cartProduct.getProductId())
+                .brandId(cartProduct.getBrandId())
+                .users(cartProduct.getUsers())
+                .productOption(cartProduct.getProductOption())
+                .id(cartId)
+                .build();
+    }
+
+
 }
