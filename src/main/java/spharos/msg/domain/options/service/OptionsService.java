@@ -39,11 +39,12 @@ public class OptionsService {
         List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
         List<OptionTypeDto> optionTypeDtos = new ArrayList<>();
 
-        if (!productOptions.isEmpty()) {
-            OptionTypeDto optionTypeDto = new OptionTypeDto(productOptions.get(0).getOptions());
-            if (optionTypeDto.getOptionType() != null) {
-                optionTypeDtos.add(optionTypeDto);
-            }
+        OptionTypeDto optionTypeDto = new OptionTypeDto(productOptions.get(0).getOptions());
+
+        if (optionTypeDto.getOptionType() != null) {
+            optionTypeDtos.add(optionTypeDto);
+        }
+        if (productOptions.get(0).getOptions().getParent() != null) {
             Set<Long> parentIds = getParentOptionIds(productOptions);
             addOptionTypeDtoFromParentIds(parentIds, optionTypeDtos);
         }
@@ -91,8 +92,9 @@ public class OptionsService {
         return String.join(OPTION_DELIMETER, optionNames);
     }
 
-    private void addOptionTypeDtoFromParentIds(Set<Long> parentIds,
-        List<OptionTypeDto> optionTypeDtos) {
+
+    private void addOptionTypeDtoFromParentIds(Set<Long> parentIds, List<OptionTypeDto> optionTypeDtos) {
+
         Options options = getOptionsById(parentIds.iterator().next());
         optionTypeDtos.add(new OptionTypeDto(options));
     }
@@ -121,6 +123,7 @@ public class OptionsService {
 
     //상품이 가진 최하위 옵션 ID의 상위 옵션 ID 취합
     private Set<Long> getParentOptionIds(List<ProductOption> productOptions) {
+
         return productOptions.stream()
             .map(productOption -> productOption.getOptions().getParent().getId())
             .collect(Collectors.toSet());
