@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,7 +97,7 @@ public class OptionsService {
     }
 
     private void addOptionTypeDtoFromParentIds(Set<Long> parentIds,
-        List<OptionTypeDto> optionTypeDtos) {
+                                               List<OptionTypeDto> optionTypeDtos) {
         Options options = getOptionsById(parentIds.iterator().next());
         optionTypeDtos.add(new OptionTypeDto(options));
     }
@@ -118,7 +119,8 @@ public class OptionsService {
         }
         return ApiResponse.of(SuccessStatus.OPTION_DETAIL_SUCCESS,
             childOptions.stream()
-                .map(option -> new OptionsResponseDto(option,productOption.getId(),
+                .map(option -> new OptionsResponseDto(option,
+                    productOptionRepository.findByOptions(option).getId(),
                     productOptionRepository.findByOptions(option).getStock()))
                 .toList());
     }
@@ -128,15 +130,15 @@ public class OptionsService {
         return productOptions.stream()
                 .filter(productOption -> productOption.getOptions() != null && productOption.getOptions().getParent() != null)
                 .map(productOption -> productOption.getOptions().getParent().getId())
-            .collect(Collectors.toSet());
+                .collect(Collectors.toSet());
     }
 
     //해당 ID들의 정보(옵션ID,이름,타입,레벨) 반환
     private List<OptionsResponseDto> getParentOptionDetails(Set<Long> parentIds) {
         List<OptionsResponseDto> optionsResponseDtos = new ArrayList<>();
-        for(Long parentId:parentIds){
+        for (Long parentId : parentIds) {
             Options options = optionsRepository.findById(parentId).orElseThrow();
-            optionsResponseDtos.add(new OptionsResponseDto(options, null,null));
+            optionsResponseDtos.add(new OptionsResponseDto(options, null, null));
         }
         return optionsResponseDtos;
     }
@@ -146,18 +148,18 @@ public class OptionsService {
         Set<Long> grandParentIds = new HashSet<>();
         List<OptionsResponseDto> optionsResponseDtos = new ArrayList<>();
 
-        for(Long parentId:parentIds) {
+        for (Long parentId : parentIds) {
             Options options = optionsRepository.findById(parentId).orElseThrow();
-            if(options.getParent()!=null) {
+            if (options.getParent() != null) {
                 grandParentIds.add(options.getParent().getId());
             }
         }
 
-        for(Long grandParentId:grandParentIds){
+        for (Long grandParentId : grandParentIds) {
             Options options = optionsRepository.findById(grandParentId).orElseThrow();
-            optionsResponseDtos.add(new OptionsResponseDto(options, null,null));
+            optionsResponseDtos.add(new OptionsResponseDto(options, null, null));
         }
-            return optionsResponseDtos;
+        return optionsResponseDtos;
     }
 
 }
