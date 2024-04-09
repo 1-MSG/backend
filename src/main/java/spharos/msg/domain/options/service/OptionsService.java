@@ -1,20 +1,12 @@
 package spharos.msg.domain.options.service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.options.dto.OptionTypeDto;
-import spharos.msg.domain.options.dto.OptionsNameDto;
 import spharos.msg.domain.options.dto.OptionsResponseDto;
 import spharos.msg.domain.options.entity.Options;
 import spharos.msg.domain.options.repository.OptionsRepository;
-import spharos.msg.domain.product.dto.ProductDetailReponse;
 import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductOption;
 import spharos.msg.domain.product.repository.ProductOptionRepository;
@@ -24,6 +16,12 @@ import spharos.msg.global.api.code.status.ErrorStatus;
 import spharos.msg.global.api.code.status.SuccessStatus;
 import spharos.msg.global.api.exception.OptionsException;
 import spharos.msg.global.api.exception.ProductNotExistException;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
