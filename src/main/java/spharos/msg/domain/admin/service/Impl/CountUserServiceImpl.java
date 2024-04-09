@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import spharos.msg.domain.admin.converter.AdminConverter;
 import spharos.msg.domain.admin.dto.AdminResponseDto;
 import spharos.msg.domain.admin.service.CountUserService;
 import spharos.msg.domain.users.entity.LoginType;
@@ -35,21 +36,18 @@ public class CountUserServiceImpl implements CountUserService {
     public List<AdminResponseDto.SearchAllInfo> SearchUsersInfo(Pageable pageable) {
         Page<Users> findUsers = usersRepository.findAll(pageable);
 
-        return findUsers.map(m -> AdminResponseDto.SearchAllInfo
-                .builder()
-                .userInfo(m.getEmail())
-                .userId(m.getId())
-                .userName(m.readUserName())
-                .status(redisService.isRefreshTokenExist(m.getUuid()))
-                .LoginType(getLoginType(m.getStatus()))
-                .build()).getContent();
+        return findUsers.map(
+                        m -> AdminConverter.toDto(
+                                m,
+                                redisService.isRefreshTokenExist(m.getUuid()),
+                                getLoginType(m.getStatus())))
+                .getContent();
     }
 
     private LoginType getLoginType(UserStatus status) {
-        if(status.equals(UserStatus.NOT_USER)){
+        if (status.equals(UserStatus.NOT_USER)) {
             return LoginType.DELETE;
-        }
-        else if(status.equals(UserStatus.UNION)){
+        } else if (status.equals(UserStatus.UNION)) {
             return LoginType.UNION;
         }
         return LoginType.EASY;
@@ -88,7 +86,7 @@ public class CountUserServiceImpl implements CountUserService {
     }
 
     @Override
-    public List<List<AdminResponseDto.MonthlySignupCount>> monthSignupCount(){
+    public List<List<AdminResponseDto.MonthlySignupCount>> monthSignupCount() {
         //타겟년도 계산
         LocalDateTime target = LocalDateTime
                 .of(LocalDateTime.now().getYear() - 1, Month.JANUARY, 1, 0, 0);
@@ -99,7 +97,8 @@ public class CountUserServiceImpl implements CountUserService {
         // 모든 년도와 월에 대한 데이터 생성
         for (int year = target.getYear(); year <= LocalDateTime.now().getYear(); year++) {
             for (int month = 1; month <= 12; month++) {
-                yearMonthSignupCounts.putIfAbsent(year, new TreeMap<>(Comparator.comparingInt(Month::getValue)));
+                yearMonthSignupCounts.putIfAbsent(year,
+                        new TreeMap<>(Comparator.comparingInt(Month::getValue)));
                 yearMonthSignupCounts.get(year).put(Month.of(month), 0L);
             }
         }
@@ -113,7 +112,8 @@ public class CountUserServiceImpl implements CountUserService {
             Month month = user.getCreatedAt().getMonth();
 
             // 해당 년도의 Map에서 해당 월의 가입자 수를 업데이트
-            yearMonthSignupCounts.get(year).put(month, yearMonthSignupCounts.get(year).get(month) + 1);
+            yearMonthSignupCounts.get(year)
+                    .put(month, yearMonthSignupCounts.get(year).get(month) + 1);
         }
 
         // DTO로 변환하여 반환
@@ -123,7 +123,8 @@ public class CountUserServiceImpl implements CountUserService {
                     Map<Month, Long> monthSignupCounts = entry.getValue();
 
                     return monthSignupCounts.entrySet().stream()
-                            .map(innerEntry -> new AdminResponseDto.MonthlySignupCount(year, innerEntry.getKey(), innerEntry.getValue()))
+                            .map(innerEntry -> new AdminResponseDto.MonthlySignupCount(year,
+                                    innerEntry.getKey(), innerEntry.getValue()))
                             .collect(Collectors.toList());
                 })
                 .collect(Collectors.toList());
