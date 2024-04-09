@@ -66,11 +66,8 @@ public class OptionsService {
                     .map(OptionsResponseDto::new)
                     .toList());
         }
-        System.out.println("11111");
         Set<Long> parentIds = getParentOptionIds(productOptions);
-        System.out.println("22222");
         List<OptionsResponseDto> optionDetailList = getParentOptionDetails(parentIds);
-        System.out.println("33333");
         List<OptionsResponseDto> parentOptionDetailList = getFinalParentOptionDetails(parentIds);
 
         if (parentOptionDetailList.isEmpty()) {
