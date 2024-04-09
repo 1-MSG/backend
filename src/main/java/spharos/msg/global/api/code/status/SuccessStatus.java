@@ -36,6 +36,7 @@ public enum SuccessStatus implements BaseCode {
     ORDER_SUCCESS(HttpStatus.CREATED, "ORDER201", "상품 주문 성공"),
     ORDER_USER_SUCCESS(HttpStatus.OK, "ORDER202", "주문자 정보 조회 성공"),
     ORDER_HISTORY_SUCCESS(HttpStatus.OK, "ORDER203", "구매 내역 리스트 조회 성공"),
+    ORDER_COUNT_SUCCESS(HttpStatus.OK, "ORDER204", "누적 주문 횟수 조회 성공"),
     CART_PRODUCT_ADD_SUCCESS(HttpStatus.CREATED, "CART201", "장바구니 담기 성공"),
     CART_PRODUCT_GET_SUCCESS(HttpStatus.OK, "CART200", "장바구니 조회 성공"),
     CART_PRODUCT_UPDATE_SUCCESS(HttpStatus.OK, "CART202", "장바구니 수정 성공"),
@@ -54,6 +55,7 @@ public enum SuccessStatus implements BaseCode {
 
     PRODUCT_DETAIL_READ_SUCCESS(HttpStatus.OK, "PRODUCT200", "상품 상세 조회 성공"),
     PRODUCT_INFO_SUCCESS(HttpStatus.OK, "PRODUCT200", "상품 정보 조회 성공"),
+    PRODUCT_RANDOM_SUCCESS(HttpStatus.OK, "PRODUCT200", "랜덤 상품 조회 성공"),
     PRODUCT_BEST_SUCCESS(HttpStatus.OK, "PRODUCT200", "베스트 상품 조회 성공"),
 
     REVIEW_SAVE_SUCCESS(HttpStatus.CREATED, "REVIEW200", "상품 리뷰 작성 성공"),
@@ -74,6 +76,7 @@ public enum SuccessStatus implements BaseCode {
     OPTION_DETAIL_SUCCESS(HttpStatus.OK, "OPTION203", "옵션 상세 조회 성공"),
 
     BRAND_GET_SUCCESS(HttpStatus.OK, "BRAND200", "전체 브랜드 조회 성공"),
+    BRAND_DETAIL_GET_SUCCESS(HttpStatus.OK, "BRAND201", "브랜드 상세 조회 성공"),
     OPTION_FIRST_SUCCESS(HttpStatus.OK, "OPTION204", "옵션 첫번째 항목 리스트 조회 성공");
 
     private final HttpStatus httpStatus;

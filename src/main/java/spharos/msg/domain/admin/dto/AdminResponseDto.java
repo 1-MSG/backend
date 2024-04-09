@@ -1,11 +1,15 @@
 package spharos.msg.domain.admin.dto;
 
 import java.time.Month;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import spharos.msg.domain.users.entity.LoginType;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AdminResponseDto {
 
     @Builder
@@ -48,8 +52,20 @@ public class AdminResponseDto {
     @AllArgsConstructor
     @Getter
     public static class MonthlySignupCount {
+
         private int year;
         private Month month;
         private Long count;
+    }
+
+    @Builder
+    @AllArgsConstructor
+    @Getter
+    @ToString
+    public static class CountPriceDto {
+
+        private Long totalDeliveryPrice;
+        private Long totalProfit;
+        private Long totalOrderPrice;
     }
 }

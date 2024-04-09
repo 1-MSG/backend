@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spharos.msg.domain.options.service.OptionsService;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderProductDetail;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderSheetDto;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderPrice;
@@ -30,6 +31,7 @@ public class OrderProductService {
     private final OrderProductRepository orderProductRepository;
     private final ProductRepository productRepository;
     private final ProductSalesInfoRepository productSalesInfoRepository;
+    private final OptionsService optionsService;
 
     @Transactional
     public void saveAllByOrderSheet(OrderSheetDto orderSheetDto, Orders orders) {
@@ -42,26 +44,7 @@ public class OrderProductService {
             OrderProduct orderProductEntity = toOrderProductEntity(detail, product, orders);
             orderProductEntities.add(orderProductEntity);
         }
-
         orderProductRepository.saveAll(orderProductEntities);
-    }
-
-    private void updateProductOrderQuantity(ProductSalesInfo productSalesInfo, int orderQuantity) {
-        ProductSalesInfo updated = ProductSalesInfo
-            .builder()
-            .id(productSalesInfo.getId())
-            .productStar(productSalesInfo.getProductStar())
-            .productSellTotalCount(productSalesInfo.getProductSellTotalCount() + orderQuantity)
-            .reviewCount(productSalesInfo.getReviewCount())
-            .build();
-
-        productSalesInfoRepository.save(updated);
-    }
-
-    private Product findProduct(OrderProductDetail detail) {
-        return productRepository
-            .findById(detail.getProductId())
-            .orElseThrow(() -> new ProductNotExistException(ErrorStatus.PRODUCT_ERROR));
     }
 
     public List<OrderPrice> createOrderPricesByOrderId(Long orderId) {
@@ -72,12 +55,21 @@ public class OrderProductService {
             .toList();
     }
 
-    private OrderPrice toOrderPrice(OrderProduct orderProduct) {
-        int discountRate = orderProduct.getDiscountRate().intValue();
-        Long originPrice = orderProduct.getProductPrice();
-        Long salePrice = originPrice * (100 - discountRate) / 100;
+    private void updateProductOrderQuantity(ProductSalesInfo productSalesInfo, int orderQuantity) {
+        ProductSalesInfo updated = ProductSalesInfo
+            .builder()
+            .id(productSalesInfo.getId())
+            .productStar(productSalesInfo.getProductStar())
+            .productSellTotalCount(productSalesInfo.getProductSellTotalCount() + orderQuantity)
+            .reviewCount(productSalesInfo.getReviewCount())
+            .build();
+        productSalesInfoRepository.save(updated);
+    }
 
-        return new OrderPrice(discountRate, originPrice, salePrice);
+    private Product findProduct(OrderProductDetail detail) {
+        return productRepository
+            .findById(detail.getProductId())
+            .orElseThrow(() -> new ProductNotExistException(ErrorStatus.PRODUCT_ERROR));
     }
 
     private OrderProduct toOrderProductEntity(OrderProductDetail orderProductDetail,
@@ -92,9 +84,23 @@ public class OrderProductService {
             .productId(orderProductDetail.getProductId())
             .orderIsCompleted(COMPLETED_DEFAULT)
             .orders(orders)
-            .productOption("옵션1 옵션2 옵션3") // 임시값 - 변경 예정
+            .productOption(getProductOptions(orderProductDetail))
             .productName(product.getProductName())
             .productImage("TEMP VALUE") //임시값 - 변경 예정
             .build();
+    }
+
+    private String getProductOptions(OrderProductDetail detail) {
+        Long productOptionId = detail.getProductOptionId();
+        return optionsService.getOptions(productOptionId);
+    }
+
+    private OrderPrice toOrderPrice(OrderProduct orderProduct) {
+        Integer deliveryFee = orderProduct.getOrdersDeliveryFee();
+        int discountRate = orderProduct.getDiscountRate().intValue();
+        Long originPrice = orderProduct.getProductPrice();
+        Long salePrice = originPrice * (100 - discountRate) / 100;
+
+        return new OrderPrice(deliveryFee, originPrice, salePrice);
     }
 }

@@ -3,6 +3,7 @@ package spharos.msg.domain.orders.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +53,17 @@ public class OrderProductRepository {
         entityManager.clear();
     }
 
+    // 최근 한 달간 생성된 OrderProduct의 productId 필드를 조회
+    public List<Long> findProductIdsCreatedLastMonth() {
+        QOrderProduct orderProduct = QOrderProduct.orderProduct;
+        LocalDateTime startDate = LocalDateTime.now().minusMonths(1);
+
+        return jpaQueryFactory
+            .select(orderProduct.productId)
+            .from(orderProduct)
+            .where(orderProduct.createdAt.goe(startDate))
+            .fetch();
+  }
     public List<OrderProduct> findAllByOrderId(Long orderId) {
         QOrderProduct orderProduct = QOrderProduct.orderProduct;
         QOrders orders = QOrders.orders;
