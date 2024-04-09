@@ -8,9 +8,11 @@ import spharos.msg.domain.options.entity.Options;
 @NoArgsConstructor
 public class OptionsNameDto {
     private int optionLevel;
+    private String optionsType;
     private String optionsName;
     public OptionsNameDto(Options options){
         this.optionLevel = options.getOptionLevel();
+        this.optionsType = options.getOptionType();
         this.optionsName = options.getOptionName();
     }
 }

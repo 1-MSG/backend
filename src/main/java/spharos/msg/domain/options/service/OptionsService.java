@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.options.dto.OptionTypeDto;
+import spharos.msg.domain.options.dto.OptionsNameDto;
 import spharos.msg.domain.options.dto.OptionsResponseDto;
 import spharos.msg.domain.options.entity.Options;
 import spharos.msg.domain.options.repository.OptionsRepository;
@@ -84,6 +85,20 @@ public class OptionsService {
     }
 
     //상품 옵션 조회
+    public ApiResponse<List<OptionsNameDto>> getOptionsDetail(Long productOptionId) {
+        ProductOption productOption = productOptionRepository.findById(productOptionId).orElseThrow();
+        Options options = productOption.getOptions();
+        List<OptionsNameDto> optionsNameDtos = new ArrayList<>();
+
+        optionsNameDtos.add(new OptionsNameDto(options));
+
+        while (options.getParent() != null) {
+            optionsNameDtos.add(new OptionsNameDto(options.getParent()));
+            options = options.getParent();
+        }
+        return ApiResponse.of(SuccessStatus.OPTION_DETAIL_SUCCESS, optionsNameDtos);
+    }
+
     public String getOptions(Long productOptionId) {
         ProductOption productOption = productOptionRepository.findById(productOptionId)
             .orElseThrow();
