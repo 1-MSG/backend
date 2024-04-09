@@ -41,6 +41,11 @@ public class OptionsService {
         List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
         List<OptionTypeDto> optionTypeDtos = new ArrayList<>();
 
+        //옵션 없는 상품
+        if(productOptions.get(0).getOptions().getOptionName()==null){
+            return ApiResponse.of(SuccessStatus.OPTION_TYPE_SUCCESS, optionTypeDtos);
+        }
+
         OptionTypeDto optionTypeDto = new OptionTypeDto(productOptions.get(0).getOptions());
 
         if (optionTypeDto.getOptionType() != null) {
@@ -97,8 +102,6 @@ public class OptionsService {
 
 
     private void addOptionTypeDtoFromParentIds(Set<Long> parentIds, List<OptionTypeDto> optionTypeDtos) {
-
-
         Options options = getOptionsById(parentIds.iterator().next());
         optionTypeDtos.add(new OptionTypeDto(options));
     }
@@ -163,5 +166,11 @@ public class OptionsService {
         }
         return optionsResponseDtos;
     }
-
+    //옵션 없는 상품용 api
+    public ApiResponse<?> getProductOptionId(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotExistException(ErrorStatus.NOT_EXIST_PRODUCT_ID));
+        List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
+        return ApiResponse.of(SuccessStatus.PRODUCT_OPTION_ID_GET_SUCCESS,productOptions.get(0).getId());
+    }
 }
