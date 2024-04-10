@@ -34,8 +34,8 @@ public class BundleController {
         return ApiResponse.of(BUNDLE_READ_SUCCESS,bundleService.getBundles(page, size));
     }
 
-    @Operation(summary = "특정 특가상품에 속하는 상품들 조회",
-        description = "하나의 특가 상품에 속한 상품들을 배열로 반환합니다")
+    @Operation(summary = "특정 특가상품의 정보를 조회",
+        description = "id와 일치하는 특가상품의 정보 및 속한 상품 배열을 반환합니다")
     @GetMapping("/bundles/{bundleId}")
     public ApiResponse<BundleDto> getBundleProducts(
         @PathVariable("bundleId") Long bundleId
