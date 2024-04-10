@@ -1,6 +1,7 @@
 package spharos.msg.domain.search.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.querydsl.core.annotations.QueryProjection;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -13,11 +14,11 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SearchResponse {
 
-    @NoArgsConstructor
     @Getter
-    @ToString
-    @AllArgsConstructor
     @Builder
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class SearchProductDtos {
 
         private String responseTime;
@@ -27,21 +28,25 @@ public class SearchResponse {
         private List<SearchProductDto> searchProductDtos;
     }
 
-    @NoArgsConstructor
     @Getter
     @ToString
-    @AllArgsConstructor
+    @NoArgsConstructor
     public static class SearchProductDto {
 
         private Long productId;
+
+        @QueryProjection
+        public SearchProductDto(Long productId) {
+            this.productId = productId;
+        }
     }
 
-    @Builder
     @Getter
+    @Builder
+    @ToString
     @EqualsAndHashCode
     @NoArgsConstructor
     @AllArgsConstructor
-    @ToString
     public static class SearchTextDto {
 
         private String productName;
