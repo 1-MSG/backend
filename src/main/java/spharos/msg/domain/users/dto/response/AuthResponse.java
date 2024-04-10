@@ -50,4 +50,9 @@ public class AuthResponse {
         private String refreshToken;
         private String accessToken;
     }
+
+    public interface UserUuidAndLoginId {
+        String getUuid();
+        String getLoginId();
+    }
 }
