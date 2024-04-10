@@ -158,10 +158,7 @@ public class AuthServiceImplV2 implements AuthService {
 
     @Override
     public AuthResponse.FindUserInfoResponseDto findUserInfo(String uuid) {
-        Users findUser = usersRepository.findByUuid(uuid).orElseThrow(
-                () -> new UsersException(ErrorStatus.FIND_USER_INFO_FAIL)
-        );
-
-        return AuthConverter.toDtoForUserInfo(findUser);
+        return usersRepository.findUserInfoByUuid(uuid).orElseThrow(
+                () -> new UsersException(ErrorStatus.FIND_USER_INFO_FAIL));
     }
 }
