@@ -86,14 +86,16 @@ public class OptionsService {
 
     //상품 옵션 조회
     public ApiResponse<List<OptionsNameDto>> getOptionsDetail(Long productOptionId) {
-        ProductOption productOption = productOptionRepository.findById(productOptionId).orElseThrow();
+        ProductOption productOption = productOptionRepository.findById(productOptionId)
+                .orElseThrow(()-> new OptionsException(ErrorStatus.NOT_EXIST_PRODUCT_OPTION));
         Options options = productOption.getOptions();
+        int stock = productOption.getStock();
         List<OptionsNameDto> optionsNameDtos = new ArrayList<>();
 
-        optionsNameDtos.add(new OptionsNameDto(options));
+        optionsNameDtos.add(new OptionsNameDto(options,stock));
 
         while (options.getParent() != null) {
-            optionsNameDtos.add(new OptionsNameDto(options.getParent()));
+            optionsNameDtos.add(new OptionsNameDto(options.getParent(),stock));
             options = options.getParent();
         }
         return ApiResponse.of(SuccessStatus.OPTION_DETAIL_SUCCESS, optionsNameDtos);
