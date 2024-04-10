@@ -150,10 +150,10 @@ public class AuthServiceImplV2 implements AuthService {
     @Transactional(readOnly = true)
     @Override
     public AuthResponse.FindIdResponseDto findLoginUnionId(String email) {
-        Users findUser = usersRepository.findByEmail(email).orElseThrow(
+        String findLoginId = usersRepository.findLoginIdByEmail(email).orElseThrow(
                 () -> new UsersException(ErrorStatus.FIND_LOGIN_ID_FAIL));
 
-        return AuthConverter.toDto(findUser);
+        return AuthResponse.FindIdResponseDto.builder().loginId(findLoginId).build();
     }
 
     @Override
