@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import spharos.msg.domain.users.entity.LoginType;
+import spharos.msg.domain.users.entity.UserStatus;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AdminResponseDto {
@@ -67,5 +68,24 @@ public class AdminResponseDto {
         private Long totalDeliveryPrice;
         private Long totalProfit;
         private Long totalOrderPrice;
+    }
+
+    @Builder
+    @Getter
+    public static class SearchInfo {
+
+        private Long Id;
+        private String userName;
+        private String email;
+        private UserStatus status;
+        private String uuid;
+
+        public SearchInfo(Long id, String userName, String email, UserStatus status, String uuid) {
+            Id = id;
+            this.userName = userName;
+            this.email = email;
+            this.status = status;
+            this.uuid = uuid;
+        }
     }
 }

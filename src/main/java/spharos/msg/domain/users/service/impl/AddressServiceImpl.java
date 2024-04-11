@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-//@Primary
 public class AddressServiceImpl implements AddressService {
 
     private final AddressRepository addressRepository;
