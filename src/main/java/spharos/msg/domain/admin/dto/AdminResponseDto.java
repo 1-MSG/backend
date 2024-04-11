@@ -1,5 +1,6 @@
 package spharos.msg.domain.admin.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import java.time.Month;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -80,8 +81,9 @@ public class AdminResponseDto {
         private UserStatus status;
         private String uuid;
 
+        @QueryProjection
         public SearchInfo(Long id, String userName, String email, UserStatus status, String uuid) {
-            Id = id;
+            this.Id = id;
             this.userName = userName;
             this.email = email;
             this.status = status;

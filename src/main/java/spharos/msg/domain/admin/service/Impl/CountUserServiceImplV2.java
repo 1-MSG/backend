@@ -16,8 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import spharos.msg.domain.admin.converter.AdminConverter;
 import spharos.msg.domain.admin.dto.AdminResponseDto;
-import spharos.msg.domain.admin.dto.AdminResponseDto.SearchAllInfo;
-import spharos.msg.domain.admin.dto.AdminResponseDto.SearchInfo;
 import spharos.msg.domain.admin.service.CountUserService;
 import spharos.msg.domain.users.entity.LoginType;
 import spharos.msg.domain.users.entity.UserStatus;
@@ -28,7 +26,7 @@ import spharos.msg.global.redis.RedisService;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-//@Primary
+@Primary
 public class CountUserServiceImplV2 implements CountUserService {
 
     private final UsersRepository usersRepository;
@@ -36,17 +34,13 @@ public class CountUserServiceImplV2 implements CountUserService {
 
     @Override
     public List<AdminResponseDto.SearchAllInfo> SearchUsersInfo(Pageable pageable) {
-        List<Users> usersByPageable = usersRepository.findUsersByPageable(pageable);
+        List<AdminResponseDto.SearchInfo> findUsersDto = usersRepository.findUsersByPageable(
+                pageable);
 
-        return usersByPageable.stream()
-                .map(user -> AdminResponseDto.SearchAllInfo.builder()
-                        .userId(user.getId())
-                        .userName(user.readUserName())
-                        .userInfo(user.getEmail())
-                        .LoginType(getLoginType(user.getStatus()))
-                        .status(redisService.isRefreshTokenExist(user.getUuid()))
-                        .build())
-                .collect(Collectors.toList());
+        return findUsersDto.stream()
+                .map(users -> AdminConverter.toDto(users,
+                        redisService.isRefreshTokenExist(users.getUuid()),
+                        getLoginType(users.getStatus()))).collect(Collectors.toList());
     }
 
     private LoginType getLoginType(UserStatus status) {
@@ -136,11 +130,11 @@ public class CountUserServiceImplV2 implements CountUserService {
     }
 
     @Override
-    public List<SearchAllInfo> SearchUsersInfoByUserName(String userName) {
-        List<SearchInfo> user = usersRepository.findSearchInfoByUserName(userName);
+    public List<AdminResponseDto.SearchAllInfo> SearchUsersInfoByUserName(String userName) {
+        List<AdminResponseDto.SearchInfo> user = usersRepository.findSearchInfoByUserName(userName);
 
         return user.stream().map(
-                u ->  AdminConverter.toDto(
+                u -> AdminConverter.toDto(
                         u,
                         redisService.isRefreshTokenExist(u.getUuid()),
                         getLoginType(u.getStatus()))).collect(Collectors.toList());
