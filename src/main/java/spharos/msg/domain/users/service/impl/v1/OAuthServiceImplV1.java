@@ -1,14 +1,15 @@
-package spharos.msg.domain.users.service.impl;
+package spharos.msg.domain.users.service.impl.v1;
+
+import java.util.List;
+import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.users.converter.AuthConverter;
 import spharos.msg.domain.users.converter.OAuthConverter;
 import spharos.msg.domain.users.dto.request.OAuthRequest;
-import spharos.msg.domain.users.dto.response.AuthResponse;
 import spharos.msg.domain.users.dto.response.OAuthResponse;
 import spharos.msg.domain.users.entity.UserOAuthList;
 import spharos.msg.domain.users.entity.UserStatus;
@@ -20,13 +21,10 @@ import spharos.msg.global.api.code.status.ErrorStatus;
 import spharos.msg.global.api.exception.UsersException;
 import spharos.msg.global.security.JwtTokenProvider;
 
-import java.util.Optional;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Primary
-public class OAuthServiceImplV2 implements OAuthService {
+public class OAuthServiceImplV1 implements OAuthService {
 
     private final UsersRepository userRepository;
     private final UserOAuthListRepository userOAuthListRepository;
@@ -83,14 +81,14 @@ public class OAuthServiceImplV2 implements OAuthService {
     @Transactional(readOnly = true)
     @Override
     public OAuthResponse.FindEasyIdResponseDto findLoginEasyId(String email) {
-        AuthResponse.UserUuidAndLoginId findData = userRepository.findUuidAndLoginIdByEmail(email).orElseThrow(
+        Users findUser = userRepository.findByEmail(email).orElseThrow(
                 () -> new UsersException(ErrorStatus.FIND_LOGIN_ID_FAIL));
 
-        if(!userOAuthListRepository.existsByUuid(findData.getUuid())){
+        List<UserOAuthList> userOAuthList = userOAuthListRepository.findByUuid(findUser.getUuid());
+        if (userOAuthList.isEmpty()) {
             throw new UsersException(ErrorStatus.FIND_LOGIN_ID_FAIL);
         }
 
-        return OAuthResponse.FindEasyIdResponseDto
-                .builder().loginId(findData.getLoginId()).build();
+        return OAuthConverter.toDtoEasy(findUser);
     }
 }

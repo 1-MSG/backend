@@ -1,8 +1,7 @@
-package spharos.msg.domain.users.service.impl;
+package spharos.msg.domain.users.service.impl.v1;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.users.converter.AddressConverter;
@@ -17,12 +16,11 @@ import spharos.msg.global.api.code.status.ErrorStatus;
 import spharos.msg.global.api.exception.UsersException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AddressServiceImpl implements AddressService {
+public class AddressServiceImplV1 implements AddressService {
 
     private final AddressRepository addressRepository;
     private final UsersRepository usersRepository;
