@@ -71,6 +71,16 @@ public class OrderProductRepository {
             .fetch();
     }
 
+    public OrderProduct findById(Long id) {
+        QOrderProduct orderProduct = QOrderProduct.orderProduct;
+
+        return jpaQueryFactory
+            .select(orderProduct)
+            .from(orderProduct)
+            .where(orderProduct.id.eq(id))
+            .fetchOne();
+    }
+
     private QOrderResponse_OrderProductDto toOrderProductDto(QOrderProduct orderProduct) {
         return new QOrderResponse_OrderProductDto(
             orderProduct.productId,
@@ -81,4 +91,5 @@ public class OrderProductRepository {
             orderProduct.discountRate,
             orderProduct.productOption);
     }
+
 }

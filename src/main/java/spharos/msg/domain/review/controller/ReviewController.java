@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,7 +43,7 @@ public class ReviewController {
     @GetMapping("/{productId}/reviews")
     public ApiResponse<ReviewResponse.ReviewsDto> getReviews(
         @PathVariable("productId") Long productId,
-        @PageableDefault(size = 10, page = 0) Pageable pageable
+        @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ){
         return ApiResponse.of(REVIEW_READ_SUCCESS,reviewService.getReviews(productId,pageable));
     }
