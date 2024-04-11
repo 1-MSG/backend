@@ -7,7 +7,7 @@ import spharos.msg.domain.product.entity.ProductOption;
 import spharos.msg.domain.users.entity.Users;
 
 public class CartConverter {
-    static public CartProductResponseDto CartEntityToDto(CartProduct cartProduct) {
+    static public CartProductResponseDto toDto(CartProduct cartProduct) {
         return CartProductResponseDto.builder()
                 .cartProductQuantity(cartProduct.getCartProductQuantity())
                 .productOptionId(cartProduct.getProductOption().getId())
@@ -19,7 +19,7 @@ public class CartConverter {
                 .build();
     }
 
-    static public CartProduct CartDtoToEntity(
+    static public CartProduct toEntity(
             Users users,
             CartProductRequestDto cartProductRequestDto,
             ProductOption productOption,
@@ -35,7 +35,7 @@ public class CartConverter {
                 .build();
     }
     //장바구니 담을 때
-    static public CartProduct CartDtoToEntity(
+    static public CartProduct toEntity(
             CartProduct cartProduct,
             Integer productQuantity) {
         return CartProduct.builder()
@@ -51,7 +51,7 @@ public class CartConverter {
     }
 
     //옵션 수정
-    static public CartProduct CartDtoToEntity(Long cartId, CartProduct cartProduct, ProductOption productOption) {
+    static public CartProduct toEntity(Long cartId, CartProduct cartProduct, ProductOption productOption) {
         return CartProduct.builder()
                 .cartProductQuantity(cartProduct.getCartProductQuantity())
                 .cartIsChecked(cartProduct.getCartIsChecked())
@@ -65,7 +65,7 @@ public class CartConverter {
     }
 
     //개수 수정
-    static public CartProduct CartDtoToEntity(Long cartId, CartProduct cartProduct, int cartProductQuantity) {
+    static public CartProduct toEntity(Long cartId, CartProduct cartProduct, int cartProductQuantity) {
         return CartProduct.builder()
                 .cartProductQuantity(cartProductQuantity)
                 .cartIsChecked(cartProduct.getCartIsChecked())
@@ -79,7 +79,7 @@ public class CartConverter {
     }
 
     //체크 수정
-    static public CartProduct CartDtoToEntity(Long cartId, CartProduct cartProduct, boolean isChecked) {
+    static public CartProduct toEntity(Long cartId, CartProduct cartProduct, boolean isChecked) {
         return CartProduct.builder()
                 .cartProductQuantity(cartProduct.getCartProductQuantity())
                 .cartIsChecked(isChecked)
@@ -93,7 +93,7 @@ public class CartConverter {
     }
 
     //핀 수정
-    static public CartProduct CartDtoToEntity(Long cartId, boolean isPinned, CartProduct cartProduct) {
+    static public CartProduct toEntity(Long cartId, boolean isPinned, CartProduct cartProduct) {
         return CartProduct.builder()
                 .cartProductQuantity(cartProduct.getCartProductQuantity())
                 .cartIsChecked(cartProduct.getCartIsChecked())

@@ -3,6 +3,7 @@ package spharos.msg.domain.cart.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spharos.msg.domain.cart.converter.CartConverter;
 import spharos.msg.domain.cart.dto.CartProductResponseDto;
 import spharos.msg.domain.cart.entity.CartProduct;
 import spharos.msg.domain.cart.repository.CartProductRepository;
@@ -11,8 +12,8 @@ import spharos.msg.domain.product.repository.ProductOptionRepository;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
-import static spharos.msg.domain.cart.converter.CartConverter.CartDtoToEntity;
-import static spharos.msg.domain.cart.converter.CartConverter.CartEntityToDto;
+import static spharos.msg.domain.cart.converter.CartConverter.toEntity;
+import static spharos.msg.domain.cart.converter.CartConverter.toDto;
 
 @Service
 @RequiredArgsConstructor
@@ -24,53 +25,53 @@ public class CartProductUpdateService {
     public ApiResponse<CartProductResponseDto> updateCartProductOption(Long productOptionId, Long cartId) {
         CartProduct cartProduct = getCartProduct(cartId);
         ProductOption productOption = productOptionRepository.findById(productOptionId).orElseThrow();
-        cartProductRepository.save(CartDtoToEntity(cartId,cartProduct, productOption));
+        cartProductRepository.save(CartConverter.toEntity(cartId,cartProduct, productOption));
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_UPDATE_SUCCESS,
-                CartEntityToDto(cartProduct));
+                toDto(cartProduct));
     }
     @Transactional
     public ApiResponse<CartProductResponseDto> addCartProductQuantity(Long cartId) {
         CartProduct cartProduct = getCartProduct(cartId);
-        cartProductRepository.save(CartDtoToEntity(cartId,cartProduct,cartProduct.getCartProductQuantity()+1));
+        cartProductRepository.save(CartConverter.toEntity(cartId,cartProduct,cartProduct.getCartProductQuantity()+1));
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_UPDATE_SUCCESS,
-                CartEntityToDto(cartProduct));
+                toDto(cartProduct));
     }
     @Transactional
     public ApiResponse<CartProductResponseDto> minusCartProductQuantity(Long cartId) {
         CartProduct cartProduct = getCartProduct(cartId);
-        cartProductRepository.save(CartDtoToEntity(cartId,cartProduct,cartProduct.getCartProductQuantity()-1));
+        cartProductRepository.save(CartConverter.toEntity(cartId,cartProduct,cartProduct.getCartProductQuantity()-1));
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_UPDATE_SUCCESS,
-                CartEntityToDto(cartProduct));
+                toDto(cartProduct));
     }
     @Transactional
     public ApiResponse<CartProductResponseDto> checkCartProduct(Long cartId) {
         CartProduct cartProduct = getCartProduct(cartId);
-        cartProductRepository.save(CartDtoToEntity(cartId,cartProduct,true));
+        cartProductRepository.save(CartConverter.toEntity(cartId,cartProduct,true));
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_UPDATE_SUCCESS,
-                CartEntityToDto(cartProduct));
+                toDto(cartProduct));
     }
 
     @Transactional
     public ApiResponse<CartProductResponseDto> notCheckCartProduct(Long cartId) {
         CartProduct cartProduct = getCartProduct(cartId);
-        cartProductRepository.save(CartDtoToEntity(cartId,cartProduct,false));
+        cartProductRepository.save(CartConverter.toEntity(cartId,cartProduct,false));
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_UPDATE_SUCCESS,
-                CartEntityToDto(cartProduct));
+                toDto(cartProduct));
     }
     @Transactional
     public ApiResponse<CartProductResponseDto> pinCartProduct(Long cartId) {
         CartProduct cartProduct = getCartProduct(cartId);
-        cartProductRepository.save(CartDtoToEntity(cartId,true,cartProduct));
+        cartProductRepository.save(toEntity(cartId,true,cartProduct));
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_UPDATE_SUCCESS,
-                CartEntityToDto(cartProduct));
+                toDto(cartProduct));
     }
 
     @Transactional
     public ApiResponse<CartProductResponseDto> notPinCartProduct(Long cartId) {
         CartProduct cartProduct = getCartProduct(cartId);
-        cartProductRepository.save(CartDtoToEntity(cartId,false,cartProduct));
+        cartProductRepository.save(toEntity(cartId,false,cartProduct));
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_UPDATE_SUCCESS,
-                CartEntityToDto(cartProduct));
+                toDto(cartProduct));
     }
 
     private CartProduct getCartProduct(Long cartId) {

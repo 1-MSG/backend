@@ -18,7 +18,7 @@ import spharos.msg.global.api.code.status.SuccessStatus;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static spharos.msg.domain.cart.converter.CartConverter.CartDtoToEntity;
+import static spharos.msg.domain.cart.converter.CartConverter.toEntity;
 
 @Service
 @RequiredArgsConstructor
@@ -48,7 +48,7 @@ public class CartProductService {
 
         List<CartProductResponseDto> cartProductResponseDtos = cartProductRepository.findByUsers(users)
                 .stream()
-                .map(CartConverter::CartEntityToDto)
+                .map(CartConverter::toDto)
                 .toList();
 
         IntStream.range(0, cartProductResponseDtos.size())
@@ -71,12 +71,12 @@ public class CartProductService {
         //이미 장바구니에 담긴 상품의 경우 개수 더해서 save하기
         for (CartProduct cartProduct : cartProducts) {
             if (cartProduct.getProductOption().getId().equals(productOptionId)) {
-                cartProductRepository.save(CartDtoToEntity(cartProduct, productQuantity));
+                cartProductRepository.save(CartConverter.toEntity(cartProduct, productQuantity));
                 return ApiResponse.of(SuccessStatus.CART_PRODUCT_ADD_SUCCESS, null);
             }
         }
         //새롭게 담는 상품의 경우 새로 생성하기
-        cartProductRepository.save(CartDtoToEntity(users, cartProductRequestDto, productOption, productQuantity));
+        cartProductRepository.save(CartConverter.toEntity(users, cartProductRequestDto, productOption, productQuantity));
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_ADD_SUCCESS, null);
     }
 }
