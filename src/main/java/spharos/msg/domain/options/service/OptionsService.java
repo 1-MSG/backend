@@ -3,7 +3,6 @@ package spharos.msg.domain.options.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spharos.msg.domain.options.converter.OptionsConverter;
 import spharos.msg.domain.options.dto.OptionTypeDto;
 import spharos.msg.domain.options.dto.OptionsNameDto;
 import spharos.msg.domain.options.dto.OptionsResponseDto;
@@ -17,15 +16,12 @@ import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.ErrorStatus;
 import spharos.msg.global.api.code.status.SuccessStatus;
 import spharos.msg.global.api.exception.OptionsException;
-import spharos.msg.global.api.exception.ProductNotExistException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static spharos.msg.domain.options.converter.OptionsConverter.toDto;
 
 @Service
 @Transactional(readOnly = true)
@@ -38,10 +34,8 @@ public class OptionsService {
     private final ProductRepository productRepository;
 
     //상품 옵션 종류 조회
-    public ApiResponse<List<OptionTypeDto>> getOptionsType(Long productId) {
-        Product product = productRepository.findById(productId)
-            .orElseThrow(() -> new ProductNotExistException(ErrorStatus.NOT_EXIST_PRODUCT_ID));
-
+    public ApiResponse<?> getOptionsType(Long productId) {
+        Product product = productRepository.getReferenceById(productId);
         List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
         List<OptionTypeDto> optionTypeDtos = new ArrayList<>();
 
@@ -50,11 +44,11 @@ public class OptionsService {
             return ApiResponse.of(SuccessStatus.OPTION_TYPE_SUCCESS, optionTypeDtos);
         }
 
-        OptionTypeDto optionTypeDto = new OptionTypeDto( productOptions.get(0).getOptions());
-
+        OptionTypeDto optionTypeDto = new OptionTypeDto(productOptions.get(0).getOptions());
         if (optionTypeDto.getOptionType() != null) {
             optionTypeDtos.add(optionTypeDto);
         }
+
         if (productOptions.get(0).getOptions().getParent() != null) {
             Set<Long> parentIds = getParentOptionIds(productOptions);
             addOptionTypeDtoFromParentIds(parentIds, optionTypeDtos);
@@ -64,16 +58,14 @@ public class OptionsService {
     }
 
     //최상위 옵션 조회
-    public ApiResponse<List<OptionsResponseDto>> getFirstOptions(Long productId) {
-        Product product = productRepository.findById(productId)
-            .orElseThrow(() -> new ProductNotExistException(ErrorStatus.NOT_EXIST_PRODUCT_ID));
-
+    public ApiResponse<?> getFirstOptions(Long productId) {
+        Product product = productRepository.getReferenceById(productId);
         List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
 
         if (productOptions.get(0).getOptions().getParent() == null) {
             return ApiResponse.of(SuccessStatus.OPTION_FIRST_SUCCESS,
                 productOptions.stream()
-                    .map(OptionsConverter::toDto)
+                    .map(OptionsResponseDto::new)
                     .toList());
         }
         Set<Long> parentIds = getParentOptionIds(productOptions);
@@ -83,17 +75,16 @@ public class OptionsService {
         if (parentOptionDetailList.isEmpty()) {
             return ApiResponse.of(SuccessStatus.OPTION_FIRST_SUCCESS, optionDetailList);
         }
-        return ApiResponse.of(SuccessStatus.OPTION_ID_SUCCESS, parentOptionDetailList.stream().distinct().toList());
+        return ApiResponse.of(SuccessStatus.OPTION_ID_SUCCESS,
+            parentOptionDetailList.stream().distinct());
     }
 
     //상품 옵션 조회
     public ApiResponse<List<OptionsNameDto>> getOptionsDetail(Long productOptionId) {
-        ProductOption productOption = productOptionRepository.findById(productOptionId)
-                .orElseThrow(()-> new OptionsException(ErrorStatus.NOT_EXIST_PRODUCT_OPTION));
+        ProductOption productOption = productOptionRepository.getReferenceById(productOptionId);
         Options options = productOption.getOptions();
         int stock = productOption.getStock();
         List<OptionsNameDto> optionsNameDtos = new ArrayList<>();
-
         optionsNameDtos.add(new OptionsNameDto(options,stock));
 
         while (options.getParent() != null) {
@@ -104,8 +95,7 @@ public class OptionsService {
     }
 
     public String getOptions(Long productOptionId) {
-        ProductOption productOption = productOptionRepository.findById(productOptionId)
-            .orElseThrow();
+        ProductOption productOption = productOptionRepository.getReferenceById(productOptionId);
         Options options = productOption.getOptions();
         List<String> optionNames = new ArrayList<>();
 
@@ -118,23 +108,18 @@ public class OptionsService {
         return String.join(OPTION_DELIMETER, optionNames);
     }
 
-
-
     private void addOptionTypeDtoFromParentIds(Set<Long> parentIds, List<OptionTypeDto> optionTypeDtos) {
         Options options = getOptionsById(parentIds.iterator().next());
         optionTypeDtos.add(new OptionTypeDto(options));
     }
 
     private Options getOptionsById(Long optionsId) {
-        return optionsRepository.findById(optionsId)
-            .orElseThrow(() -> new OptionsException(ErrorStatus.NOT_EXIST_PRODUCT_OPTION));
+        return optionsRepository.getReferenceById(optionsId);
     }
 
     //하위 옵션 데이터 조회
-    public ApiResponse<List<OptionsResponseDto>> getChildOptions(Long optionsId) {
-        Options options = optionsRepository.findById(optionsId)
-            .orElseThrow(() -> new OptionsException(ErrorStatus.NOT_EXIST_PRODUCT_OPTION));
-        ProductOption productOption = productOptionRepository.findByOptions(options);
+    public ApiResponse<?> getChildOptions(Long optionsId) {
+        Options options = optionsRepository.getReferenceById(optionsId);
         List<Options> childOptions = options.getChild();
         //하위 옵션이 없다면 던지고 있다면 해당 옵션 리스트 반환
         if (childOptions.isEmpty()) {
@@ -142,7 +127,7 @@ public class OptionsService {
         }
         return ApiResponse.of(SuccessStatus.OPTION_DETAIL_SUCCESS,
             childOptions.stream()
-                .map(option -> toDto(option,
+                .map(option -> new OptionsResponseDto(option,
                     productOptionRepository.findByOptions(option).getId(),
                     productOptionRepository.findByOptions(option).getStock()))
                 .toList());
@@ -161,8 +146,8 @@ public class OptionsService {
     private List<OptionsResponseDto> getParentOptionDetails(Set<Long> parentIds) {
         List<OptionsResponseDto> optionsResponseDtos = new ArrayList<>();
         for (Long parentId : parentIds) {
-            Options options = optionsRepository.findById(parentId).orElseThrow();
-            optionsResponseDtos.add(toDto(options, null, null));
+            Options options = optionsRepository.getReferenceById(parentId);
+            optionsResponseDtos.add(new OptionsResponseDto(options, null, null));
         }
         return optionsResponseDtos;
     }
@@ -173,22 +158,21 @@ public class OptionsService {
         List<OptionsResponseDto> optionsResponseDtos = new ArrayList<>();
 
         for (Long parentId : parentIds) {
-            Options options = optionsRepository.findById(parentId).orElseThrow();
+            Options options = optionsRepository.getReferenceById(parentId);
             if (options.getParent() != null) {
                 grandParentIds.add(options.getParent().getId());
             }
         }
 
         for (Long grandParentId : grandParentIds) {
-            Options options = optionsRepository.findById(grandParentId).orElseThrow();
-            optionsResponseDtos.add(toDto(options, null, null));
+            Options options = optionsRepository.getReferenceById(grandParentId);
+            optionsResponseDtos.add(new OptionsResponseDto(options, null, null));
         }
         return optionsResponseDtos;
     }
     //옵션 없는 상품용 api
-    public ApiResponse<Long> getProductOptionId(Long productId) {
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotExistException(ErrorStatus.NOT_EXIST_PRODUCT_ID));
+    public ApiResponse<?> getProductOptionId(Long productId) {
+        Product product = productRepository.getReferenceById(productId);
         List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
         return ApiResponse.of(SuccessStatus.PRODUCT_OPTION_ID_GET_SUCCESS,productOptions.get(0).getId());
     }
