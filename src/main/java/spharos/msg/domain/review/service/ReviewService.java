@@ -39,14 +39,11 @@ public class ReviewService {
 
     //리뷰 목록 가져 오기
     public ReviewResponse.ReviewsDto getReviews(Long productId, Pageable pageable) {
-        //상품 가져오기
+
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new NotFoundException("상품 찾을 수 없음"));
-        //페이지 가져오기
         Page<Review> reviewPage = reviewRepository.findByProduct(product, pageable);
-        //리스트로 변환
         List<ReviewResponse.ReviewDetailDto> reviews = convertPageToList(reviewPage);
-        //다음 페이지가 있는지 확인
         boolean isLast = !reviewPage.hasNext();
 
         return ReviewConverter.toDto(reviews, isLast);
@@ -54,10 +51,9 @@ public class ReviewService {
 
     //특정 리뷰 가져 오기
     public ReviewResponse.ReviewDetailDto getReviewDetail(Long reviewId) {
-        //리뷰 객체 가져 오기
+
         Review review = reviewRepository.findById(reviewId)
             .orElseThrow(() -> new NotFoundException(reviewId + "해당하는 리뷰 찾을수 없음"));
-        //사용자 이름 가져 오기
         String userName = usersRepository.findById(review.getUserId())
             .map(Users::getUsername)
             .orElseThrow(() -> new NotFoundException(review.getUserId() + "해당하는 사용자 찾을수 없음"));
