@@ -16,8 +16,8 @@ import spharos.msg.domain.product.entity.Product;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     //랜덤 상품 반환
-    @Query("SELECT p FROM Product p ORDER BY RAND()")
-    List<Product> findTop12RandomProducts();
+    @Query(value = "SELECT * FROM product ORDER BY RAND() LIMIT :limit", nativeQuery = true)
+    List<Product> findRandomProducts(@Param("limit") int limit);
 
     @EntityGraph(attributePaths = {"productSalesInfo"})
     Optional<Product> findById(Long productId);
