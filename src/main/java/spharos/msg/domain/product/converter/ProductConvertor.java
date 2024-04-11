@@ -1,4 +1,4 @@
-package spharos.msg.domain.product.convertor;
+package spharos.msg.domain.product.converter;
 
 import java.util.List;
 import lombok.AccessLevel;

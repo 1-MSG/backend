@@ -17,7 +17,7 @@ import org.webjars.NotFoundException;
 import spharos.msg.domain.category.entity.CategoryProduct;
 import spharos.msg.domain.category.repository.CategoryProductRepository;
 import spharos.msg.domain.orders.repository.OrderProductRepository;
-import spharos.msg.domain.product.convertor.ProductConvertor;
+import spharos.msg.domain.product.converter.ProductConvertor;
 import spharos.msg.domain.product.dto.ProductResponse;
 import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductImage;

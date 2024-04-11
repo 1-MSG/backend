@@ -69,20 +69,21 @@ public class ProductController {
         description = "상품들에 대한 상세 정보를 조회합니다")
     @GetMapping("/products")
     public ApiResponse<List<ProductResponse.ProductInfoDto>> getProductsDetails(
-        @RequestParam(value = "productIds", defaultValue = "[1,2,3]") String productIds
+        @RequestParam(value = "productIds", defaultValue = "[1,2,3]") List<Long> productIds
     ) {
-        // 대괄호 제거
-        String cleanProductIds = productIds.replaceAll("^\\[|]$", "");
+        // List<Long>타입으로 변경하면서 임시 주석 처리
+//        // 대괄호 제거
+//        String cleanProductIds = productIds.replaceAll("^\\[|]$", "");
+//
+//        // 쉼표로 구분된 문자열을 배열로 변환
+//        String[] idArray = cleanProductIds.split(",");
+//
+//        // 배열을 Long 형식의 리스트로 변환
+//        List<Long> idList = Arrays.stream(idArray)
+//            .map(Long::valueOf)
+//            .toList();
 
-        // 쉼표로 구분된 문자열을 배열로 변환
-        String[] idArray = cleanProductIds.split(",");
-
-        // 배열을 Long 형식의 리스트로 변환
-        List<Long> idList = Arrays.stream(idArray)
-            .map(Long::valueOf)
-            .toList();
-
-        return ApiResponse.of(PRODUCT_INFO_SUCCESS,productService.getProductsDetails(idList));
+        return ApiResponse.of(PRODUCT_INFO_SUCCESS,productService.getProductsDetails(productIds));
     }
 
     @Operation(summary = "베스트 상품 목록 조회",
