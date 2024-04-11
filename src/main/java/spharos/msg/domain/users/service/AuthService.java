@@ -1,31 +1,25 @@
 package spharos.msg.domain.users.service;
 
-import spharos.msg.domain.users.dto.request.ChangePasswordRequestDto;
-import spharos.msg.domain.users.dto.request.DuplicationCheckRequestDto;
-import spharos.msg.domain.users.dto.request.LoginRequestDto;
-import spharos.msg.domain.users.dto.response.FindIdOutDto;
-import spharos.msg.domain.users.dto.response.FindUserInfoOutDto;
-import spharos.msg.domain.users.dto.response.ReissueOutDto;
-import spharos.msg.domain.users.dto.request.SignUpRequestDto;
-import spharos.msg.domain.users.dto.response.LoginOutDto;
+import spharos.msg.domain.users.dto.request.AuthRequest;
+import spharos.msg.domain.users.dto.response.AuthResponse;
 
 public interface AuthService {
 
-    void signUp(SignUpRequestDto signUpRequestDto);
+    void signUp(AuthRequest.SignUpRequestDto dto);
 
-    LoginOutDto login(LoginRequestDto loginRequestDto);
+    AuthResponse.LoginResponseDto login(AuthRequest.LoginRequestDto dto);
 
     void logout(Long userId);
 
-    ReissueOutDto reissueToken(String token);
+    AuthResponse.ReissueResponseDto reissueToken(String token);
 
-    void duplicateCheckLoginId(DuplicationCheckRequestDto duplicationCheckRequestDto);
+    void duplicateCheckLoginId(AuthRequest.DuplicationCheckDto dto);
 
     void withdrawMember(Long userId);
 
-    void changePassword(ChangePasswordRequestDto changePasswordRequestDto);
+    void changePassword(AuthRequest.ChangePasswordDto dto);
 
-    FindIdOutDto findLoginUnionId(String email);
+    AuthResponse.FindIdResponseDto findLoginUnionId(String email);
 
-    FindUserInfoOutDto findUserInfo(String uuid);
+    AuthResponse.FindUserInfoResponseDto findUserInfo(String uuid);
 }

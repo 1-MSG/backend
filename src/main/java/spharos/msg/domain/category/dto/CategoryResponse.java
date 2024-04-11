@@ -4,6 +4,7 @@ package spharos.msg.domain.category.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.querydsl.core.annotations.QueryProjection;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,11 +16,11 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CategoryResponse {
 
-    @NoArgsConstructor
-    @AllArgsConstructor
     @Builder
     @Getter
     @ToString
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class CategoryDto {
 
         /**
@@ -34,19 +35,25 @@ public class CategoryResponse {
 
     @Getter
     @ToString
-    @AllArgsConstructor
     public static class SubCategory {
 
         private Long categoryId;
         private String categoryName;
         private String categoryImage;
+
+        @QueryProjection
+        public SubCategory(Long categoryId, String categoryName, String categoryImage) {
+            this.categoryId = categoryId;
+            this.categoryName = categoryName;
+            this.categoryImage = categoryImage;
+        }
     }
 
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
     @Getter
+    @Builder
     @ToString
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class CategoryProductDtos {
 
         @JsonProperty("isLast")
@@ -54,12 +61,15 @@ public class CategoryResponse {
         List<CategoryProductDto> categoryProducts;
     }
 
-    @NoArgsConstructor
     @Getter
     @ToString
-    @AllArgsConstructor
     public static class CategoryProductDto {
 
         Long productId;
+
+        @QueryProjection
+        public CategoryProductDto(Long productId) {
+            this.productId = productId;
+        }
     }
 }
