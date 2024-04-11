@@ -10,7 +10,6 @@ import spharos.msg.domain.cart.entity.CartProduct;
 import spharos.msg.domain.cart.repository.CartProductRepository;
 import spharos.msg.domain.product.entity.ProductOption;
 import spharos.msg.domain.product.repository.ProductOptionRepository;
-import spharos.msg.domain.product.repository.ProductRepository;
 import spharos.msg.domain.users.entity.Users;
 import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.global.api.ApiResponse;
@@ -26,7 +25,6 @@ import static spharos.msg.domain.cart.converter.CartConverter.CartDtoToEntity;
 public class CartProductService {
 
     private final CartProductRepository cartProductRepository;
-    private final ProductRepository productRepository;
     private final ProductOptionRepository productOptionRepository;
     private final UsersRepository usersRepository;
 
