@@ -156,6 +156,7 @@ public class AuthServiceImplV2 implements AuthService {
         return AuthResponse.FindIdResponseDto.builder().loginId(findLoginId).build();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public AuthResponse.FindUserInfoResponseDto findUserInfo(String uuid) {
         return usersRepository.findUserInfoByUuid(uuid).orElseThrow(

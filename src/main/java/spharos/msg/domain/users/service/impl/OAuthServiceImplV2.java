@@ -20,7 +20,6 @@ import spharos.msg.global.api.code.status.ErrorStatus;
 import spharos.msg.global.api.exception.UsersException;
 import spharos.msg.global.security.JwtTokenProvider;
 
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
