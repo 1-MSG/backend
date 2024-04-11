@@ -6,12 +6,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spharos.msg.domain.options.service.OptionsService;
+import spharos.msg.domain.orders.converter.OrderProductConverter;
+import spharos.msg.domain.orders.converter.OrdersConverter;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderProductDetail;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderSheetDto;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderPrice;
 import spharos.msg.domain.orders.entity.OrderProduct;
 import spharos.msg.domain.orders.entity.Orders;
 import spharos.msg.domain.orders.repository.OrderProductRepository;
+import spharos.msg.domain.product.converter.ProductSalesInfoConverter;
 import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductSalesInfo;
 import spharos.msg.domain.product.repository.ProductRepository;
@@ -25,11 +29,10 @@ import spharos.msg.global.api.exception.ProductNotExistException;
 @Transactional(readOnly = true)
 public class OrderProductService {
 
-    private static final boolean COMPLETED_DEFAULT = false;
-
     private final OrderProductRepository orderProductRepository;
     private final ProductRepository productRepository;
     private final ProductSalesInfoRepository productSalesInfoRepository;
+    private final OptionsService optionsService;
 
     @Transactional
     public void saveAllByOrderSheet(OrderSheetDto orderSheetDto, Orders orders) {
@@ -39,21 +42,24 @@ public class OrderProductService {
         for (OrderProductDetail detail : orderProductDetails) {
             Product product = findProduct(detail);
             updateProductOrderQuantity(product.getProductSalesInfo(), detail.getOrderQuantity());
-            OrderProduct orderProductEntity = toOrderProductEntity(detail, product, orders);
+            OrderProduct orderProductEntity = createOrderEntity(detail, product, orders);
             orderProductEntities.add(orderProductEntity);
         }
 
         orderProductRepository.saveAll(orderProductEntities);
     }
 
+    public List<OrderPrice> createOrderPricesByOrderId(Long orderId) {
+        List<OrderProduct> orderProducts = orderProductRepository.findAllByOrderId(orderId);
+        return orderProducts
+            .stream()
+            .map(OrdersConverter::toDto)
+            .toList();
+    }
+
     private void updateProductOrderQuantity(ProductSalesInfo productSalesInfo, int orderQuantity) {
-        ProductSalesInfo updated = ProductSalesInfo
-            .builder()
-            .id(productSalesInfo.getId())
-            .productStar(productSalesInfo.getProductStar())
-            .productSellTotalCount(productSalesInfo.getProductSellTotalCount() + orderQuantity)
-            .reviewCount(productSalesInfo.getReviewCount())
-            .build();
+        ProductSalesInfo updated = ProductSalesInfoConverter
+            .toEntity(productSalesInfo, orderQuantity);
 
         productSalesInfoRepository.save(updated);
     }
@@ -64,37 +70,14 @@ public class OrderProductService {
             .orElseThrow(() -> new ProductNotExistException(ErrorStatus.PRODUCT_ERROR));
     }
 
-    public List<OrderPrice> createOrderPricesByOrderId(Long orderId) {
-        List<OrderProduct> orderProducts = orderProductRepository.findAllByOrderId(orderId);
-        return orderProducts
-            .stream()
-            .map(this::toOrderPrice)
-            .toList();
-    }
-
-    private OrderPrice toOrderPrice(OrderProduct orderProduct) {
-        int discountRate = orderProduct.getDiscountRate().intValue();
-        Long originPrice = orderProduct.getProductPrice();
-        Long salePrice = originPrice * (100 - discountRate) / 100;
-
-        return new OrderPrice(discountRate, originPrice, salePrice);
-    }
-
-    private OrderProduct toOrderProductEntity(OrderProductDetail orderProductDetail,
+    private OrderProduct createOrderEntity(OrderProductDetail orderProductDetail,
         Product product, Orders orders) {
+        String productOptions = getProductOptions(orderProductDetail);
+        return OrderProductConverter.toEntity(orderProductDetail, product, orders, productOptions);
+    }
 
-        return OrderProduct
-            .builder()
-            .orderQuantity(orderProductDetail.getOrderQuantity())
-            .ordersDeliveryFee(orderProductDetail.getOrderDeliveryFee())
-            .discountRate(orderProductDetail.getDiscountRate())
-            .productPrice(orderProductDetail.getOriginPrice())
-            .productId(orderProductDetail.getProductId())
-            .orderIsCompleted(COMPLETED_DEFAULT)
-            .orders(orders)
-            .productOption("옵션1 옵션2 옵션3") // 임시값 - 변경 예정
-            .productName(product.getProductName())
-            .productImage("TEMP VALUE") //임시값 - 변경 예정
-            .build();
+    private String getProductOptions(OrderProductDetail detail) {
+        Long productOptionId = detail.getProductOptionId();
+        return optionsService.getOptions(productOptionId);
     }
 }

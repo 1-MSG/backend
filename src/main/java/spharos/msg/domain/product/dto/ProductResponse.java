@@ -19,8 +19,10 @@ public class ProductResponse {
     @Getter
     public static class ProductInfoDto {
 
-        @Schema(description = "상품 브랜드")
-        private final String productBrand;
+        @Schema(description = "브랜드id")
+        private final Long brandId;
+        @Schema(description = "브랜드명")
+        private final String brandName;
         @Schema(description = "상품 이름")
         private final String productName;
         @Schema(description = "상품 정상가")
@@ -39,10 +41,11 @@ public class ProductResponse {
         private final String responseTime;
 
         @Builder
-        private ProductInfoDto(String productBrand, String productName, Integer productPrice, String productImage,
+        private ProductInfoDto(Long brandId, String brandName, String productName, Integer productPrice, String productImage,
             BigDecimal productStar, Integer discountPrice, BigDecimal discountRate, Long reviewCount, String responseTime) {
 
-            this.productBrand = productBrand;
+            this.brandId = brandId;
+            this.brandName = brandName;
             this.productName = productName;
             this.productPrice = productPrice;
             this.reviewCount = reviewCount;
@@ -113,6 +116,21 @@ public class ProductResponse {
         private ProductIdDto(Long productId) {
 
             this.productId = productId;
+        }
+    }
+
+    @Getter
+    public static class ProductDeliveryDto {
+        @Schema(description = "기본배송비")
+        private final Integer deliveryFee;
+        @Schema(description = "무료배송 최소금액")
+        private final Integer minDeliveryFee;
+
+        @Builder
+        private ProductDeliveryDto(Integer deliveryFee, Integer minDeliveryFee) {
+
+            this.deliveryFee = deliveryFee;
+            this.minDeliveryFee = minDeliveryFee;
         }
     }
 

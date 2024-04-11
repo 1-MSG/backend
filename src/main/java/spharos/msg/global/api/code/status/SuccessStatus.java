@@ -31,11 +31,15 @@ public enum SuccessStatus implements BaseCode {
     TODAY_SIGNUP_COUNT_SUCCESS(HttpStatus.ACCEPTED, "ADMIN005", "오늘 가입자 수 조회 성공"),
     COUNT_SESSION_USERS_SUCCESS(HttpStatus.ACCEPTED, "ADMIN006", "전체 회원 탈퇴 수 조회 성공"),
     COUNT_MONTHLY_ASSIGN_SUCCESS(HttpStatus.ACCEPTED, "ADMIN006", "월별 가입자 수 조회 성공"),
+    TOTAL_SALES_PRICE_SUCCESS(HttpStatus.ACCEPTED, "ADMIN007", "총 매출액 조회 성공"),
+    TOTAL_DELIVERY_FEE_SUCCESS(HttpStatus.ACCEPTED, "ADMIN008", "총 배송비 조회 성공"),
+    TOTAL_PROFIT_SUCCESS(HttpStatus.ACCEPTED, "ADMIN009", "총 순이익 조회 성공"),
 
 
     ORDER_SUCCESS(HttpStatus.CREATED, "ORDER201", "상품 주문 성공"),
     ORDER_USER_SUCCESS(HttpStatus.OK, "ORDER202", "주문자 정보 조회 성공"),
     ORDER_HISTORY_SUCCESS(HttpStatus.OK, "ORDER203", "구매 내역 리스트 조회 성공"),
+    ORDER_COUNT_SUCCESS(HttpStatus.OK, "ORDER204", "누적 주문 횟수 조회 성공"),
     CART_PRODUCT_ADD_SUCCESS(HttpStatus.CREATED, "CART201", "장바구니 담기 성공"),
     CART_PRODUCT_GET_SUCCESS(HttpStatus.OK, "CART200", "장바구니 조회 성공"),
     CART_PRODUCT_UPDATE_SUCCESS(HttpStatus.OK, "CART202", "장바구니 수정 성공"),
@@ -54,6 +58,7 @@ public enum SuccessStatus implements BaseCode {
 
     PRODUCT_DETAIL_READ_SUCCESS(HttpStatus.OK, "PRODUCT200", "상품 상세 조회 성공"),
     PRODUCT_INFO_SUCCESS(HttpStatus.OK, "PRODUCT200", "상품 정보 조회 성공"),
+    PRODUCT_RANDOM_SUCCESS(HttpStatus.OK, "PRODUCT200", "랜덤 상품 조회 성공"),
     PRODUCT_BEST_SUCCESS(HttpStatus.OK, "PRODUCT200", "베스트 상품 조회 성공"),
 
     REVIEW_SAVE_SUCCESS(HttpStatus.CREATED, "REVIEW200", "상품 리뷰 작성 성공"),
@@ -72,8 +77,10 @@ public enum SuccessStatus implements BaseCode {
     OPTION_TYPE_SUCCESS(HttpStatus.OK, "OPTION200", "옵션 타입 조회 성공"),
     OPTION_ID_SUCCESS(HttpStatus.OK, "OPTION202", "옵션 ID 조회 성공"),
     OPTION_DETAIL_SUCCESS(HttpStatus.OK, "OPTION203", "옵션 상세 조회 성공"),
+    PRODUCT_OPTION_ID_GET_SUCCESS(HttpStatus.OK,"OPTION204","ProductOptionId 조회 성공"),
 
     BRAND_GET_SUCCESS(HttpStatus.OK, "BRAND200", "전체 브랜드 조회 성공"),
+    BRAND_DETAIL_GET_SUCCESS(HttpStatus.OK, "BRAND201", "브랜드 상세 조회 성공"),
     OPTION_FIRST_SUCCESS(HttpStatus.OK, "OPTION204", "옵션 첫번째 항목 리스트 조회 성공");
 
     private final HttpStatus httpStatus;

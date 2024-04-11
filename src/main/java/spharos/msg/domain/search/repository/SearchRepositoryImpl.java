@@ -1,6 +1,5 @@
 package spharos.msg.domain.search.repository;
 
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -11,10 +10,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import spharos.msg.domain.brand.entity.QBrand;
 import spharos.msg.domain.category.entity.QCategory;
 import spharos.msg.domain.category.entity.QCategoryProduct;
 import spharos.msg.domain.product.entity.QProduct;
+import spharos.msg.domain.search.dto.QSearchResponse_SearchProductDto;
 import spharos.msg.domain.search.dto.SearchResponse.SearchProductDto;
 import spharos.msg.domain.search.dto.SearchResponse.SearchTextDto;
 
@@ -23,7 +22,6 @@ import spharos.msg.domain.search.dto.SearchResponse.SearchTextDto;
 @Slf4j
 public class SearchRepositoryImpl implements SearchRepository {
 
-    private static final int SEARCH_PRODUCT_SIZE = 10;
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
@@ -54,12 +52,10 @@ public class SearchRepositoryImpl implements SearchRepository {
         QCategoryProduct categoryProduct, QProduct product, QCategory category) {
 
         return jpaQueryFactory
-            .select(Projections.constructor(
-                SearchProductDto.class, product.id))
+            .select(new QSearchResponse_SearchProductDto(product.id))
             .from(categoryProduct)
             .innerJoin(categoryProduct.product, product)
             .innerJoin(categoryProduct.category, category)
-            .innerJoin(product.brand, QBrand.brand)
             .where(validateContainsKeyword(keyword, product, category))
             .orderBy(product.id.desc())
             .distinct()
@@ -81,6 +77,7 @@ public class SearchRepositoryImpl implements SearchRepository {
         QProduct product = QProduct.product;
         QCategory category = QCategory.category;
         List<String> searchResults = getSearchResults(keyword, categoryProduct, product, category);
+
         return searchResults.stream()
             .map(SearchTextDto::new)
             .distinct()

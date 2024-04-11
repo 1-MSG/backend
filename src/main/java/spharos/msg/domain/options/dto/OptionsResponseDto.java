@@ -1,6 +1,5 @@
 package spharos.msg.domain.options.dto;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spharos.msg.domain.options.entity.Options;
@@ -9,12 +8,14 @@ import spharos.msg.domain.product.entity.ProductOption;
 @Getter
 @NoArgsConstructor
 public class OptionsResponseDto {
+    private Long productOptionId;
     private Long optionId;
     private int optionLevel;
     private String optionType;
     private String optionName;
     private Integer stock;
-    public OptionsResponseDto(Options options, Integer stock){
+    public OptionsResponseDto(Options options, Long id, Integer stock){
+        this.productOptionId = id;
         this.optionId = options.getId();
         this.optionName = options.getOptionName();
         this.optionType = options.getOptionType();
@@ -22,6 +23,7 @@ public class OptionsResponseDto {
         this.stock = stock;
     }
     public OptionsResponseDto(ProductOption productOption){
+        this.productOptionId = productOption.getId();
         this.optionId = productOption.getOptions().getId();
         this.optionName = productOption.getOptions().getOptionName();
         this.optionType = productOption.getOptions().getOptionType();

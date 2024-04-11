@@ -1,28 +1,30 @@
 package spharos.msg.domain.product.service;
 
+import static spharos.msg.global.api.code.status.ErrorStatus.NOT_EXIST_PRODUCT;
+
 import jakarta.transaction.Transactional;
 import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 import spharos.msg.domain.category.entity.CategoryProduct;
 import spharos.msg.domain.category.repository.CategoryProductRepository;
-
+import spharos.msg.domain.orders.repository.OrderProductRepository;
 import spharos.msg.domain.product.dto.ProductResponse;
 import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductImage;
-
 import spharos.msg.domain.product.repository.ProductImageRepository;
 import spharos.msg.domain.product.repository.ProductRepository;
 import spharos.msg.domain.product.repository.ProductRepositoryCustom;
+import spharos.msg.global.api.exception.ProductNotExistException;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +35,7 @@ public class ProductService {
     private final CategoryProductRepository categoryProductRepository;
     private final ProductImageRepository productImageRepository;
     private final ProductRepositoryCustom productRepositoryCustom;
+    private final OrderProductRepository orderProductRepository;
 
     //id로 상품의 기본 정보 불러오기
     @Transactional
@@ -44,12 +47,14 @@ public class ProductService {
             product.getDiscountRate());
 
         return ProductResponse.ProductInfoDto.builder()
-            .productBrand(product.getBrand().getBrandName())
+            .brandName(product.getBrand().getBrandName())
+            .brandId(product.getBrand().getId())
             .productName(product.getProductName())
             .productPrice(product.getProductPrice())
             .productStar(product.getProductSalesInfo().getProductStar())
             .discountRate(product.getDiscountRate())
             .discountPrice(discountPrice)
+            .reviewCount(product.getProductSalesInfo().getReviewCount())
             .responseTime(String.valueOf(System.currentTimeMillis()))
             .build();
     }
@@ -105,7 +110,7 @@ public class ProductService {
             .build();
     }
 
-    //id리스트로 상품 객체 불러오기
+    //id리스트로 여러 상품 불러오기
     @Transactional
     public List<ProductResponse.ProductInfoDto> getProductsDetails(List<Long> idList) {
         List<Product> products = productRepositoryCustom.findProductsByIdList(idList);
@@ -116,7 +121,8 @@ public class ProductService {
 
             return ProductResponse.ProductInfoDto.builder()
                 .productName(product.getProductName())
-                .productBrand(product.getBrand().getBrandName())
+                .brandName(product.getBrand().getBrandName())
+                .brandId(product.getBrand().getId())
                 .productImage(productImage.getProductImageUrl())
                 .productPrice(product.getProductPrice())
                 .discountRate(product.getDiscountRate())
@@ -124,6 +130,7 @@ public class ProductService {
                     getDiscountedPrice(product.getProductPrice(), product.getDiscountRate()))
                 .productStar(product.getProductSalesInfo().getProductStar())
                 .reviewCount(product.getProductSalesInfo().getReviewCount())
+                .responseTime(String.valueOf(System.currentTimeMillis()))
                 .build();
         }).toList();
     }
@@ -141,6 +148,37 @@ public class ProductService {
                     product -> ProductResponse.ProductIdDto.builder().productId(product.getId())
                         .build())
                 .toList()).isLast(isLast).build();
+    }
+
+    //랜덤 상품 불러오기
+    @Transactional
+    public List<ProductResponse.ProductIdDto> getRandomProducts() {
+        //최근 1달 주문 내역의 productId 불러오기
+        List<Long> recentProducts = orderProductRepository.findProductIdsCreatedLastMonth();
+        // 주문 내역이 없을 경우 랜덤 상품 반환
+        if (recentProducts.isEmpty()) {
+            return productRepository.findTop12RandomProducts().stream()
+                .map(product -> ProductResponse.ProductIdDto.builder().productId(product.getId())
+                    .build()).collect(
+                    Collectors.toList());
+        }
+
+        // 주문 내역이 있을 경우, HashMap 생성
+        Map<Long, Integer> categoryCountMap = new HashMap<>();
+        // 순회하면서 categoryId:cnt 추가해주기
+        for (Long productId : recentProducts) {
+            Long categoryId = categoryProductRepository.findByProductId(productId).getCategory()
+                .getId();
+            categoryCountMap.put(categoryId, categoryCountMap.getOrDefault(categoryId, 0) + 1);
+        }
+        // 가장 많은 빈도의 카테고리 id 찾기
+        Long interestedCategoryId = getKeyWithMaxValue(categoryCountMap);
+
+        // 해당 카테고리 id로 랜덤 상품 불러와서 리스트로 변환
+        return categoryProductRepository.findRandomTop12ByCategoryId(interestedCategoryId).stream()
+            .map(product -> ProductResponse.ProductIdDto.builder().productId(product.getId())
+                .build()).collect(
+                Collectors.toList());
     }
 
     //어드민 베스트11 불러 오기
@@ -164,6 +202,16 @@ public class ProductService {
             .toList();
     }
 
+    //상품의 배송정보 불러 오기
+    public ProductResponse.ProductDeliveryDto getProductDeliveryInfo(Long productId) {
+        Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotExistException(NOT_EXIST_PRODUCT));
+
+        return ProductResponse.ProductDeliveryDto.builder()
+            .deliveryFee(product.getDeliveryFee())
+            .minDeliveryFee(product.getBrand().getMinDeliveryFee())
+            .build();
+    }
+
     //할인가 계산하는 method
     private Integer getDiscountedPrice(Integer price, BigDecimal discountRate) {
 
@@ -171,12 +219,26 @@ public class ProductService {
             return price;
         }
 
-        BigDecimal normalPrice = new BigDecimal(price);
-        BigDecimal discount = discountRate.divide(BigDecimal.valueOf(100),
-            RoundingMode.HALF_UP); //할인율을 백분율로 변환
-        BigDecimal discountedPrice = normalPrice.multiply(
-            BigDecimal.ONE.subtract(discount)); // 할인 적용 가격 계산
+        // BigDecimal로 원래 가격과 할인율을 계산
+        BigDecimal normalPrice = BigDecimal.valueOf(price);
+        BigDecimal discount = discountRate.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP); // 할인율을 백분율로 변환
+        BigDecimal discountedPrice = normalPrice.multiply(BigDecimal.ONE.subtract(discount)); // 할인 가격 계산
 
-        return discountedPrice.intValue();
+        // 계산된 할인 가격을 정수로 변환하여 반환
+        return discountedPrice.setScale(0, RoundingMode.HALF_UP).intValue();
+    }
+
+    private Long getKeyWithMaxValue(Map<Long, Integer> map) {
+        Long maxKey = null;
+        Integer maxValue = Integer.MIN_VALUE;
+
+        for (Map.Entry<Long, Integer> entry : map.entrySet()) {
+            if (entry.getValue() > maxValue) {
+                maxValue = entry.getValue();
+                maxKey = entry.getKey();
+            }
+        }
+
+        return maxKey;
     }
 }
