@@ -27,6 +27,7 @@ import spharos.msg.domain.users.repository.UsersRepository;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Slf4j
 public class ReviewService {
 
@@ -37,7 +38,6 @@ public class ReviewService {
     private final OrderProductRepository orderProductRepository;
 
     //리뷰 목록 가져 오기
-    @Transactional
     public ReviewResponse.ReviewsDto getReviews(Long productId, Pageable pageable) {
         //상품 가져오기
         Product product = productRepository.findById(productId)
@@ -53,7 +53,6 @@ public class ReviewService {
     }
 
     //특정 리뷰 가져 오기
-    @Transactional
     public ReviewResponse.ReviewDetailDto getReviewDetail(Long reviewId) {
         //리뷰 객체 가져 오기
         Review review = reviewRepository.findById(reviewId)
