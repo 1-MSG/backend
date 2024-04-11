@@ -28,6 +28,7 @@ public class OrderResponse {
     }
 
     @Getter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class OrderPrice {
 
@@ -53,10 +54,9 @@ public class OrderResponse {
         }
     }
 
-    @NoArgsConstructor
-    @AllArgsConstructor
     @Getter
     @ToString
+    @NoArgsConstructor
     public static class OrderUserDto {
 
         private String loginId;
@@ -65,6 +65,15 @@ public class OrderResponse {
         private String phoneNumber;
         private String email;
 
+        @QueryProjection
+        public OrderUserDto(String loginId, String username, String address, String phoneNumber,
+            String email) {
+            this.loginId = loginId;
+            this.username = username;
+            this.address = address;
+            this.phoneNumber = phoneNumber;
+            this.email = email;
+        }
     }
 
     @NoArgsConstructor
