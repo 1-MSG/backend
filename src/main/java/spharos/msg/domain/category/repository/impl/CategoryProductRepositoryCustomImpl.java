@@ -14,9 +14,11 @@ import spharos.msg.domain.category.dto.CategoryResponse.CategoryProductDto;
 import spharos.msg.domain.category.dto.CategoryResponse.SubCategory;
 import spharos.msg.domain.category.dto.QCategoryResponse_CategoryProductDto;
 import spharos.msg.domain.category.dto.QCategoryResponse_SubCategory;
+import spharos.msg.domain.category.entity.CategoryProduct;
 import spharos.msg.domain.category.entity.QCategory;
 import spharos.msg.domain.category.entity.QCategoryProduct;
 import spharos.msg.domain.category.repository.CategoryProductRepositoryCustom;
+import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.QProduct;
 
 @Component
@@ -146,5 +148,17 @@ public class CategoryProductRepositoryCustomImpl implements CategoryProductRepos
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
+    }
+
+    @Override
+    public CategoryProduct findByProductWithFetchJoin(Product product) {
+        QCategoryProduct categoryProduct = QCategoryProduct.categoryProduct;
+        QCategory category = QCategory.category;
+
+        return jpaQueryFactory
+            .selectFrom(categoryProduct)
+            .join(categoryProduct.category, category)
+            .where(categoryProduct.product.eq(product))
+            .fetchOne();
     }
 }

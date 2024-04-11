@@ -35,7 +35,6 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryProductRepository categoryProductRepository;
     private final ProductImageRepository productImageRepository;
-    private final ProductRepositoryCustom productRepositoryCustom;
     private final OrderProductRepository orderProductRepository;
 
     //id로 상품의 기본 정보 불러오기
@@ -89,7 +88,7 @@ public class ProductService {
 
     //id리스트로 여러 상품 불러오기
     public List<ProductResponse.ProductInfoDto> getProductsDetails(List<Long> idList) {
-        List<Product> products = productRepositoryCustom.findProductsByIdList(idList);
+        List<Product> products = productRepository.findProductsByIdList(idList);
         return products.stream().map(product -> {
             ProductImage productImage = productImageRepository.findByProductAndImageIndex(product,
                     0)

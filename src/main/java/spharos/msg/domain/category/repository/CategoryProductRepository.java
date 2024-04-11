@@ -13,6 +13,7 @@ public interface CategoryProductRepository extends JpaRepository<CategoryProduct
     CategoryProduct findByProduct(Product product);
 
     CategoryProduct findByProductId(Long productId);
+
     @Query(value = "SELECT * FROM category_product cp WHERE cp.category_id = :categoryId ORDER BY RAND() LIMIT 12", nativeQuery = true)
     List<CategoryProduct> findRandomByCategoryId(@Param("categoryId") Long categoryId);
 }

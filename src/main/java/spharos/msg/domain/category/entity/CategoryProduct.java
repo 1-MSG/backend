@@ -21,7 +21,7 @@ public class CategoryProduct extends BaseEntity {
     @Column(name = "category_product_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 
