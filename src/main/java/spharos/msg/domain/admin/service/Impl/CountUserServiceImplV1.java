@@ -12,7 +12,6 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,8 +29,8 @@ import spharos.msg.global.redis.RedisService;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Primary
-public class CountUserServiceImpl implements CountUserService {
+//@Primary
+public class CountUserServiceImplV1 implements CountUserService {
 
     private final UsersRepository usersRepository;
     private final RedisService redisService;

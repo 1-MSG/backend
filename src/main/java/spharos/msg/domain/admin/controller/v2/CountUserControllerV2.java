@@ -1,4 +1,4 @@
-package spharos.msg.domain.admin.controller;
+package spharos.msg.domain.admin.controller.v2;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,16 +14,17 @@ import org.springframework.web.bind.annotation.RestController;
 import spharos.msg.domain.admin.dto.AdminResponseDto;
 import spharos.msg.domain.admin.dto.AdminResponseDto.MonthlySignupCount;
 import spharos.msg.domain.admin.service.CountUserService;
+import spharos.msg.domain.admin.service.Impl.CountUserServiceImplV2;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/admin/users")
-@Tag(name = "Admin Users", description = "어드민 관련 페이지")
-public class CountUserController {
+@RequestMapping("/api/v2/admin/users")
+@Tag(name = "Admin Users V2", description = "어드민 관련 페이지")
+public class CountUserControllerV2 {
 
-    private final CountUserService countUserService;
+    private final CountUserServiceImplV2 countUserService;
 
     //전체회원 정보 조회
     //Pageable
@@ -73,7 +74,7 @@ public class CountUserController {
 
     @Operation(summary = "월별 가입자 회원 수 조회 API", description = "월별 가입자 회원의 수를 반환합니다.")
     @GetMapping("/count-monthly-assign")
-    private ApiResponse<List<List<AdminResponseDto.MonthlySignupCount>>> MonthlyAssignCountApi() {
+    private ApiResponse<List<List<MonthlySignupCount>>> MonthlyAssignCountApi() {
         List<List<MonthlySignupCount>> result = countUserService.monthSignupCount();
         return ApiResponse.of(SuccessStatus.COUNT_MONTHLY_ASSIGN_SUCCESS, result);
     }
