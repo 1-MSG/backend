@@ -45,32 +45,28 @@ public class CountUserController {
     @Operation(summary = "현재 접속자 수 조회 API", description = "현재 접속자 수를 반환합니다.")
     @GetMapping("/connect-user")
     private ApiResponse<AdminResponseDto.ConnectCount> ConnectCountApi() {
-        return ApiResponse.of(
-                SuccessStatus.COUNT_CONNECT_USERS_SUCCESS,
+        return ApiResponse.of(SuccessStatus.COUNT_CONNECT_USERS_SUCCESS,
                 countUserService.countConnectUser());
     }
 
     @Operation(summary = "전체 회원 수 조회 API", description = "전체 회원 수를 반환합니다.")
     @GetMapping("/count-user")
     private ApiResponse<AdminResponseDto.UsersCount> UsersCountApi() {
-        return ApiResponse.of(
-                SuccessStatus.COUNT_TOTAL_USERS_SUCCESS,
+        return ApiResponse.of(SuccessStatus.COUNT_TOTAL_USERS_SUCCESS,
                 countUserService.usersCount());
     }
 
     @Operation(summary = "오늘 가입자 수 조회 API", description = "오늘 가입한 회원 수를 반환합니다.")
     @GetMapping("/count-today-user")
     private ApiResponse<AdminResponseDto.UsersCount> todaySignupCountApi() {
-        return ApiResponse.of(
-                SuccessStatus.TODAY_SIGNUP_COUNT_SUCCESS,
+        return ApiResponse.of(SuccessStatus.TODAY_SIGNUP_COUNT_SUCCESS,
                 countUserService.todaySignupCount());
     }
 
     @Operation(summary = "전체 탈퇴 회원 수 조회 API", description = "전체 탈퇴 회원의 수를 반환합니다.")
     @GetMapping("/count-secession-user")
     private ApiResponse<AdminResponseDto.SecessionCount> UsersSecessionCountApi() {
-        return ApiResponse.of(
-                SuccessStatus.COUNT_SESSION_USERS_SUCCESS,
+        return ApiResponse.of(SuccessStatus.COUNT_SESSION_USERS_SUCCESS,
                 countUserService.secessionCount());
     }
 
@@ -80,5 +76,13 @@ public class CountUserController {
     private ApiResponse<List<List<AdminResponseDto.MonthlySignupCount>>> MonthlyAssignCountApi() {
         List<List<MonthlySignupCount>> result = countUserService.monthSignupCount();
         return ApiResponse.of(SuccessStatus.COUNT_MONTHLY_ASSIGN_SUCCESS, result);
+    }
+
+    @Operation(summary = "회원 정보 조회 API", description = "회원 이름을 받아 회원 정보 리스트를 반환합니다.")
+    @GetMapping("/users")
+    private ApiResponse<List<AdminResponseDto.SearchAllInfo>> MonthlyAssignCountApi(
+            @RequestParam String userName) {
+        return ApiResponse.of(SuccessStatus.SEARCH_USERS_INFO_BY_USERNAME_SUCCESS,
+                countUserService.SearchUsersInfoByUserName(userName));
     }
 }

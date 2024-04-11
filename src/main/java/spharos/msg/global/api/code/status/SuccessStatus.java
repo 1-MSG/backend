@@ -34,6 +34,7 @@ public enum SuccessStatus implements BaseCode {
     TOTAL_SALES_PRICE_SUCCESS(HttpStatus.ACCEPTED, "ADMIN007", "총 매출액 조회 성공"),
     TOTAL_DELIVERY_FEE_SUCCESS(HttpStatus.ACCEPTED, "ADMIN008", "총 배송비 조회 성공"),
     TOTAL_PROFIT_SUCCESS(HttpStatus.ACCEPTED, "ADMIN009", "총 순이익 조회 성공"),
+    SEARCH_USERS_INFO_BY_USERNAME_SUCCESS(HttpStatus.ACCEPTED, "ADMIN010", "유저 정보 조회 성공"),
 
 
     ORDER_SUCCESS(HttpStatus.CREATED, "ORDER201", "상품 주문 성공"),

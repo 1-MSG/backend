@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import spharos.msg.domain.admin.dto.AdminResponseDto;
 import spharos.msg.domain.users.dto.response.AuthResponse;
 import spharos.msg.domain.users.entity.UserStatus;
 import spharos.msg.domain.users.entity.Users;
@@ -43,4 +44,7 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
     long countByStatus(UserStatus userStatus);
 
     List<Users> findByCreatedAtGreaterThanEqual(LocalDateTime dateTime);
+
+    @Query("SELECT new spharos.msg.domain.admin.dto.AdminResponseDto$SearchInfo(u.id, u.userName, u.email, u.status, u.uuid) FROM Users u WHERE u.userName = :userName")
+    List<AdminResponseDto.SearchInfo> findSearchInfoByUserName(@Param("userName") String userName);
 }
