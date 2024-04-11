@@ -1,4 +1,4 @@
-package spharos.msg.domain.review.convertor;
+package spharos.msg.domain.review.converter;
 
 import java.util.List;
 import spharos.msg.domain.orders.entity.OrderProduct;
@@ -9,7 +9,7 @@ import spharos.msg.domain.review.dto.ReviewResponse.ReviewDetailDto;
 import spharos.msg.domain.review.dto.ReviewResponse.ReviewsDto;
 import spharos.msg.domain.review.entity.Review;
 
-public class ReviewConvertor {
+public class ReviewConverter {
 
     public static Review toEntity(Product product, OrderProduct orderProduct,
         ReviewRequest.createDto reviewRequest, Long userId) {

@@ -17,7 +17,7 @@ import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductSalesInfo;
 import spharos.msg.domain.product.repository.ProductRepository;
 import spharos.msg.domain.product.repository.ProductSalesInfoRepository;
-import spharos.msg.domain.review.convertor.ReviewConvertor;
+import spharos.msg.domain.review.converter.ReviewConverter;
 import spharos.msg.domain.review.dto.ReviewRequest;
 import spharos.msg.domain.review.dto.ReviewResponse;
 import spharos.msg.domain.review.entity.Review;
@@ -49,7 +49,7 @@ public class ReviewService {
         //다음 페이지가 있는지 확인
         boolean isLast = !reviewPage.hasNext();
 
-        return ReviewConvertor.toDto(reviews, isLast);
+        return ReviewConverter.toDto(reviews, isLast);
     }
 
     //특정 리뷰 가져 오기
@@ -62,7 +62,7 @@ public class ReviewService {
             .map(Users::getUsername)
             .orElseThrow(() -> new NotFoundException(review.getUserId() + "해당하는 사용자 찾을수 없음"));
 
-        return ReviewConvertor.toDto(review, userName);
+        return ReviewConverter.toDto(review, userName);
     }
 
     //리뷰 등록
@@ -80,7 +80,7 @@ public class ReviewService {
         //추후, 이미 작성된 리뷰 인지 확인 필요함
 
         reviewRepository.save(
-            ReviewConvertor.toEntity(product, orderProduct, reviewRequest, userId));
+            ReviewConverter.toEntity(product, orderProduct, reviewRequest, userId));
         //리뷰 추가 후 갱신된 별점
         BigDecimal newProductStar = calcProductStar(productSalesInfo.getProductStar(),
             productSalesInfo.getReviewCount(), reviewRequest.getReviewStar());
@@ -97,7 +97,7 @@ public class ReviewService {
         ProductSalesInfo productSalesInfo = review.getProduct().getProductSalesInfo();
 
         reviewRepository.save(
-            ReviewConvertor.toEntity(review, reviewRequest)
+            ReviewConverter.toEntity(review, reviewRequest)
         );
 
         BigDecimal newAverageStar = recalcProductStar(productSalesInfo.getProductStar(),
@@ -137,7 +137,7 @@ public class ReviewService {
                     .orElseThrow(
                         () -> new NotFoundException(review.getUserId() + "해당하는 사용자 찾을수 없음"));
 
-                return ReviewConvertor.toDto(review, userName);
+                return ReviewConverter.toDto(review, userName);
             })
             .toList();
     }
