@@ -3,6 +3,7 @@ package spharos.msg.domain.options.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spharos.msg.domain.options.converter.OptionsConverter;
 import spharos.msg.domain.options.dto.OptionTypeDto;
 import spharos.msg.domain.options.dto.OptionsNameDto;
 import spharos.msg.domain.options.dto.OptionsResponseDto;
@@ -23,6 +24,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static spharos.msg.domain.options.converter.OptionsConverter.toDto;
 
 @Service
 @Transactional(readOnly = true)
@@ -47,7 +50,7 @@ public class OptionsService {
             return ApiResponse.of(SuccessStatus.OPTION_TYPE_SUCCESS, optionTypeDtos);
         }
 
-        OptionTypeDto optionTypeDto = new OptionTypeDto(productOptions.get(0).getOptions());
+        OptionTypeDto optionTypeDto = new OptionTypeDto( productOptions.get(0).getOptions());
 
         if (optionTypeDto.getOptionType() != null) {
             optionTypeDtos.add(optionTypeDto);
@@ -70,7 +73,7 @@ public class OptionsService {
         if (productOptions.get(0).getOptions().getParent() == null) {
             return ApiResponse.of(SuccessStatus.OPTION_FIRST_SUCCESS,
                 productOptions.stream()
-                    .map(OptionsResponseDto::new)
+                    .map(OptionsConverter::toDto)
                     .toList());
         }
         Set<Long> parentIds = getParentOptionIds(productOptions);
@@ -139,7 +142,7 @@ public class OptionsService {
         }
         return ApiResponse.of(SuccessStatus.OPTION_DETAIL_SUCCESS,
             childOptions.stream()
-                .map(option -> new OptionsResponseDto(option,
+                .map(option -> toDto(option,
                     productOptionRepository.findByOptions(option).getId(),
                     productOptionRepository.findByOptions(option).getStock()))
                 .toList());
@@ -159,7 +162,7 @@ public class OptionsService {
         List<OptionsResponseDto> optionsResponseDtos = new ArrayList<>();
         for (Long parentId : parentIds) {
             Options options = optionsRepository.findById(parentId).orElseThrow();
-            optionsResponseDtos.add(new OptionsResponseDto(options, null, null));
+            optionsResponseDtos.add(toDto(options, null, null));
         }
         return optionsResponseDtos;
     }
@@ -178,7 +181,7 @@ public class OptionsService {
 
         for (Long grandParentId : grandParentIds) {
             Options options = optionsRepository.findById(grandParentId).orElseThrow();
-            optionsResponseDtos.add(new OptionsResponseDto(options, null, null));
+            optionsResponseDtos.add(toDto(options, null, null));
         }
         return optionsResponseDtos;
     }
