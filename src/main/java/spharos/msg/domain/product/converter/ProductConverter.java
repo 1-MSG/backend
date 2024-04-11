@@ -8,7 +8,6 @@ import spharos.msg.domain.product.dto.ProductResponse;
 import spharos.msg.domain.product.dto.ProductResponse.Best11Dto;
 import spharos.msg.domain.product.dto.ProductResponse.BestProductsDto;
 import spharos.msg.domain.product.dto.ProductResponse.ProductCategoryDto;
-import spharos.msg.domain.product.dto.ProductResponse.ProductDeliveryDto;
 import spharos.msg.domain.product.dto.ProductResponse.ProductIdDto;
 import spharos.msg.domain.product.dto.ProductResponse.ProductImageDto;
 import spharos.msg.domain.product.dto.ProductResponse.ProductInfoDto;
@@ -16,7 +15,7 @@ import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductImage;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ProductConvertor {
+public class ProductConverter {
     public static ProductInfoDto toDto(Product product,Integer discountPrice){
         return ProductResponse.ProductInfoDto.builder()
             .brandName(product.getBrand().getBrandName())

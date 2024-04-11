@@ -17,7 +17,7 @@ import org.webjars.NotFoundException;
 import spharos.msg.domain.category.entity.CategoryProduct;
 import spharos.msg.domain.category.repository.CategoryProductRepository;
 import spharos.msg.domain.orders.repository.OrderProductRepository;
-import spharos.msg.domain.product.converter.ProductConvertor;
+import spharos.msg.domain.product.converter.ProductConverter;
 import spharos.msg.domain.product.dto.ProductResponse;
 import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductImage;
@@ -46,7 +46,7 @@ public class ProductService {
         Integer discountPrice = getDiscountedPrice(product.getProductPrice(),
             product.getDiscountRate());
 
-        return ProductConvertor.toDto(product, discountPrice);
+        return ProductConverter.toDto(product, discountPrice);
     }
 
     //id로 상품 썸네일 이미지 불러오기
@@ -57,7 +57,7 @@ public class ProductService {
         ProductImage productImage = productImageRepository.findByProductAndImageIndex(product, 0)
             .orElseThrow(() -> new NotFoundException("해당 상품에 대한 index가 0인 이미지를 찾을 수 없음"));
 
-        return ProductConvertor.toDto(productImage);
+        return ProductConverter.toDto(productImage);
     }
 
     //id로 상품 이미지들 불러오기
@@ -67,7 +67,7 @@ public class ProductService {
 
         List<ProductImage> productImages = productImageRepository.findByProduct(product);
 
-        return productImages.stream().map(ProductConvertor::toDto).toList();
+        return productImages.stream().map(ProductConverter::toDto).toList();
     }
 
     //id로 상품 상세 html 불러오기
@@ -84,7 +84,7 @@ public class ProductService {
             .orElseThrow(() -> new ProductNotExistException(NOT_EXIST_PRODUCT));
         CategoryProduct categoryProduct = categoryProductRepository.findByProduct(product);
 
-        return ProductConvertor.toDto(categoryProduct);
+        return ProductConverter.toDto(categoryProduct);
     }
 
     //id리스트로 여러 상품 불러오기
@@ -97,7 +97,7 @@ public class ProductService {
 
             Integer discountPrice = getDiscountedPrice(product.getProductPrice(), product.getDiscountRate());
 
-            return ProductConvertor.toDto(product,productImage,discountPrice);
+            return ProductConverter.toDto(product,productImage,discountPrice);
         }).toList();
     }
 
@@ -109,10 +109,10 @@ public class ProductService {
         boolean isLast = !productPage.hasNext();
 
         List<ProductResponse.ProductIdDto> productList = productPage.getContent().stream().map(
-                ProductConvertor::toDto)
+                ProductConverter::toDto)
             .toList();
 
-        return ProductConvertor.toDto(productList, isLast);
+        return ProductConverter.toDto(productList, isLast);
     }
 
     //랜덤 상품 불러 오기
@@ -122,7 +122,7 @@ public class ProductService {
         // 주문 내역이 없을 경우
         if (recentProducts.isEmpty()) {
             return productRepository.findRandomProducts(12).stream()
-                .map(ProductConvertor::toDto).toList();
+                .map(ProductConverter::toDto).toList();
         }
         // 주문 내역이 있을 경우
         return getRandomProductsByInterestedCategory(recentProducts);
@@ -137,7 +137,7 @@ public class ProductService {
                 ProductImage productImage = productImageRepository.findByProductAndImageIndex(product, 0)
                     .orElse(new ProductImage());
 
-                return ProductConvertor.toDto(product,productImage);
+                return ProductConverter.toDto(product,productImage);
             })
             .toList();
     }
@@ -196,7 +196,7 @@ public class ProductService {
 
         List<ProductResponse.ProductIdDto> resultProducts = new java.util.ArrayList<>(
             categoryProducts.stream()
-                .map(categoryProduct -> ProductConvertor.toDto(categoryProduct.getProduct()))
+                .map(categoryProduct -> ProductConverter.toDto(categoryProduct.getProduct()))
                 .toList());
 
         // 현재 카테고리 상품의 개수
@@ -209,7 +209,7 @@ public class ProductService {
             List<Product> additionalRandomProducts = productRepository.findRandomProducts(additionalProductsNeeded);
             // 추가된 랜덤 상품을 결과 리스트에 추가
             List<ProductResponse.ProductIdDto> additionalProducts = additionalRandomProducts.stream()
-                .map(ProductConvertor::toDto)
+                .map(ProductConverter::toDto)
                 .toList();
             resultProducts.addAll(additionalProducts);
         }
