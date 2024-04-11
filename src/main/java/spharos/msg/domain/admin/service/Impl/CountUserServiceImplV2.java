@@ -3,7 +3,6 @@ package spharos.msg.domain.admin.service.Impl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +12,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import spharos.msg.domain.admin.converter.AdminConverter;
@@ -30,22 +28,25 @@ import spharos.msg.global.redis.RedisService;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Primary
-public class CountUserServiceImpl implements CountUserService {
+//@Primary
+public class CountUserServiceImplV2 implements CountUserService {
 
     private final UsersRepository usersRepository;
     private final RedisService redisService;
 
     @Override
     public List<AdminResponseDto.SearchAllInfo> SearchUsersInfo(Pageable pageable) {
-        Page<Users> findUsers = usersRepository.findAll(pageable);
+        List<Users> usersByPageable = usersRepository.findUsersByPageable(pageable);
 
-        return findUsers.map(
-                        m -> AdminConverter.toDto(
-                                m,
-                                redisService.isRefreshTokenExist(m.getUuid()),
-                                getLoginType(m.getStatus())))
-                .getContent();
+        return usersByPageable.stream()
+                .map(user -> AdminResponseDto.SearchAllInfo.builder()
+                        .userId(user.getId())
+                        .userName(user.readUserName())
+                        .userInfo(user.getEmail())
+                        .LoginType(getLoginType(user.getStatus()))
+                        .status(redisService.isRefreshTokenExist(user.getUuid()))
+                        .build())
+                .collect(Collectors.toList());
     }
 
     private LoginType getLoginType(UserStatus status) {

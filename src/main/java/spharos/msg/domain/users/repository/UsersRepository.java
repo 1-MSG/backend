@@ -13,7 +13,7 @@ import spharos.msg.domain.users.entity.UserStatus;
 import spharos.msg.domain.users.entity.Users;
 
 @Repository
-public interface UsersRepository extends JpaRepository<Users, Long> {
+public interface UsersRepository extends JpaRepository<Users, Long>, UsersRepositoryQueryDsl {
 
     Optional<Users> findByUuid(String uuid);
 
