@@ -1,11 +1,13 @@
 package spharos.msg.domain.cart.converter;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import spharos.msg.domain.cart.dto.CartProductRequestDto;
 import spharos.msg.domain.cart.dto.CartProductResponseDto;
 import spharos.msg.domain.cart.entity.CartProduct;
 import spharos.msg.domain.product.entity.ProductOption;
 import spharos.msg.domain.users.entity.Users;
-
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CartConverter {
     static public CartProductResponseDto toDto(CartProduct cartProduct) {
         return CartProductResponseDto.builder()

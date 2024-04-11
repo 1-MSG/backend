@@ -1,9 +1,11 @@
 package spharos.msg.domain.options.converter;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import spharos.msg.domain.options.dto.OptionsResponseDto;
 import spharos.msg.domain.options.entity.Options;
 import spharos.msg.domain.product.entity.ProductOption;
-
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OptionsConverter {
     static public OptionsResponseDto toDto (Options options, Long id, Integer stock){
         return OptionsResponseDto.builder()
