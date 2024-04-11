@@ -2,7 +2,6 @@ package spharos.msg.domain.product.service;
 
 import static spharos.msg.global.api.code.status.ErrorStatus.NOT_EXIST_PRODUCT;
 
-import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
@@ -13,11 +12,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 import spharos.msg.domain.category.entity.CategoryProduct;
 import spharos.msg.domain.category.repository.CategoryProductRepository;
 import spharos.msg.domain.orders.repository.OrderProductRepository;
-import spharos.msg.domain.product.convertor.ProductConvertor;
+import spharos.msg.domain.product.converter.ProductConvertor;
 import spharos.msg.domain.product.dto.ProductResponse;
 import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductImage;
@@ -28,6 +28,7 @@ import spharos.msg.global.api.exception.ProductNotExistException;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Slf4j
 public class ProductService {
 
@@ -38,7 +39,6 @@ public class ProductService {
     private final OrderProductRepository orderProductRepository;
 
     //id로 상품의 기본 정보 불러오기
-    @Transactional
     public ProductResponse.ProductInfoDto getProductInfo(Long productId) {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new ProductNotExistException(NOT_EXIST_PRODUCT));
@@ -50,7 +50,6 @@ public class ProductService {
     }
 
     //id로 상품 썸네일 이미지 불러오기
-    @Transactional
     public ProductResponse.ProductImageDto getProductImage(Long productId) {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new ProductNotExistException(NOT_EXIST_PRODUCT));
@@ -62,7 +61,6 @@ public class ProductService {
     }
 
     //id로 상품 이미지들 불러오기
-    @Transactional
     public List<ProductResponse.ProductImageDto> getProductImages(Long productId) {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new ProductNotExistException(NOT_EXIST_PRODUCT));
@@ -73,7 +71,6 @@ public class ProductService {
     }
 
     //id로 상품 상세 html 불러오기
-    @Transactional
     public String getProductDetail(Long productId) {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new ProductNotExistException(NOT_EXIST_PRODUCT));
@@ -82,7 +79,6 @@ public class ProductService {
     }
 
     //id로 상품 상세 카테고리 정보 불러오기
-    @Transactional
     public ProductResponse.ProductCategoryDto getProductCategory(Long productId) {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new ProductNotExistException(NOT_EXIST_PRODUCT));
@@ -92,7 +88,6 @@ public class ProductService {
     }
 
     //id리스트로 여러 상품 불러오기
-    @Transactional
     public List<ProductResponse.ProductInfoDto> getProductsDetails(List<Long> idList) {
         List<Product> products = productRepositoryCustom.findProductsByIdList(idList);
         return products.stream().map(product -> {
@@ -107,7 +102,6 @@ public class ProductService {
     }
 
     //베스트 상품 목록 가져오기
-    @Transactional
     public ProductResponse.BestProductsDto getRankingProducts(Pageable pageable) {
         Page<Product> productPage = productRepository.findAllByOrderByProductSalesInfoProductSellTotalCountDesc(
             pageable);
@@ -122,7 +116,6 @@ public class ProductService {
     }
 
     //랜덤 상품 불러 오기
-    @Transactional
     public List<ProductResponse.ProductIdDto> getRandomProducts() {
         //최근 1달 주문 내역의 productId 불러 오기
         List<Long> recentProducts = orderProductRepository.findProductIdsCreatedLastMonth();

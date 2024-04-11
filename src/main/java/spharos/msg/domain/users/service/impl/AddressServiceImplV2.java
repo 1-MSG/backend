@@ -13,17 +13,14 @@ import spharos.msg.domain.users.entity.Users;
 import spharos.msg.domain.users.repository.AddressRepository;
 import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.domain.users.service.AddressService;
-import spharos.msg.global.api.code.status.ErrorStatus;
-import spharos.msg.global.api.exception.UsersException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-//@Primary
-public class AddressServiceImpl implements AddressService {
+@Primary
+public class AddressServiceImplV2 implements AddressService {
 
     private final AddressRepository addressRepository;
     private final UsersRepository usersRepository;
@@ -31,9 +28,7 @@ public class AddressServiceImpl implements AddressService {
     @Transactional
     @Override
     public void createAddress(AddressRequest.AddAddressDto dto, Long userId) {
-        Users findUser = usersRepository.findById(userId).orElseThrow(
-                () -> new UsersException(ErrorStatus.DELIVERY_ADDRESS_ADD_FAIL)
-        );
+        Users findUser = usersRepository.getReferenceById(userId);
 
         addressRepository.save(AddressConverter.toEntity(dto, findUser));
     }
