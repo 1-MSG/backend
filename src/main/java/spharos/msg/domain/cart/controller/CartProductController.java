@@ -6,13 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import spharos.msg.domain.cart.dto.CartProductOptionResponseDto;
 import spharos.msg.domain.cart.dto.CartProductRequestDto;
 import spharos.msg.domain.cart.dto.CartProductResponseDto;
 import spharos.msg.domain.cart.service.CartProductService;
 import spharos.msg.domain.cart.service.CartProductUpdateService;
 import spharos.msg.global.api.ApiResponse;
-import spharos.msg.global.api.code.status.SuccessStatus;
 
 import java.util.List;
 
@@ -115,14 +113,5 @@ public class CartProductController {
             @PathVariable Long cartId
     ) {
         return cartProductService.deleteCart(cartId);
-    }
-
-    @Operation(summary = "장바구니 상품 옵션 조회",
-            description = "장바구니에 담긴 상품의 옵션을 조회합니다.")
-    @GetMapping("/option/{productId}")
-    public ApiResponse<List<CartProductOptionResponseDto>> getCartOption(
-            @PathVariable Long productId
-    ) {
-        return cartProductService.getCartOption(productId);
     }
 }

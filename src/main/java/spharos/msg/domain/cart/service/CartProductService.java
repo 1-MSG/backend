@@ -4,12 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.cart.converter.CartConverter;
-import spharos.msg.domain.cart.dto.CartProductOptionResponseDto;
 import spharos.msg.domain.cart.dto.CartProductRequestDto;
 import spharos.msg.domain.cart.dto.CartProductResponseDto;
 import spharos.msg.domain.cart.entity.CartProduct;
 import spharos.msg.domain.cart.repository.CartProductRepository;
-import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductOption;
 import spharos.msg.domain.product.repository.ProductOptionRepository;
 import spharos.msg.domain.product.repository.ProductRepository;
@@ -66,17 +64,6 @@ public class CartProductService {
         CartProduct cartProduct = cartProductRepository.findById(cartId).orElseThrow();
         cartProductRepository.delete(cartProduct);
         return ApiResponse.of(SuccessStatus.CART_PRODUCT_DELETE_SUCCESS, null);
-    }
-
-    @Transactional(readOnly = true)
-    public ApiResponse<List<CartProductOptionResponseDto>> getCartOption(Long productId) {
-        Product product = productRepository.findById(productId).orElseThrow();
-
-        return ApiResponse.of(SuccessStatus.CART_PRODUCT_OPTION_SUCCESS,
-                productOptionRepository.findByProduct(product)
-                        .stream()
-                        .map(CartProductOptionResponseDto::new)
-                        .toList());
     }
 
     private ApiResponse<Void> addCart(Users users, Long productOptionId,
