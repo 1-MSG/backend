@@ -6,6 +6,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,13 +28,12 @@ public class BundleController {
     private final BundleService bundleService;
 
     @Operation(summary = "특가 목록 조회",
-        description = "특가 탭에 표시되는 특가 상품 목록을 조회합니다(페이지는 0부터 시작)")
+        description = "특가 탭에 표시되는 특가 상품 목록을 조회합니다(페이지는 0부터 시작, sort는 빈 문자열을 주시면 됩니다.)")
     @GetMapping("/bundles")
     public ApiResponse<BundleResponse.BundlesDto> getBundles(
-        @RequestParam("page") int page,
-        @RequestParam("size") int size
+        @PageableDefault(size = 5, page = 0, sort = "id", direction =Sort.Direction.DESC)Pageable pageable
     ) {
-        return ApiResponse.of(BUNDLE_READ_SUCCESS,bundleService.getBundles(page, size));
+        return ApiResponse.of(BUNDLE_READ_SUCCESS,bundleService.getBundles(pageable));
     }
 
     @Operation(summary = "특정 특가상품의 정보를 조회",

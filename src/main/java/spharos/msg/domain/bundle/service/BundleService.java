@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
@@ -25,11 +26,9 @@ public class BundleService {
     private final BundleProductRepository bundleProductRepository;
 
     @Transactional
-    public BundleResponse.BundlesDto getBundles(int page, int size) {
+    public BundleResponse.BundlesDto getBundles(Pageable pageable) {
 
-        PageRequest pageRequest = PageRequest.of(page, size);
-
-        Page<Bundle> bundlePage = bundleRepository.findAll(pageRequest);
+        Page<Bundle> bundlePage = bundleRepository.findAll(pageable);
 
         List<BundleResponse.BundleDto> bundles = getBundleList(bundlePage);
         boolean isLast = !bundlePage.hasNext();

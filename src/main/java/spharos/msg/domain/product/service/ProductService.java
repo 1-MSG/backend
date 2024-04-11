@@ -202,7 +202,7 @@ public class ProductService {
         // 현재 카테고리 상품의 개수
         int currentSize = resultProducts.size();
         int desiredSize = 12; // 원하는 리스트의 최종 크기
-        log.info("현재 길이는"+currentSize);
+
         if (currentSize < desiredSize) {
             // 부족한 개수만큼 랜덤 상품을 추가로 가져오기
             int additionalProductsNeeded = desiredSize - currentSize;
