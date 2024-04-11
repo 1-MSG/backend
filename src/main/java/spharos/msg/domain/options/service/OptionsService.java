@@ -186,7 +186,7 @@ public class OptionsService {
         return optionsResponseDtos;
     }
     //옵션 없는 상품용 api
-    public ApiResponse<?> getProductOptionId(Long productId) {
+    public ApiResponse<Long> getProductOptionId(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotExistException(ErrorStatus.NOT_EXIST_PRODUCT_ID));
         List<ProductOption> productOptions = productOptionRepository.findByProduct(product);

@@ -47,7 +47,7 @@ public class OptionsController {
     @Operation(summary = "ProductOptionId 조회",
             description = "ProductId를 받아서 ProductOptionId를 조회 합니다.")
     @GetMapping("/product-option/{productId}")
-    public ApiResponse<?> getProductOptionId(
+    public ApiResponse<Long> getProductOptionId(
             @PathVariable Long productId) {
         return optionsService.getProductOptionId(productId);
     }
