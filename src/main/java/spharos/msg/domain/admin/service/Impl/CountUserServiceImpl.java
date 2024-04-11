@@ -17,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import spharos.msg.domain.admin.converter.AdminConverter;
 import spharos.msg.domain.admin.dto.AdminResponseDto;
+import spharos.msg.domain.admin.dto.AdminResponseDto.SearchAllInfo;
+import spharos.msg.domain.admin.dto.AdminResponseDto.SearchInfo;
 import spharos.msg.domain.admin.service.CountUserService;
 import spharos.msg.domain.users.entity.LoginType;
 import spharos.msg.domain.users.entity.UserStatus;
@@ -128,5 +130,16 @@ public class CountUserServiceImpl implements CountUserService {
                             .collect(Collectors.toList());
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SearchAllInfo> SearchUsersInfoByUserName(String userName) {
+        List<SearchInfo> user = usersRepository.findSearchInfoByUserName(userName);
+
+        return user.stream().map(
+                u ->  AdminConverter.toDto(
+                        u,
+                        redisService.isRefreshTokenExist(u.getUuid()),
+                        getLoginType(u.getStatus()))).collect(Collectors.toList());
     }
 }

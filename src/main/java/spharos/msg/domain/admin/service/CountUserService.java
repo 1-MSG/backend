@@ -19,4 +19,6 @@ public interface CountUserService {
     public AdminResponseDto.SecessionCount secessionCount();
 
     public List<List<AdminResponseDto.MonthlySignupCount>> monthSignupCount();
+
+    public List<AdminResponseDto.SearchAllInfo> SearchUsersInfoByUserName(String userName);
 }
