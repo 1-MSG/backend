@@ -36,5 +36,7 @@ public class BundleResponse {
         private String bundleImage;
 
         private Integer bundlePrice;
+
+        private List<Long> bundleProductIds;
     }
 }
