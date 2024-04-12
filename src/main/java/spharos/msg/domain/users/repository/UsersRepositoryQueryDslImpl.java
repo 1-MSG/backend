@@ -1,15 +1,15 @@
 package spharos.msg.domain.users.repository;
 
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import spharos.msg.domain.admin.dto.AdminResponseDto;
-import spharos.msg.domain.admin.dto.AdminResponseDto.MonthlySignupCount;
-import spharos.msg.domain.admin.dto.QAdminResponseDto_MonthlySignupCount;
+import spharos.msg.domain.admin.dto.AdminResponseDto.MonthlySignupCountV2;
+import spharos.msg.domain.admin.dto.QAdminResponseDto_MonthlySignupCountV2;
 import spharos.msg.domain.admin.dto.QAdminResponseDto_SearchInfo;
 import spharos.msg.domain.users.entity.QUsers;
 
@@ -31,21 +31,16 @@ public class UsersRepositoryQueryDslImpl implements UsersRepositoryQueryDsl {
     }
 
     @Override
-    public List<List<MonthlySignupCount>> CountByMonthly() {
+    public List<MonthlySignupCountV2> CountByMonthly(LocalDateTime StartDate) {
         QUsers users = QUsers.users;
 
-        LocalDateTime targetDate = LocalDateTime
-                .of(LocalDateTime.now().getYear() - 1, Month.JANUARY, 1, 0, 0);
-
-        List<MonthlySignupCount> fetch = jpaQueryFactory
-                .select(new QAdminResponseDto_MonthlySignupCount(
+        return jpaQueryFactory
+                .select(new QAdminResponseDto_MonthlySignupCountV2(
                         users.createdAt.year(), users.createdAt.month(), users.count()))
                 .from(users)
-                .where(users.createdAt.after(targetDate))
+                .where(users.createdAt.after(StartDate))
                 .groupBy(users.createdAt.year(), users.createdAt.month())
+                .orderBy(users.createdAt.year().asc(), users.createdAt.month().asc())
                 .fetch();
-        for (MonthlySignupCount monthlySignupCount : fetch) {
-//            log.info("", monthlySignupCount.getYear(), monthlySignupCount.getMonth(), monthlySignupCount.g());
-        }
     }
 }

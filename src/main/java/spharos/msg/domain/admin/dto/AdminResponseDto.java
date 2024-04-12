@@ -52,20 +52,30 @@ public class AdminResponseDto {
 
     @Builder
     @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class MonthlySignupCount {
 
         private int year;
         private Month month;
         private Long count;
+    }
+
+    @Builder
+    @Getter
+    public static class MonthlySignupCountV2 {
+
+        private int year;
+        private int month;
+        private Long count;
 
         @QueryProjection
-        public MonthlySignupCount(int year, Month month, Long count) {
+        public MonthlySignupCountV2(int year, int month, Long count) {
             this.year = year;
             this.month = month;
             this.count = count;
         }
     }
-
 
 
     @Builder

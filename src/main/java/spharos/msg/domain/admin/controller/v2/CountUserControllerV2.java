@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import spharos.msg.domain.admin.dto.AdminResponseDto;
 import spharos.msg.domain.admin.dto.AdminResponseDto.MonthlySignupCount;
-import spharos.msg.domain.admin.service.CountUserService;
 import spharos.msg.domain.admin.service.Impl.CountUserServiceImplV2;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;

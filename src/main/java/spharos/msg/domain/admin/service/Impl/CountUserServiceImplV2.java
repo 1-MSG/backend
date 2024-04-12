@@ -3,11 +3,7 @@ package spharos.msg.domain.admin.service.Impl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +15,6 @@ import spharos.msg.domain.admin.dto.AdminResponseDto;
 import spharos.msg.domain.admin.service.CountUserService;
 import spharos.msg.domain.users.entity.LoginType;
 import spharos.msg.domain.users.entity.UserStatus;
-import spharos.msg.domain.users.entity.Users;
 import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.global.redis.RedisService;
 
@@ -87,8 +82,10 @@ public class CountUserServiceImplV2 implements CountUserService {
     @Override
     public List<List<AdminResponseDto.MonthlySignupCount>> monthSignupCount() {
 
+        LocalDateTime startDate = LocalDateTime
+                .of(LocalDateTime.now().getYear() - 1, Month.JANUARY, 1, 0, 0);
 
-        return null;
+        return AdminConverter.toDto(usersRepository.CountByMonthly(startDate), startDate);
     }
 
     @Override
