@@ -6,4 +6,6 @@ import spharos.msg.domain.admin.dto.AdminResponseDto;
 
 public interface UsersRepositoryQueryDsl {
     List<AdminResponseDto.SearchInfo> findUsersByPageable(Pageable pageable);
+
+    List<List<AdminResponseDto.MonthlySignupCount>> CountByMonthly();
 }

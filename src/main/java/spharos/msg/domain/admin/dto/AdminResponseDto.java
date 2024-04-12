@@ -51,14 +51,22 @@ public class AdminResponseDto {
     }
 
     @Builder
-    @AllArgsConstructor
     @Getter
     public static class MonthlySignupCount {
 
         private int year;
         private Month month;
         private Long count;
+
+        @QueryProjection
+        public MonthlySignupCount(int year, Month month, Long count) {
+            this.year = year;
+            this.month = month;
+            this.count = count;
+        }
     }
+
+
 
     @Builder
     @AllArgsConstructor
