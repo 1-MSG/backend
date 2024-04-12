@@ -25,19 +25,17 @@ import spharos.msg.global.api.exception.UsersException;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class OrderService {
+public class OrderServiceV1 {
 
     private final OrderRepository orderRepository;
     private final UsersRepository usersRepository;
     private final ProductOptionRepository productOptionRepository;
 
-
     public OrderUserDto findOrderUser(String uuid) {
-        Users user = usersRepository
+        Users users = usersRepository
             .findByUuid(uuid)
             .orElseThrow(() -> new OrderException(ErrorStatus.FIND_USER_INFO_FAIL));
-
-        return OrdersConverter.toDto(user);
+        return OrdersConverter.toDto(users);
     }
 
     @Transactional
@@ -79,7 +77,7 @@ public class OrderService {
 
         return orderRepository.findAllByUserId(users.getId());
     }
-    
+
     private Long getTotalPrice(List<OrderProductDetail> orderProductDetails) {
         Long totalPrice = 0L;
         for (OrderProductDetail orderProductDetail : orderProductDetails) {

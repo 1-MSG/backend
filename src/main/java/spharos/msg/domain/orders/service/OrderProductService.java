@@ -49,12 +49,16 @@ public class OrderProductService {
         orderProductRepository.saveAll(orderProductEntities);
     }
 
-    public List<OrderPrice> createOrderPricesByOrderId(Long orderId) {
+    public List<OrderPrice> createOrderPricesByOrderIdV1(Long orderId) {
         List<OrderProduct> orderProducts = orderProductRepository.findAllByOrderId(orderId);
         return orderProducts
             .stream()
             .map(OrdersConverter::toDto)
             .toList();
+    }
+
+    public List<OrderPrice> createOrderPricesByOrderIdV2(Long orderId) {
+        return orderProductRepository.findOrderPricesByOrderId(orderId);
     }
 
     private void updateProductOrderQuantity(ProductSalesInfo productSalesInfo, int orderQuantity) {
