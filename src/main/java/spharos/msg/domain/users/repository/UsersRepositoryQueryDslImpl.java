@@ -31,7 +31,7 @@ public class UsersRepositoryQueryDslImpl implements UsersRepositoryQueryDsl {
     }
 
     @Override
-    public List<MonthlySignupCountV2> CountByMonthly(LocalDateTime StartDate) {
+    public List<MonthlySignupCountV2> countByMonthly(LocalDateTime StartDate) {
         QUsers users = QUsers.users;
 
         return jpaQueryFactory

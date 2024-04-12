@@ -85,7 +85,7 @@ public class CountUserServiceImplV2 implements CountUserService {
         LocalDateTime startDate = LocalDateTime
                 .of(LocalDateTime.now().getYear() - 1, Month.JANUARY, 1, 0, 0);
 
-        return AdminConverter.toDto(usersRepository.CountByMonthly(startDate), startDate);
+        return AdminConverter.toDto(usersRepository.countByMonthly(startDate), startDate);
     }
 
     @Override

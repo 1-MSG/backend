@@ -11,7 +11,7 @@ public interface UsersRepositoryQueryDsl {
 
     List<AdminResponseDto.SearchInfo> findUsersByPageable(Pageable pageable);
 
-    List<AdminResponseDto.MonthlySignupCountV2> CountByMonthly(LocalDateTime StartDate);
+    List<AdminResponseDto.MonthlySignupCountV2> countByMonthly(LocalDateTime StartDate);
 
     Optional<OrderUserDto> findOrderUserDtoByUuid(String uuid);
 }
