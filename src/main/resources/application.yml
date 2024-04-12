@@ -1,9 +1,15 @@
 spring:
-  datasource:
-    url: ${DB_ADDRESS}
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
+  datasource-master:
     driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: ${DB_PASSWORD}
+    jdbc-url: ${DB_ADDRESS_MASTER}
+  datasource-slave:
+    username: root
+    password: ${DB_PASSWORD}
+    jdbc-url: ${DB_ADDRESS_SLAVE}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: none
