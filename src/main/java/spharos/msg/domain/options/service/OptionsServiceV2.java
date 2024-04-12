@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -42,18 +41,21 @@ public class OptionsServiceV2 {
         List<OptionTypeDto> optionTypeDtos = new ArrayList<>();
 
         //옵션 없는 상품
-        if(productOptions.get(0).getOptions()==null||productOptions.get(0).getOptions().getOptionName()==null){
+        ProductOption firstProductOption = productOptions.get(0);
+        Options options = firstProductOption.getOptions();
+        if (options.getOptionName() == null) {
             return ApiResponse.of(SuccessStatus.OPTION_TYPE_SUCCESS, optionTypeDtos);
         }
-        Options options = productOptions.get(0).getOptions();
-        OptionTypeDto optionTypeDto = optionsRepository.findOptionsType(options);
+        //현재 옵션 저장
+        OptionTypeDto optionTypeDto = productOptionRepository.findTypeByOptions(options);
         if (optionTypeDto.getOptionType() != null) {
             optionTypeDtos.add(optionTypeDto);
         }
-
+        //상위 옵션 저장
         if (options.getParent() != null) {
             Set<Long> parentIds = getParentOptionIds(productOptions);
-            addOptionTypeDtoFromParentIds(parentIds, optionTypeDtos);
+            options = optionsRepository.getReferenceById(parentIds.iterator().next());
+            optionTypeDtos.add(productOptionRepository.findTypeByOptions(options));
         }
         return ApiResponse.of(SuccessStatus.OPTION_TYPE_SUCCESS, optionTypeDtos);
     }
@@ -109,11 +111,6 @@ public class OptionsServiceV2 {
         return String.join(OPTION_DELIMETER, optionNames);
     }
 
-    private void addOptionTypeDtoFromParentIds(Set<Long> parentIds, List<OptionTypeDto> optionTypeDtos) {
-        Options options = optionsRepository.getReferenceById(parentIds.iterator().next());
-        optionTypeDtos.add(new OptionTypeDto(options));
-    }
-
     //하위 옵션 데이터 조회
     public ApiResponse<?> getChildOptions(Long optionsId) {
         Options options = optionsRepository.getReferenceById(optionsId);
@@ -134,11 +131,7 @@ public class OptionsServiceV2 {
 
     //상품이 가진 최하위 옵션 ID의 상위 옵션 ID 취합
     Set<Long> getParentOptionIds(List<ProductOption> productOptions) {
-
-        return productOptions.stream()
-                .filter(productOption -> productOption.getOptions() != null && productOption.getOptions().getParent() != null)
-                .map(productOption -> productOption.getOptions().getParent().getId())
-                .collect(Collectors.toSet());
+        return productOptionRepository.getParentOptionIds(productOptions);
     }
 
     //해당 ID들의 정보(옵션ID,이름,타입,레벨) 반환
