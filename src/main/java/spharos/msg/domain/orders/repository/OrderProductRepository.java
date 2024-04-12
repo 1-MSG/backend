@@ -1,5 +1,6 @@
 package spharos.msg.domain.orders.repository;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDateTime;
@@ -7,6 +8,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import spharos.msg.domain.orders.dto.OrderResponse.OrderPrice;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderProductDto;
 import spharos.msg.domain.orders.dto.QOrderResponse_OrderProductDto;
 import spharos.msg.domain.orders.entity.OrderProduct;
@@ -20,7 +22,7 @@ public class OrderProductRepository {
 
     private static final String NO_IMAGE = "NONE";
     private static final int ORDER_PRODUCT_BATCH_SIZE = 10;
-    
+
     private final JPAQueryFactory jpaQueryFactory;
     private final EntityManager entityManager;
 
@@ -71,6 +73,26 @@ public class OrderProductRepository {
             .fetch();
     }
 
+    public List<OrderPrice> findOrderPricesByOrderId(Long orderId) {
+        QOrderProduct orderProduct = QOrderProduct.orderProduct;
+        QOrders orders = QOrders.orders;
+
+        List<Tuple> priceTuples = jpaQueryFactory
+            .select(
+                orderProduct.ordersDeliveryFee,
+                orderProduct.productPrice,
+                orderProduct.discountRate)
+            .from(orderProduct)
+            .innerJoin(orderProduct.orders, orders)
+            .where(orders.id.eq(orderId))
+            .fetch();
+
+        return priceTuples
+            .stream()
+            .map(tuple -> toOrderPriceDto(orderProduct, tuple))
+            .toList();
+    }
+
     public OrderProduct findById(Long id) {
         QOrderProduct orderProduct = QOrderProduct.orderProduct;
 
@@ -92,4 +114,12 @@ public class OrderProductRepository {
             orderProduct.productOption);
     }
 
+    private OrderPrice toOrderPriceDto(QOrderProduct orderProduct, Tuple priceTuple) {
+        Integer deliveryFee = priceTuple.get(orderProduct.ordersDeliveryFee);
+        Long productPrice = priceTuple.get(orderProduct.productPrice);
+        long discountRate = priceTuple.get(orderProduct.discountRate).longValue();
+        Long salePrice = productPrice * (100 - discountRate) / 100;
+
+        return new OrderPrice(deliveryFee, productPrice, salePrice);
+    }
 }

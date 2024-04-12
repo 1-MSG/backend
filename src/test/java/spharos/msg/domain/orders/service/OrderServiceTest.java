@@ -12,7 +12,7 @@ import spharos.msg.domain.orders.repository.OrderRepository;
 import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.global.config.QueryDslConfig;
 
-@Import({OrderService.class, QueryDslConfig.class})
+@Import({OrderServiceV1.class, QueryDslConfig.class})
 @SpringBootTest
 @Transactional
 class OrderServiceTest {
@@ -21,7 +21,7 @@ class OrderServiceTest {
     OrderRepository orderRepository;
 
     @Autowired
-    OrderService orderService;
+    OrderServiceV1 orderServiceV1;
 
     @Autowired
     UsersRepository usersRepository;
