@@ -42,7 +42,7 @@ public class CountPriceService {
     private List<OrderPrice> findCountPriceElements(List<Long> orderIds) {
         return orderIds
             .stream()
-            .map(orderProductService::createOrderPricesByOrderId)
+            .map(orderProductService::createOrderPricesByOrderIdV1)
             .flatMap(Collection::stream)
             .toList();
     }

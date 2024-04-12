@@ -3,12 +3,12 @@ package spharos.msg.domain.options.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import spharos.msg.domain.options.dto.OptionsNameDto;
 import spharos.msg.domain.options.service.OptionsService;
 import spharos.msg.global.api.ApiResponse;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,5 +48,14 @@ public class OptionsController {
     public ApiResponse<?> getProductOptionId(
             @PathVariable Long productId) {
         return optionsService.getProductOptionId(productId);
+    }
+
+    @Operation(summary = "옵션명 조회",
+            description = "상품의 전체 옵션 종류, 이름을 조회 합니다. (색상 : 빨강, 사이즈 : L)")
+    @GetMapping
+    public ApiResponse<List<OptionsNameDto>> getOptionsDetail(
+            @RequestParam(value = "productOptionId") Long productOptionId)
+    {
+        return optionsService.getOptionsDetail(productOptionId);
     }
 }

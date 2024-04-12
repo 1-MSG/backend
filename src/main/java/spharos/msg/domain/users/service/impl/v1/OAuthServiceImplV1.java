@@ -1,4 +1,4 @@
-package spharos.msg.domain.users.service.impl;
+package spharos.msg.domain.users.service.impl.v1;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +24,7 @@ import spharos.msg.global.security.JwtTokenProvider;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class OAuthServiceImpl implements OAuthService {
+public class OAuthServiceImplV1 implements OAuthService {
 
     private final UsersRepository userRepository;
     private final UserOAuthListRepository userOAuthListRepository;

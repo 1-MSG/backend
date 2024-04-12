@@ -1,4 +1,4 @@
-package spharos.msg.domain.users.service.impl;
+package spharos.msg.domain.users.service.impl.v1;
 
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ import spharos.msg.global.security.JwtTokenProvider;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AuthServiceImpl implements AuthService {
+public class AuthServiceImplV1 implements AuthService {
 
     private final UsersRepository usersRepository;
     private final AuthenticationManager authenticationManager;

@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spharos.msg.domain.orders.converter.OrdersConverter;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderProductDetail;
 import spharos.msg.domain.orders.dto.OrderRequest.OrderSheetDto;
 import spharos.msg.domain.orders.dto.OrderResponse.OrderHistoryDto;
@@ -24,31 +25,23 @@ import spharos.msg.global.api.exception.UsersException;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class OrderService {
+public class OrderServiceV1 {
 
     private final OrderRepository orderRepository;
     private final UsersRepository usersRepository;
     private final ProductOptionRepository productOptionRepository;
 
-
     public OrderUserDto findOrderUser(String uuid) {
-        Users user = usersRepository
+        Users users = usersRepository
             .findByUuid(uuid)
             .orElseThrow(() -> new OrderException(ErrorStatus.FIND_USER_INFO_FAIL));
-
-        return OrderUserDto
-            .builder()
-            .loginId(user.getLoginId())
-            .email(user.getEmail())
-            .username(user.getUsername())
-            .phoneNumber(user.getPhoneNumber())
-            .address(user.getAddress())
-            .build();
+        return OrdersConverter.toDto(users);
     }
 
     @Transactional
     public Orders saveOrder(OrderSheetDto orderSheetDto) {
-        Orders newOrder = toOrderEntity(orderSheetDto);
+        Long totalPrice = getTotalPrice(orderSheetDto.getOrderProductDetails());
+        Orders newOrder = OrdersConverter.toEntity(orderSheetDto, totalPrice);
         List<OrderProductDetail> orderProductDetails = orderSheetDto.getOrderProductDetails();
         orderProductDetails.forEach(this::decreaseStock);
         return orderRepository.save(newOrder);
@@ -59,15 +52,7 @@ public class OrderService {
             .findById(orderId)
             .orElseThrow(() -> new OrderException(ErrorStatus.ORDER_ID_NOT_FOUND));
 
-        return OrderResultDto
-            .builder()
-            .orderPrices(orderPrices)
-            .createdAt(orders.getCreatedAt())
-            .address(orders.getAddress())
-            .username(orders.getUsername())
-            .totalPrice(orders.getTotalPrice())
-            .phoneNumber(orders.getUserPhoneNumber())
-            .build();
+        return OrdersConverter.toDto(orders, orderPrices);
     }
 
     private void decreaseStock(OrderProductDetail product) {
@@ -93,17 +78,6 @@ public class OrderService {
         return orderRepository.findAllByUserId(users.getId());
     }
 
-    private Orders toOrderEntity(OrderSheetDto orderSheetDto) {
-        return Orders.builder()
-            .userId(orderSheetDto.getBuyerId())
-            .username(orderSheetDto.getBuyerName())
-            .userPhoneNumber(orderSheetDto.getBuyerPhoneNumber())
-            .address(orderSheetDto.getAddress())
-            .totalPrice(getTotalPrice(orderSheetDto.getOrderProductDetails()))
-            .build();
-    }
-
-
     private Long getTotalPrice(List<OrderProductDetail> orderProductDetails) {
         Long totalPrice = 0L;
         for (OrderProductDetail orderProductDetail : orderProductDetails) {
@@ -113,14 +87,4 @@ public class OrderService {
         }
         return totalPrice;
     }
-
-    /*
-    현재 사용되지 않음
-    private Product findProductByOption(Long optionId) {
-        return productOptionRepository
-            .findById(optionId)
-            .orElseThrow(() -> new OrderException(ErrorStatus.ORDER_PRODUCT_NOT_FOUND))
-            .getProduct();
-    }
-    */
 }

@@ -1,6 +1,5 @@
 package spharos.msg.domain.category.repository.impl;
 
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.StringExpression;
@@ -13,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import spharos.msg.domain.category.dto.CategoryResponse.CategoryProductDto;
 import spharos.msg.domain.category.dto.CategoryResponse.SubCategory;
+import spharos.msg.domain.category.dto.QCategoryResponse_CategoryProductDto;
+import spharos.msg.domain.category.dto.QCategoryResponse_SubCategory;
 import spharos.msg.domain.category.entity.QCategory;
 import spharos.msg.domain.category.entity.QCategoryProduct;
 import spharos.msg.domain.category.repository.CategoryProductRepositoryCustom;
@@ -23,6 +24,7 @@ import spharos.msg.domain.product.entity.QProduct;
 public class CategoryProductRepositoryCustomImpl implements CategoryProductRepositoryCustom {
 
     private static final String NO_IMAGE = "NONE";
+    private static final String ALL_CATEGORY_SELECT_NAME = "상품 전체보기";
 
     private final JPAQueryFactory jpaQueryFactory;
 
@@ -33,15 +35,26 @@ public class CategoryProductRepositoryCustomImpl implements CategoryProductRepos
         categoryIds.add(0, parentId);
 
         return jpaQueryFactory
-            .select(Projections.constructor(SubCategory.class,
+            .select(new QCategoryResponse_SubCategory(
                 category.id,
                 new CaseBuilder()
                     .when(category.id.eq(parentId))
-                    .then("상품 전체보기")
+                    .then(ALL_CATEGORY_SELECT_NAME)
                     .otherwise(category.categoryName),
                 tryGetCategoryImage(category)))
             .from(category)
             .where(category.id.in(categoryIds))
+            .fetch();
+    }
+
+    @Override
+    public List<SubCategory> findCategoriesByLevel(int categoryLevel) {
+        QCategory category = QCategory.category;
+        return jpaQueryFactory
+            .select(toSubCategoryDto(null, category))
+            .from(category)
+            .where(category.categoryLevel.eq(categoryLevel))
+            .distinct()
             .fetch();
     }
 
@@ -53,18 +66,32 @@ public class CategoryProductRepositoryCustomImpl implements CategoryProductRepos
             .fetch();
     }
 
-    @Override
-    public List<SubCategory> findCategoriesByLevel(int categoryLevel) {
-        QCategory category = QCategory.category;
-        return jpaQueryFactory
-            .select(Projections.constructor(SubCategory.class,
-                category.id,
-                category.categoryName,
-                tryGetCategoryImage(category)))
-            .from(category)
-            .where(category.categoryLevel.eq(categoryLevel))
-            .distinct()
-            .fetch();
+    private QCategoryResponse_SubCategory toSubCategoryDto(Long parentId, QCategory category) {
+        BooleanExpression isNotNullAndSameWithParentId = (parentId != null) ?
+            category.id.eq(parentId) :
+            null;
+
+        return new QCategoryResponse_SubCategory(
+            category.id,
+            new CaseBuilder()
+                .when(isNotNullAndSameWithParentId)
+                .then(ALL_CATEGORY_SELECT_NAME)
+                .otherwise(category.categoryName),
+            tryGetCategoryImage(category)
+        );
+    }
+
+    private StringExpression tryGetCategoryImage(QCategory category) {
+        return new CaseBuilder()
+            .when(category.categoryImage.isNotEmpty())
+            .then(category.categoryImage)
+            .otherwise(NO_IMAGE);
+    }
+
+    private BooleanExpression validateParentAndLevel(Long parentId, QCategory category) {
+        return category.parent.id.eq(parentId)
+            .and(category.categoryLevel
+                .eq(category.parent.categoryLevel.add(1)));
     }
 
     @Override
@@ -81,13 +108,6 @@ public class CategoryProductRepositoryCustomImpl implements CategoryProductRepos
         return new PageImpl<>(categoryProductDtos, pageable, total);
     }
 
-    private StringExpression tryGetCategoryImage(QCategory category) {
-        return new CaseBuilder()
-            .when(category.categoryImage.isNotEmpty())
-            .then(category.categoryImage)
-            .otherwise(NO_IMAGE);
-    }
-
     private List<Long> getCategoryIds(Long categoryId, QCategory category) {
         return jpaQueryFactory
             .select(category.id)
@@ -95,12 +115,6 @@ public class CategoryProductRepositoryCustomImpl implements CategoryProductRepos
             .where(validateChildCategory(category, categoryId))
             .distinct()
             .fetch();
-    }
-
-    private BooleanExpression validateParentAndLevel(Long parentId, QCategory category) {
-        return category.parent.id.eq(parentId)
-            .and(category.categoryLevel
-                .eq(category.parent.categoryLevel.add(1)));
     }
 
     private Long getTotal(QCategoryProduct categoryProduct, QCategory category, Long categoryId) {
@@ -122,7 +136,7 @@ public class CategoryProductRepositoryCustomImpl implements CategoryProductRepos
         QCategoryProduct categoryProduct, QCategory category, QProduct product,
         List<Long> categoryIds) {
         return jpaQueryFactory
-            .select(Projections.constructor(CategoryProductDto.class, product.id))
+            .select(new QCategoryResponse_CategoryProductDto(product.id))
             .from(categoryProduct)
             .innerJoin(categoryProduct.product, product)
             .innerJoin(categoryProduct.category, category)

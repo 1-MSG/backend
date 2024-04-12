@@ -1,7 +1,6 @@
 package spharos.msg.global.config;
 
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,12 +30,14 @@ public class SecurityConfig {
             var cors = new org.springframework.web.cors.CorsConfiguration();
             cors.setAllowedOriginPatterns(List.of("*"));
             cors.addAllowedHeader("*");
+            cors.addAllowedHeader("http://localhost:3000");
             cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
             cors.setAllowedHeaders(List.of("*"));
             cors.setAllowCredentials(true);
             return cors;
         };
     }
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

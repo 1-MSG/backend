@@ -40,14 +40,14 @@ public class ProductController {
     @Operation(summary = "상품 썸네일 조회",
         description = "특정 상품에 대한 상품 이미지(썸네일)을 반환합니다")
     @GetMapping("/product/{productId}/image")
-    public ApiResponse<ProductResponse.ProductImage> getProductImage(@PathVariable("productId") Long productId) {
+    public ApiResponse<ProductResponse.ProductImageDto> getProductImage(@PathVariable("productId") Long productId) {
         return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductImage(productId));
     }
 
     @Operation(summary = "상품 이미지 전체 조회",
         description = "특정 상품에 대한 상품 이미지 리스트를 반환합니다")
     @GetMapping("/product/{productId}/images")
-    public ApiResponse<List<ProductResponse.ProductImage>> getProductImages(@PathVariable("productId") Long productId) {
+    public ApiResponse<List<ProductResponse.ProductImageDto>> getProductImages(@PathVariable("productId") Long productId) {
         return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductImages(productId));
     }
 
@@ -61,7 +61,7 @@ public class ProductController {
     @Operation(summary = "상품 카테고리 정보 조회",
         description = "특정 상품이 속한 카테고리를 반환합니다")
     @GetMapping("/product/{productId}/category")
-    public ApiResponse<ProductResponse.ProductCategory> getProductCategory(@PathVariable("productId") Long productId) {
+    public ApiResponse<ProductResponse.ProductCategoryDto> getProductCategory(@PathVariable("productId") Long productId) {
         return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getProductCategory(productId));
     }
 
@@ -69,20 +69,21 @@ public class ProductController {
         description = "상품들에 대한 상세 정보를 조회합니다")
     @GetMapping("/products")
     public ApiResponse<List<ProductResponse.ProductInfoDto>> getProductsDetails(
-        @RequestParam(value = "productIds", defaultValue = "[1,2,3]") String productIds
+        @RequestParam(value = "productIds", defaultValue = "[1,2,3]") List<Long> productIds
     ) {
-        // 대괄호 제거
-        String cleanProductIds = productIds.replaceAll("^\\[|]$", "");
+        // List<Long>타입으로 변경하면서 임시 주석 처리
+//        // 대괄호 제거
+//        String cleanProductIds = productIds.replaceAll("^\\[|]$", "");
+//
+//        // 쉼표로 구분된 문자열을 배열로 변환
+//        String[] idArray = cleanProductIds.split(",");
+//
+//        // 배열을 Long 형식의 리스트로 변환
+//        List<Long> idList = Arrays.stream(idArray)
+//            .map(Long::valueOf)
+//            .toList();
 
-        // 쉼표로 구분된 문자열을 배열로 변환
-        String[] idArray = cleanProductIds.split(",");
-
-        // 배열을 Long 형식의 리스트로 변환
-        List<Long> idList = Arrays.stream(idArray)
-            .map(Long::valueOf)
-            .toList();
-
-        return ApiResponse.of(PRODUCT_INFO_SUCCESS,productService.getProductsDetails(idList));
+        return ApiResponse.of(PRODUCT_INFO_SUCCESS,productService.getProductsDetails(productIds));
     }
 
     @Operation(summary = "베스트 상품 목록 조회",

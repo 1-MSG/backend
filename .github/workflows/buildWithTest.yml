@@ -25,7 +25,8 @@ jobs:
 
       - name: Build with Gradle Wrapper
         env:
-          DB_ADDRESS: ${{ secrets.DB_ADDRESS }}
+          DB_ADDRESS_MASTER: ${{ secrets.DB_ADDRESS_MASTER }}
+          DB_ADDRESS_SLAVE: ${{ secrets.DB_ADDRESS_SLAVE }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           REDIS_DB_ADDRESS: ${{ secrets.REDIS_DB_ADDRESS }}
