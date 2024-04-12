@@ -7,12 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import spharos.msg.domain.admin.dto.AdminResponseDto;
 import spharos.msg.domain.users.dto.response.AuthResponse;
 import spharos.msg.domain.users.entity.UserStatus;
 import spharos.msg.domain.users.entity.Users;
 
 @Repository
-public interface UsersRepository extends JpaRepository<Users, Long> {
+public interface UsersRepository extends JpaRepository<Users, Long>, UsersRepositoryQueryDsl {
 
     Optional<Users> findByUuid(String uuid);
 
@@ -27,7 +28,8 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
     Optional<Users> findByEmail(String email);
 
     @Query("SELECT u.uuid, u.loginId FROM Users u WHERE u.email = :email")
-    Optional<AuthResponse.UserUuidAndLoginId> findUuidAndLoginIdByEmail(@Param("email") String email);
+    Optional<AuthResponse.UserUuidAndLoginId> findUuidAndLoginIdByEmail(
+        @Param("email") String email);
 
     @Query("SELECT u.loginId From Users u WHERE u.email = :email")
     Optional<String> findLoginIdByEmail(@Param("email") String email);
@@ -43,4 +45,10 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
     long countByStatus(UserStatus userStatus);
 
     List<Users> findByCreatedAtGreaterThanEqual(LocalDateTime dateTime);
+
+    @Query("SELECT new spharos.msg.domain.admin.dto.AdminResponseDto$SearchInfo(u.id, u.userName, u.email, u.status, u.uuid) FROM Users u WHERE u.userName = :userName")
+    List<AdminResponseDto.SearchInfo> findSearchInfoByUserName(@Param("userName") String userName);
+
+    @Query("SELECT u.id from Users u WHERE u.uuid = :uuid")
+    Optional<Long> findIdByUuid(@Param("uuid") String uuid);
 }

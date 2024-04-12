@@ -29,6 +29,7 @@ public class SecurityConfig {
             var cors = new org.springframework.web.cors.CorsConfiguration();
             cors.setAllowedOriginPatterns(List.of("*"));
             cors.addAllowedHeader("*");
+            cors.addAllowedHeader("http://localhost:3000");
             cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
             cors.setAllowedHeaders(List.of("*"));
             cors.setAllowCredentials(true);

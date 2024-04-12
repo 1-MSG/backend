@@ -31,9 +31,9 @@ public class SearchRepositoryImpl implements SearchRepository {
         QCategory category = QCategory.category;
 
         Long total = getTotal(keyword, categoryProduct, product, category);
-        List<SearchProductDto> searchProductDtos = getSearchProductIds(
-            keyword, pageable, categoryProduct, product, category);
 
+        List<SearchProductDto> searchProductDtos = getSearchProductIds(
+                keyword, pageable, categoryProduct, product, category);
         return new PageImpl<>(searchProductDtos, pageable, total);
     }
 

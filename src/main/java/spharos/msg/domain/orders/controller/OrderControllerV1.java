@@ -23,7 +23,7 @@ import spharos.msg.domain.orders.dto.OrderResponse.OrderUserDto;
 import spharos.msg.domain.orders.entity.Orders;
 import spharos.msg.domain.orders.repository.OrderProductRepository;
 import spharos.msg.domain.orders.service.OrderProductService;
-import spharos.msg.domain.orders.service.OrderService;
+import spharos.msg.domain.orders.service.OrderServiceV1;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
@@ -31,10 +31,10 @@ import spharos.msg.global.api.code.status.SuccessStatus;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
-@Tag(name = "Order", description = "주문 API")
-public class OrderController {
+@Tag(name = "OrderV1", description = "주문 API")
+public class OrderControllerV1 {
 
-    private final OrderService orderService;
+    private final OrderServiceV1 orderServiceV1;
     private final OrderProductService orderProductService;
     private final OrderProductRepository orderProductRepository;
 
@@ -44,7 +44,7 @@ public class OrderController {
     public ApiResponse<Long> addOrderAPI(
         @RequestBody OrderSheetDto orderSheetDto,
         @AuthenticationPrincipal UserDetails userDetails) {
-        Orders newOrder = orderService.saveOrder(orderSheetDto);
+        Orders newOrder = orderServiceV1.saveOrder(orderSheetDto);
         orderProductService.saveAllByOrderSheet(orderSheetDto, newOrder);
 
         return ApiResponse.of(
@@ -58,10 +58,10 @@ public class OrderController {
     public ApiResponse<OrderResultDto> orderResultAPI(
         @RequestParam("orderId") Long orderId
     ) {
-        List<OrderPrice> orderPrices = orderProductService.createOrderPricesByOrderId(orderId);
+        List<OrderPrice> orderPrices = orderProductService.createOrderPricesByOrderIdV1(orderId);
         return ApiResponse.of(
             SuccessStatus.ORDER_SUCCESS,
-            orderService.createOrderResult(orderId, orderPrices));
+            orderServiceV1.createOrderResult(orderId, orderPrices));
     }
 
     @Operation(summary = "회원별 주문 내역 조회를 위한 order_id 리스트 조회",
@@ -73,7 +73,7 @@ public class OrderController {
         String uuid = userDetails.getUsername();
         return ApiResponse.of(
             SuccessStatus.ORDER_HISTORY_SUCCESS,
-            orderService.findOrderHistories(uuid)
+            orderServiceV1.findOrderHistories(uuid)
         );
     }
 
@@ -94,7 +94,7 @@ public class OrderController {
         @AuthenticationPrincipal UserDetails userDetails
     ) {
         String uuid = userDetails.getUsername();
-        OrderUserDto orderUserDto = orderService.findOrderUser(uuid);
+        OrderUserDto orderUserDto = orderServiceV1.findOrderUser(uuid);
         return ApiResponse.of(SuccessStatus.ORDER_USER_SUCCESS, orderUserDto);
     }
 }
