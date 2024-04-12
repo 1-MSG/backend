@@ -2,7 +2,6 @@ package spharos.msg.domain.options.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spharos.msg.domain.options.dto.OptionTypeDto;
@@ -30,14 +29,12 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
-@Primary
-public class OptionsServiceImplV2 implements OptionsService {
+public class OptionsServiceV2 {
     private static final String OPTION_DELIMETER = "/";
     private final OptionsRepository optionsRepository;
     private final ProductOptionRepository productOptionRepository;
     private final ProductRepository productRepository;
 
-    @Override
     //상품 옵션 종류 조회
     public ApiResponse<?> getOptionsType(Long productId) {
         Product product = productRepository.getReferenceById(productId);
@@ -49,8 +46,7 @@ public class OptionsServiceImplV2 implements OptionsService {
             return ApiResponse.of(SuccessStatus.OPTION_TYPE_SUCCESS, optionTypeDtos);
         }
         Options options = productOptions.get(0).getOptions();
-
-        OptionTypeDto optionTypeDto = new OptionTypeDto(options);
+        OptionTypeDto optionTypeDto = optionsRepository.findOptionsType(options);
         if (optionTypeDto.getOptionType() != null) {
             optionTypeDtos.add(optionTypeDto);
         }
@@ -62,7 +58,6 @@ public class OptionsServiceImplV2 implements OptionsService {
         return ApiResponse.of(SuccessStatus.OPTION_TYPE_SUCCESS, optionTypeDtos);
     }
 
-    @Override
     //최상위 옵션 조회
     public ApiResponse<?> getFirstOptions(Long productId) {
         Product product = productRepository.getReferenceById(productId);
@@ -100,7 +95,6 @@ public class OptionsServiceImplV2 implements OptionsService {
         return ApiResponse.of(SuccessStatus.OPTION_DETAIL_SUCCESS, optionsNameDtos);
     }
     //구매쪽 옵션
-    @Override
     public String getOptions(Long productOptionId) {
         ProductOption productOption = productOptionRepository.getReferenceById(productOptionId);
         Options options = productOption.getOptions();
@@ -121,7 +115,6 @@ public class OptionsServiceImplV2 implements OptionsService {
     }
 
     //하위 옵션 데이터 조회
-    @Override
     public ApiResponse<?> getChildOptions(Long optionsId) {
         Options options = optionsRepository.getReferenceById(optionsId);
         List<Options> childOptions = options.getChild();
@@ -176,7 +169,6 @@ public class OptionsServiceImplV2 implements OptionsService {
         }
         return optionsResponseDtos;
     }
-    @Override
     //옵션 없는 상품용 api
     public ApiResponse<?> getProductOptionId(Long productId) {
         Product product = productRepository.getReferenceById(productId);
