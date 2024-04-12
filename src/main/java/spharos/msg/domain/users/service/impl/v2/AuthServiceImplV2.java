@@ -1,8 +1,8 @@
-package spharos.msg.domain.users.service.impl;
+package spharos.msg.domain.users.service.impl.v2;
 
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,11 +21,13 @@ import spharos.msg.global.api.exception.UsersException;
 import spharos.msg.global.redis.RedisService;
 import spharos.msg.global.security.JwtTokenProvider;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AuthServiceImpl implements AuthService {
-
+public class AuthServiceImplV2 implements AuthService {
     private final UsersRepository usersRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
@@ -34,18 +36,13 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     @Override
     public void signUp(AuthRequest.SignUpRequestDto dto) {
+        Optional<UserStatus> statusByLoginId = usersRepository.findStatusByLoginId(dto.getLoginId());
 
-        //중복회원 검색
-        duplicateCheckLoginId(AuthRequest.DuplicationCheckDto
-                .builder()
-                .loginId(dto.getLoginId())
-                .build());
-
-        //탈퇴한 회원 검증.
-        //한번 탈퇴하면 절대 회원가입/로그인 금지 되는 정책 적용 중.
-        if (usersRepository.findByLoginId(dto.getLoginId())
-                .filter(m -> m.getStatus() == UserStatus.NOT_USER).isPresent()) {
-            throw new UsersException(ErrorStatus.WITHDRAW_USER_FAIL);
+        if(statusByLoginId.isPresent()){
+            if(statusByLoginId.get() == UserStatus.NOT_USER){
+                throw new UsersException(ErrorStatus.WITHDRAW_USER_FAIL);
+            }
+            throw new UsersException(ErrorStatus.DUPLICATION_LOGIN_ID);
         }
 
         String uuid = UUID.randomUUID().toString();
@@ -152,18 +149,16 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(readOnly = true)
     @Override
     public AuthResponse.FindIdResponseDto findLoginUnionId(String email) {
-        Users findUser = usersRepository.findByEmail(email).orElseThrow(
+        String findLoginId = usersRepository.findLoginIdByEmail(email).orElseThrow(
                 () -> new UsersException(ErrorStatus.FIND_LOGIN_ID_FAIL));
 
-        return AuthConverter.toDto(findUser);
+        return AuthResponse.FindIdResponseDto.builder().loginId(findLoginId).build();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public AuthResponse.FindUserInfoResponseDto findUserInfo(String uuid) {
-        Users findUser = usersRepository.findByUuid(uuid).orElseThrow(
-                () -> new UsersException(ErrorStatus.FIND_USER_INFO_FAIL)
-        );
-
-        return AuthConverter.toDtoForUserInfo(findUser);
+        return usersRepository.findUserInfoByUuid(uuid).orElseThrow(
+                () -> new UsersException(ErrorStatus.FIND_USER_INFO_FAIL));
     }
 }

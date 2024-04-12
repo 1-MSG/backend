@@ -1,4 +1,4 @@
-package spharos.msg.domain.users.service.impl;
+package spharos.msg.domain.users.service.impl.v2;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Primary
 public class AddressServiceImplV2 implements AddressService {
 
     private final AddressRepository addressRepository;
