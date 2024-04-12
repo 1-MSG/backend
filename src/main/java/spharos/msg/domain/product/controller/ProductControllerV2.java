@@ -68,7 +68,7 @@ public class ProductControllerV2 {
     @Operation(summary = "여러 상품 정보 조회",
         description = "상품들에 대한 상세 정보를 조회합니다")
     @GetMapping("/products")
-    public ApiResponse<List<ProductResponse.ProductInfoDto>> getProductsDetails(
+    public ApiResponse<List<ProductResponse.ProductInfoAdminDto>> getProductsDetails(
         @RequestParam(value = "productIds", defaultValue = "1") List<Long> productIds
     ) {
         return ApiResponse.of(PRODUCT_INFO_SUCCESS,productService.getProductsDetails(productIds));

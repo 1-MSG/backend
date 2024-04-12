@@ -1,4 +1,4 @@
-package spharos.msg.domain.users.service.impl;
+package spharos.msg.domain.users.service.impl.v2;
 
 
 import jakarta.mail.MessagingException;
@@ -24,7 +24,7 @@ import spharos.msg.global.redis.RedisService;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UsersServiceImpl implements UsersService {
+public class UsersServiceImplV2 implements UsersService {
 
     private final JavaMailSender mailSender;
     private final RedisService redisService;

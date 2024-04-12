@@ -16,14 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 import spharos.msg.domain.category.entity.CategoryProduct;
 import spharos.msg.domain.category.repository.CategoryProductRepository;
-import spharos.msg.domain.orders.repository.OrderProductRepository;
 import spharos.msg.domain.product.converter.ProductConverter;
 import spharos.msg.domain.product.dto.ProductResponse;
 import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductImage;
 import spharos.msg.domain.product.repository.ProductImageRepository;
 import spharos.msg.domain.product.repository.ProductRepository;
-import spharos.msg.domain.product.repository.ProductRepositoryCustom;
 import spharos.msg.global.api.exception.ProductNotExistException;
 
 @Service
@@ -35,7 +33,6 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryProductRepository categoryProductRepository;
     private final ProductImageRepository productImageRepository;
-    private final OrderProductRepository orderProductRepository;
 
     //id로 상품의 기본 정보 불러오기
     public ProductResponse.ProductInfoDto getProductInfo(Long productId) {
@@ -87,7 +84,7 @@ public class ProductService {
     }
 
     //id리스트로 여러 상품 불러오기
-    public List<ProductResponse.ProductInfoDto> getProductsDetails(List<Long> idList) {
+    public List<ProductResponse.ProductInfoAdminDto> getProductsDetails(List<Long> idList) {
         List<Product> products = productRepository.findProductsByIdList(idList);
         return products.stream().map(product -> {
             ProductImage productImage = productImageRepository.findByProductAndImageIndex(product,
@@ -96,7 +93,7 @@ public class ProductService {
 
             Integer discountPrice = getDiscountedPrice(product.getProductPrice(), product.getDiscountRate());
 
-            return ProductConverter.toDto(product,productImage,discountPrice);
+            return ProductConverter.toAdminDto(product,productImage);
         }).toList();
     }
 
@@ -158,54 +155,5 @@ public class ProductService {
 
         // 계산된 할인 가격을 정수로 변환하여 반환
         return discountedPrice.setScale(0, RoundingMode.HALF_UP).intValue();
-    }
-
-    private Long getKeyWithMaxValue(Map<Long, Integer> map) {
-        Long maxKey = null;
-        Integer maxValue = Integer.MIN_VALUE;
-
-        for (Map.Entry<Long, Integer> entry : map.entrySet()) {
-            if (entry.getValue() > maxValue) {
-                maxValue = entry.getValue();
-                maxKey = entry.getKey();
-            }
-        }
-
-        return maxKey;
-    }
-
-    private List<ProductResponse.ProductIdDto> getRandomProductsByInterestedCategory(List<Long> recentProducts) {
-        Map<Long, Integer> categoryCountMap = new HashMap<>();
-
-        for (Long productId : recentProducts) {
-            Long categoryId = categoryProductRepository.findByProductId(productId).getCategory().getId();
-            categoryCountMap.put(categoryId, categoryCountMap.getOrDefault(categoryId, 0) + 1);
-        }
-
-        Long interestedCategoryId = getKeyWithMaxValue(categoryCountMap);
-
-        List<CategoryProduct> categoryProducts = categoryProductRepository.findRandomByCategoryId(interestedCategoryId);
-
-        List<ProductResponse.ProductIdDto> resultProducts = new java.util.ArrayList<>(
-            categoryProducts.stream()
-                .map(categoryProduct -> ProductConverter.toDto(categoryProduct.getProduct()))
-                .toList());
-
-        // 현재 카테고리 상품의 개수
-        int currentSize = resultProducts.size();
-        int desiredSize = 12; // 원하는 리스트의 최종 크기
-
-        if (currentSize < desiredSize) {
-            // 부족한 개수만큼 랜덤 상품을 추가로 가져오기
-            int additionalProductsNeeded = desiredSize - currentSize;
-            List<Product> additionalRandomProducts = productRepository.findRandomProducts(additionalProductsNeeded);
-            // 추가된 랜덤 상품을 결과 리스트에 추가
-            List<ProductResponse.ProductIdDto> additionalProducts = additionalRandomProducts.stream()
-                .map(ProductConverter::toDto)
-                .toList();
-            resultProducts.addAll(additionalProducts);
-        }
-
-        return resultProducts;
     }
 }

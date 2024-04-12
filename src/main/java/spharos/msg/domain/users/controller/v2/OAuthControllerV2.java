@@ -1,26 +1,29 @@
-package spharos.msg.domain.users.controller;
+package spharos.msg.domain.users.controller.v2;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import java.util.Optional;
-
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import spharos.msg.domain.users.dto.request.OAuthRequest;
 import spharos.msg.domain.users.dto.response.OAuthResponse;
-import spharos.msg.domain.users.service.OAuthService;
+import spharos.msg.domain.users.service.impl.v2.OAuthServiceImplV2;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/oauth")
-@Tag(name = "OAuth", description = "간편 로그인 관련 API")
-public class OAuthController {
+@RequestMapping("/api/v2/oauth")
+@Tag(name = "OAuth V2", description = "간편 로그인 관련 API")
+public class OAuthControllerV2 {
 
-    private final OAuthService oAuthService;
+    private final OAuthServiceImplV2 oAuthService;
 
     @Operation(summary = "간편 회원가입", description = "간편회원 회원가입")
     @PostMapping("/signup")

@@ -19,6 +19,7 @@ import spharos.msg.domain.category.repository.CategoryProductRepository;
 import spharos.msg.domain.orders.repository.OrderProductRepository;
 import spharos.msg.domain.product.converter.ProductConverter;
 import spharos.msg.domain.product.dto.ProductResponse;
+import spharos.msg.domain.product.dto.ProductResponse.ProductDeliveryDto;
 import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductImage;
 import spharos.msg.domain.product.repository.ProductImageRepository;
@@ -84,18 +85,10 @@ public class ProductServiceV2 {
         return ProductConverter.toDto(categoryProduct);
     }
 
-    //id리스트로 여러 상품 불러오기
-    public List<ProductResponse.ProductInfoDto> getProductsDetails(List<Long> idList) {
-        List<Product> products = productRepository.findProductsByIdList(idList);
-        return products.stream().map(product -> {
-            ProductImage productImage = productImageRepository.findByProductAndImageIndex(product,
-                    0)
-                .orElseGet(ProductImage::new); // 이미지를 찾을 수 없을 때 빈 ProductImage 객체를 생성하여 반환
-
-            Integer discountPrice = getDiscountedPrice(product.getProductPrice(), product.getDiscountRate());
-
-            return ProductConverter.toDto(product,productImage,discountPrice);
-        }).toList();
+    //id 리스트로 여러 상품 불러오기
+    public List<ProductResponse.ProductInfoAdminDto> getProductsDetails(List<Long> idList) {
+        List<Product> products = productRepository.findProductsByIdListWithFetchJoin(idList);
+        return products.stream().map(ProductConverter::toAdminDto).toList();
     }
 
     //베스트 상품 목록 가져오기
@@ -114,8 +107,8 @@ public class ProductServiceV2 {
 
     //랜덤 상품 불러 오기
     public List<ProductResponse.ProductIdDto> getRandomProducts() {
-        return productRepository.findRandomProducts(12).stream()
-            .map(ProductConverter::toDto).toList();
+        Integer RANDOM_LIMIT = 12;
+        return productRepository.findRandomProductIds(RANDOM_LIMIT);
     }
 
     //어드민 베스트11 불러 오기
@@ -123,18 +116,14 @@ public class ProductServiceV2 {
         List<Product> products = productRepository.findBest11WithFetchJoin();
 
         return products.stream()
-            .map(ProductConverter::toAdminDto)
+            .map(ProductConverter::toAdminBest11Dto)
             .toList();
     }
 
     //상품의 배송정보 불러 오기
     public ProductResponse.ProductDeliveryDto getProductDeliveryInfo(Long productId) {
-        Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotExistException(NOT_EXIST_PRODUCT));
 
-        return ProductResponse.ProductDeliveryDto.builder()
-            .deliveryFee(product.getDeliveryFee())
-            .minDeliveryFee(product.getBrand().getMinDeliveryFee())
-            .build();
+        return productRepository.findProductDelivery(productId);
     }
 
     //할인가 계산하는 method
@@ -153,52 +142,4 @@ public class ProductServiceV2 {
         return discountedPrice.setScale(0, RoundingMode.HALF_UP).intValue();
     }
 
-    private Long getKeyWithMaxValue(Map<Long, Integer> map) {
-        Long maxKey = null;
-        Integer maxValue = Integer.MIN_VALUE;
-
-        for (Map.Entry<Long, Integer> entry : map.entrySet()) {
-            if (entry.getValue() > maxValue) {
-                maxValue = entry.getValue();
-                maxKey = entry.getKey();
-            }
-        }
-
-        return maxKey;
-    }
-
-    private List<ProductResponse.ProductIdDto> getRandomProductsByInterestedCategory(List<Long> recentProducts) {
-        Map<Long, Integer> categoryCountMap = new HashMap<>();
-
-        for (Long productId : recentProducts) {
-            Long categoryId = categoryProductRepository.findByProductId(productId).getCategory().getId();
-            categoryCountMap.put(categoryId, categoryCountMap.getOrDefault(categoryId, 0) + 1);
-        }
-
-        Long interestedCategoryId = getKeyWithMaxValue(categoryCountMap);
-
-        List<CategoryProduct> categoryProducts = categoryProductRepository.findRandomByCategoryId(interestedCategoryId);
-
-        List<ProductResponse.ProductIdDto> resultProducts = new java.util.ArrayList<>(
-            categoryProducts.stream()
-                .map(categoryProduct -> ProductConverter.toDto(categoryProduct.getProduct()))
-                .toList());
-
-        // 현재 카테고리 상품의 개수
-        int currentSize = resultProducts.size();
-        int desiredSize = 12; // 원하는 리스트의 최종 크기
-
-        if (currentSize < desiredSize) {
-            // 부족한 개수만큼 랜덤 상품을 추가로 가져오기
-            int additionalProductsNeeded = desiredSize - currentSize;
-            List<Product> additionalRandomProducts = productRepository.findRandomProducts(additionalProductsNeeded);
-            // 추가된 랜덤 상품을 결과 리스트에 추가
-            List<ProductResponse.ProductIdDto> additionalProducts = additionalRandomProducts.stream()
-                .map(ProductConverter::toDto)
-                .toList();
-            resultProducts.addAll(additionalProducts);
-        }
-
-        return resultProducts;
-    }
 }

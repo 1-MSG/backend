@@ -1,6 +1,7 @@
 package spharos.msg.domain.product.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -19,8 +20,6 @@ public class ProductResponse {
     @Getter
     public static class ProductInfoDto {
 
-        @Schema(description = "상품id")
-        private final Long productId;
         @Schema(description = "브랜드id")
         private final Long brandId;
         @Schema(description = "브랜드명")
@@ -37,16 +36,13 @@ public class ProductResponse {
         private final BigDecimal productStar;
         @Schema(description = "상품 리뷰 개수")
         private final Long reviewCount;
-        @Schema(description = "상품 이미지")
-        private final String productImage;
         @Schema(description = "응답 시간")
         private final String responseTime;
 
         @Builder
-        private ProductInfoDto(Long productId, Long brandId, String brandName, String productName, Integer productPrice, String productImage,
+        private ProductInfoDto(Long brandId, String brandName, String productName, Integer productPrice,
             BigDecimal productStar, Integer discountPrice, BigDecimal discountRate, Long reviewCount, String responseTime) {
 
-            this.productId = productId;
             this.brandId = brandId;
             this.brandName = brandName;
             this.productName = productName;
@@ -55,6 +51,37 @@ public class ProductResponse {
             this.productStar = productStar;
             this.discountRate = discountRate;
             this.discountPrice = discountPrice;
+            this.responseTime = responseTime;
+        }
+    }
+
+    @Getter
+    public static class ProductInfoAdminDto {
+
+        @Schema(description = "상품id")
+        private final Long productId;
+        @Schema(description = "브랜드명")
+        private final String brandName;
+        @Schema(description = "상품 이름")
+        private final String productName;
+        @Schema(description = "상품 정상가")
+        private final Integer productPrice;
+        @Schema(description = "상품 리뷰 개수")
+        private final Long reviewCount;
+        @Schema(description = "상품 이미지")
+        private final String productImage;
+        @Schema(description = "응답 시간")
+        private final String responseTime;
+
+        @Builder
+        private ProductInfoAdminDto(Long productId, String brandName, String productName, Integer productPrice, String productImage,
+            Long reviewCount, String responseTime) {
+
+            this.productId = productId;
+            this.brandName = brandName;
+            this.productName = productName;
+            this.productPrice = productPrice;
+            this.reviewCount = reviewCount;
             this.productImage = productImage;
             this.responseTime = responseTime;
         }
@@ -116,7 +143,8 @@ public class ProductResponse {
         private final Long productId;
 
         @Builder
-        private ProductIdDto(Long productId) {
+        @QueryProjection
+        public ProductIdDto(Long productId) {
 
             this.productId = productId;
         }
@@ -130,7 +158,8 @@ public class ProductResponse {
         private final Integer minDeliveryFee;
 
         @Builder
-        private ProductDeliveryDto(Integer deliveryFee, Integer minDeliveryFee) {
+        @QueryProjection
+        public ProductDeliveryDto(Integer deliveryFee, Integer minDeliveryFee) {
 
             this.deliveryFee = deliveryFee;
             this.minDeliveryFee = minDeliveryFee;

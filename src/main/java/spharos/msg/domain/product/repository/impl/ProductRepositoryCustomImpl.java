@@ -1,11 +1,18 @@
 package spharos.msg.domain.product.repository.impl;
 
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.expression.Expression;
 import org.springframework.stereotype.Repository;
 import spharos.msg.domain.brand.entity.QBrand;
+import spharos.msg.domain.product.dto.ProductResponse.ProductDeliveryDto;
+import spharos.msg.domain.product.dto.ProductResponse.ProductIdDto;
+import spharos.msg.domain.product.dto.QProductResponse_ProductDeliveryDto;
+import spharos.msg.domain.product.dto.QProductResponse_ProductIdDto;
 import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.QProduct;
 import spharos.msg.domain.product.entity.QProductImage;
@@ -13,6 +20,7 @@ import spharos.msg.domain.product.entity.QProductSalesInfo;
 import spharos.msg.domain.product.repository.ProductRepositoryCustom;
 
 @Repository
+@Slf4j
 @RequiredArgsConstructor
 public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 
@@ -45,5 +53,58 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             .orderBy(productSalesInfo.productSellTotalCount.desc())
             .limit(11)
             .fetch();
+    }
+
+    @Override
+    public List<Product> findProductsByIdListWithFetchJoin(List<Long> idList) {
+        QProduct product = QProduct.product;
+        QProductSalesInfo productSalesInfo = QProductSalesInfo.productSalesInfo;
+        QBrand brand = QBrand.brand;
+        QProductImage productImage = QProductImage.productImage;
+
+        return jpaQueryFactory
+            .selectFrom(product)
+            .leftJoin(product.productSalesInfo,productSalesInfo).fetchJoin()
+            .leftJoin(product.brand,brand).fetchJoin()
+            .leftJoin(product.productImages,productImage).fetchJoin()
+            .where(product.id.in(idList))
+            .fetch();
+    }
+
+    @Override
+    public ProductDeliveryDto findProductDelivery(Long productId) {
+        QProduct product = QProduct.product;
+        QBrand brand = QBrand.brand;
+
+        return jpaQueryFactory
+            .select(toDeliveryInfoDto(product,brand))
+            .from(product)
+            .innerJoin(product.brand,brand)
+            .where(product.id.eq(productId))
+            .fetchOne();
+    }
+
+    private QProductResponse_ProductDeliveryDto toDeliveryInfoDto(QProduct product,QBrand brand) {
+        return new QProductResponse_ProductDeliveryDto(
+            product.deliveryFee,
+            brand.minDeliveryFee
+        );
+    }
+
+    @Override
+    public List<ProductIdDto> findRandomProductIds(Integer limit) {
+        QProduct product = QProduct.product;
+        return jpaQueryFactory
+            .select(toProductIdDto(product))
+            .from(product)
+            .orderBy(Expressions.numberTemplate(Double.class,"RAND()").asc())
+            .limit(limit)
+            .fetch();
+    }
+
+    private QProductResponse_ProductIdDto toProductIdDto(QProduct product) {
+        return new QProductResponse_ProductIdDto(
+            product.id
+        );
     }
 }

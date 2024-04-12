@@ -1,5 +1,6 @@
 package spharos.msg.domain.admin.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import java.time.Month;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -50,14 +51,32 @@ public class AdminResponseDto {
     }
 
     @Builder
-    @AllArgsConstructor
     @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class MonthlySignupCount {
 
         private int year;
         private Month month;
         private Long count;
     }
+
+    @Builder
+    @Getter
+    public static class MonthlySignupCountV2 {
+
+        private int year;
+        private int month;
+        private Long count;
+
+        @QueryProjection
+        public MonthlySignupCountV2(int year, int month, Long count) {
+            this.year = year;
+            this.month = month;
+            this.count = count;
+        }
+    }
+
 
     @Builder
     @AllArgsConstructor
@@ -80,8 +99,9 @@ public class AdminResponseDto {
         private UserStatus status;
         private String uuid;
 
+        @QueryProjection
         public SearchInfo(Long id, String userName, String email, UserStatus status, String uuid) {
-            Id = id;
+            this.Id = id;
             this.userName = userName;
             this.email = email;
             this.status = status;
