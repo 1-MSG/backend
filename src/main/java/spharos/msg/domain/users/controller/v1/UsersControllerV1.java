@@ -1,4 +1,4 @@
-package spharos.msg.domain.users.controller;
+package spharos.msg.domain.users.controller.v1;
 
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import spharos.msg.domain.users.dto.request.UsersRequest;
 import spharos.msg.domain.users.dto.response.UsersResponse;
 import spharos.msg.domain.users.service.UsersService;
+import spharos.msg.domain.users.service.impl.v1.UsersServiceImplV1;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
@@ -16,10 +17,10 @@ import spharos.msg.global.api.code.status.SuccessStatus;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
-@Tag(name = "User", description = "회원 관련 API")
-public class UsersController {
+@Tag(name = "User V1", description = "회원 관련 API")
+public class UsersControllerV1 {
 
-    private final UsersService usersService;
+    private final UsersServiceImplV1 usersService;
 
     @Operation(summary = "이메일 발송",
             description = "이메일 중복 확인 후, 이메일 인증을 위한 이메일을 발송 합니다.")
