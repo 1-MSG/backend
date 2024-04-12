@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import spharos.msg.domain.category.dto.CategoryResponse.CategoryProductDtos;
 import spharos.msg.domain.category.dto.CategoryResponse.SubCategory;
-import spharos.msg.domain.category.service.CategoryService;
+import spharos.msg.domain.category.service.CategoryServiceV1;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
@@ -26,7 +26,7 @@ import spharos.msg.global.api.code.status.SuccessStatus;
 @Slf4j
 public class CategoryController {
 
-    private final CategoryService categoryService;
+    private final CategoryServiceV1 categoryService;
 
     @Operation(summary = "카테고리 id를 통한 자식 카테고리 조회",
         description = "해당 카테고리의 바로 아래 차수의 카테고리를 조회합니다.")

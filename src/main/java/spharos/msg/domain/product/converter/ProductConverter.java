@@ -32,6 +32,7 @@ public class ProductConverter {
 
     public static ProductInfoDto toDto(Product product,ProductImage productImage, Integer discountPrice){
         return ProductResponse.ProductInfoDto.builder()
+            .productId(product.getId())
             .productImage(productImage.getProductImageUrl())
             .brandName(product.getBrand().getBrandName())
             .brandId(product.getBrand().getId())
@@ -76,6 +77,17 @@ public class ProductConverter {
             .productBrand(product.getBrand().getBrandName())
             .productPrice(product.getProductPrice())
             .productImage(productImage.getProductImageUrl())
+            .productSellTotalCount(product.getProductSalesInfo().getProductSellTotalCount())
+            .build();
+    }
+
+    public static Best11Dto toAdminDto(Product product){
+        return ProductResponse.Best11Dto.builder()
+            .productId(product.getId())
+            .productName(product.getProductName())
+            .productBrand(product.getBrand().getBrandName())
+            .productPrice(product.getProductPrice())
+            .productImage(product.getProductImages().get(0).getProductImageUrl())
             .productSellTotalCount(product.getProductSalesInfo().getProductSellTotalCount())
             .build();
     }

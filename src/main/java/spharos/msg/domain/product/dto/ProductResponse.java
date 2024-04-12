@@ -19,6 +19,8 @@ public class ProductResponse {
     @Getter
     public static class ProductInfoDto {
 
+        @Schema(description = "상품id")
+        private final Long productId;
         @Schema(description = "브랜드id")
         private final Long brandId;
         @Schema(description = "브랜드명")
@@ -41,9 +43,10 @@ public class ProductResponse {
         private final String responseTime;
 
         @Builder
-        private ProductInfoDto(Long brandId, String brandName, String productName, Integer productPrice, String productImage,
+        private ProductInfoDto(Long productId, Long brandId, String brandName, String productName, Integer productPrice, String productImage,
             BigDecimal productStar, Integer discountPrice, BigDecimal discountRate, Long reviewCount, String responseTime) {
 
+            this.productId = productId;
             this.brandId = brandId;
             this.brandName = brandName;
             this.productName = productName;

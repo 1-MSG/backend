@@ -157,7 +157,7 @@ public class CategoryProductRepositoryCustomImpl implements CategoryProductRepos
 
         return jpaQueryFactory
             .selectFrom(categoryProduct)
-            .join(categoryProduct.category, category)
+            .join(categoryProduct.category, category).fetchJoin()
             .where(categoryProduct.product.eq(product))
             .fetchOne();
     }

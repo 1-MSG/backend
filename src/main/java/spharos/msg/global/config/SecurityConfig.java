@@ -51,11 +51,13 @@ public class SecurityConfig {
                         "/swagger-resources/**", "/api-docs/**")
                     .permitAll()
                     .requestMatchers("/api/v1/**").permitAll() //테스트용 주석 제거시, 모든 api 호출 가능.
+                    .requestMatchers("/api/v2/**").permitAll() //v2도 허용
                     .requestMatchers("/api/v1/oauth/**").permitAll() //테스트용 주석 제거시, 모든 api 호출 가능.
                     .requestMatchers("/api/v1/users/**").permitAll()
                     .requestMatchers("/api/v1/auth/**").permitAll()
                     .requestMatchers("/api/v1/reissue/**").permitAll()
                     .requestMatchers("/example/**").permitAll()
+                    .requestMatchers("/error").permitAll()
                     .anyRequest()
                     .authenticated()
             )

@@ -23,7 +23,7 @@ import spharos.msg.global.api.exception.CategoryException;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
-public class CategoryServiceImplV1 implements CategoryService {
+public class CategoryServiceV1 {
 
     private static final int LARGE_CATEGORY_LEVEL = 0;
     

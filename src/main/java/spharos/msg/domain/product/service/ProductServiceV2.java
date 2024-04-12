@@ -23,19 +23,17 @@ import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductImage;
 import spharos.msg.domain.product.repository.ProductImageRepository;
 import spharos.msg.domain.product.repository.ProductRepository;
-import spharos.msg.domain.product.repository.ProductRepositoryCustom;
 import spharos.msg.global.api.exception.ProductNotExistException;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
-public class ProductService {
+public class ProductServiceV2 {
 
     private final ProductRepository productRepository;
     private final CategoryProductRepository categoryProductRepository;
     private final ProductImageRepository productImageRepository;
-    private final OrderProductRepository orderProductRepository;
 
     //id로 상품의 기본 정보 불러오기
     public ProductResponse.ProductInfoDto getProductInfo(Long productId) {
@@ -81,7 +79,7 @@ public class ProductService {
     public ProductResponse.ProductCategoryDto getProductCategory(Long productId) {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new ProductNotExistException(NOT_EXIST_PRODUCT));
-        CategoryProduct categoryProduct = categoryProductRepository.findByProduct(product);
+        CategoryProduct categoryProduct = categoryProductRepository.findByProductWithFetchJoin(product);
 
         return ProductConverter.toDto(categoryProduct);
     }
@@ -122,15 +120,10 @@ public class ProductService {
 
     //어드민 베스트11 불러 오기
     public List<ProductResponse.Best11Dto> getBest11Products() {
-        List<Product> products = productRepository.findTop11ByOrderByProductSalesInfoProductSellTotalCountDesc();
+        List<Product> products = productRepository.findBest11WithFetchJoin();
 
         return products.stream()
-            .map(product -> {
-                ProductImage productImage = productImageRepository.findByProductAndImageIndex(product, 0)
-                    .orElse(new ProductImage());
-
-                return ProductConverter.toDto(product,productImage);
-            })
+            .map(ProductConverter::toAdminDto)
             .toList();
     }
 
