@@ -4,8 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import spharos.msg.domain.options.dto.OptionTypeDto;
 import spharos.msg.domain.options.dto.OptionsNameDto;
-import spharos.msg.domain.options.service.OptionsService;
+import spharos.msg.domain.options.dto.OptionsResponseDto;
+import spharos.msg.domain.options.service.OptionsServiceV1;
 import spharos.msg.global.api.ApiResponse;
 
 import java.util.List;
