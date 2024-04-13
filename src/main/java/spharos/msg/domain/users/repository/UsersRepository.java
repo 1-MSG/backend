@@ -51,4 +51,7 @@ public interface UsersRepository extends JpaRepository<Users, Long>, UsersReposi
 
     @Query("SELECT u.id from Users u WHERE u.uuid = :uuid")
     Optional<Long> findIdByUuid(@Param("uuid") String uuid);
+
+    @Query("SELECT l.product.id FROM Likes l WHERE l.users.uuid = :uuid")
+    List<Long> findProductIdsByUserUuid(@Param("uuid") String uuid);
 }

@@ -27,6 +27,7 @@ public class LikesServiceV2 {
     public ApiResponse<Void> likeProduct(Long productId, String userUuid) {
         Product product = productRepository.getReferenceById(productId);
         Users users = usersRepository.findByUuid(userUuid).orElseThrow();
+//      Users users = usersRepository.getReferenceById(usersRepository.findIdByUuid(userUuid).orElseThrow());
 
         Likes like = Likes.builder()
                 .product(product)
@@ -51,17 +52,15 @@ public class LikesServiceV2 {
 
     @Transactional
     public ApiResponse<List<Long>> getProductLikeList(String userUuid) {
-        Users users = usersRepository.findByUuid(userUuid).orElseThrow();
-        return ApiResponse.of(SuccessStatus.LIKES_LIST_GET_SUCCESS,
-                likesRepository.findByUsers(users)
-                        .stream()
-                        .map(likes -> likes.getProduct().getId())
-                        .toList());
+        List<Long> likeProductIds = usersRepository.findProductIdsByUserUuid(userUuid);
+        return ApiResponse.of(SuccessStatus.LIKES_LIST_GET_SUCCESS, likeProductIds);
     }
+
 
     @Transactional
     public ApiResponse<IsLikesDto> getProductLike(String userUuid, Long productId) {
         Users users = usersRepository.findByUuid(userUuid).orElseThrow();
+
         Product product = productRepository.getReferenceById(productId);
 
         return ApiResponse.of(SuccessStatus.LIKES_GET_SUCCESS,
