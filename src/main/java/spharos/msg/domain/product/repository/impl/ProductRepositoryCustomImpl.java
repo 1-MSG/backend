@@ -123,7 +123,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             .from(product)
             .join(product.productSalesInfo,productSalesInfo)
             .where(cursorTotalSellCountAndCursorId(cursorTotalSellCount,cursorId,product,productSalesInfo))
-            .orderBy(productSalesInfo.productSellTotalCount.desc())
+            .orderBy(productSalesInfo.productSellTotalCount.desc(),product.id.asc())
             .limit(pageable.getPageSize())
             .fetch();
 
@@ -144,8 +144,8 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             return null;
         }
 
-        return productSalesInfo.productSellTotalCount.eq(cursorTotalSellCount)
-            .and(product.id.gt(cursorId))
-            .or(productSalesInfo.productSellTotalCount.lt(cursorTotalSellCount));
+        return productSalesInfo.productSellTotalCount.lt(cursorTotalSellCount)
+            .or(productSalesInfo.productSellTotalCount.eq(cursorTotalSellCount)
+            .and(product.id.gt(cursorId)));
     }
 }

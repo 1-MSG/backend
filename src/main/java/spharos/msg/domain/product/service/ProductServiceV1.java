@@ -2,12 +2,9 @@ package spharos.msg.domain.product.service;
 
 import static spharos.msg.global.api.code.status.ErrorStatus.NOT_EXIST_PRODUCT;
 
-import jakarta.persistence.criteria.CriteriaBuilder.In;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,7 +26,7 @@ import spharos.msg.global.api.exception.ProductNotExistException;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
-public class ProductService {
+public class ProductServiceV1 {
 
     private final ProductRepository productRepository;
     private final CategoryProductRepository categoryProductRepository;

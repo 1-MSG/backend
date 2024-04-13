@@ -6,10 +6,10 @@ import static spharos.msg.global.api.code.status.SuccessStatus.PRODUCT_RANDOM_SU
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.data.domain.Pageable;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import spharos.msg.domain.product.dto.ProductResponse;
-import spharos.msg.domain.product.service.ProductService;
+import spharos.msg.domain.product.service.ProductServiceV1;
 import spharos.msg.global.api.ApiResponse;
 
 @RequiredArgsConstructor
@@ -27,7 +27,7 @@ import spharos.msg.global.api.ApiResponse;
 @Slf4j
 public class ProductControllerV1 {
 
-    private final ProductService productService;
+    private final ProductServiceV1 productService;
 
     @Operation(summary = "상품 기본정보 조회",
         description = "개별 상품에 대한 기본 정보를 조회합니다")
