@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 import static spharos.msg.domain.options.converter.OptionsConverter.toDto;
+import static spharos.msg.domain.options.converter.OptionsConverter.toNameDto;
 
 
 @Service
@@ -91,10 +92,15 @@ public class OptionsServiceV2 {
         Options options = productOption.getOptions();
         int stock = productOption.getStock();
         List<OptionsNameDto> optionsNameDtos = new ArrayList<>();
-        optionsNameDtos.add(new OptionsNameDto(options,stock));
+        if(options==null||options.getOptionName()==null){
+            optionsNameDtos.add(toNameDto(stock));
+            return ApiResponse.of(SuccessStatus.OPTION_DETAIL_SUCCESS, optionsNameDtos);
+        }
+
+        optionsNameDtos.add(toNameDto(options,stock));
 
         while (options.getParent() != null) {
-            optionsNameDtos.add(new OptionsNameDto(options.getParent(),stock));
+            optionsNameDtos.add(toNameDto(options.getParent(),stock));
             options = options.getParent();
         }
         return ApiResponse.of(SuccessStatus.OPTION_DETAIL_SUCCESS, optionsNameDtos);

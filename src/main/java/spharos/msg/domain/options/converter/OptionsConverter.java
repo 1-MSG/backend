@@ -2,6 +2,7 @@ package spharos.msg.domain.options.converter;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import spharos.msg.domain.options.dto.OptionsNameDto;
 import spharos.msg.domain.options.dto.OptionsResponseDto;
 import spharos.msg.domain.options.entity.Options;
 import spharos.msg.domain.product.entity.ProductOption;
@@ -31,6 +32,21 @@ public class OptionsConverter {
     static public OptionsResponseDto toDto (String optionName, Integer stock){
         return OptionsResponseDto.builder()
                 .optionName(optionName)
+                .stock(stock)
+                .build();
+    }
+
+    static public OptionsNameDto toNameDto(Integer stock){
+        return OptionsNameDto.builder()
+                .optionsType("")
+                .optionsName("")
+                .stock(stock)
+                .build();
+    }
+    static public OptionsNameDto toNameDto(Options options,Integer stock){
+        return OptionsNameDto.builder()
+                .optionsType(options.getOptionType())
+                .optionsName(options.getOptionName())
                 .stock(stock)
                 .build();
     }
