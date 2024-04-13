@@ -5,8 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import spharos.msg.domain.coupon.dto.CouponResponseDto;
 import spharos.msg.domain.coupon.service.CouponService;
 import spharos.msg.global.api.ApiResponse;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,13 +19,13 @@ public class CouponController {
     private final CouponService couponService;
 
     @GetMapping("/coupon")
-    private ApiResponse<?> getCoupon(
+    private ApiResponse<List<CouponResponseDto>> getCoupon(
     ) {
         return couponService.getCoupon();
     }
 
     @PostMapping("/coupon/{couponId}")
-    private ApiResponse<?> downloadCoupon(
+    private ApiResponse<Void> downloadCoupon(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable Long couponId
     ) {
@@ -30,7 +33,7 @@ public class CouponController {
     }
 
     @GetMapping("/coupon-user")
-    private ApiResponse<?> getUsersCoupon(
+    private ApiResponse<List<CouponResponseDto>> getUsersCoupon(
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         return couponService.getUsersCoupon(userDetails.getUsername());
