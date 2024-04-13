@@ -4,9 +4,7 @@ import static spharos.msg.global.api.code.status.ErrorStatus.NOT_EXIST_PRODUCT;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,10 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 import spharos.msg.domain.category.entity.CategoryProduct;
 import spharos.msg.domain.category.repository.CategoryProductRepository;
-import spharos.msg.domain.orders.repository.OrderProductRepository;
 import spharos.msg.domain.product.converter.ProductConverter;
 import spharos.msg.domain.product.dto.ProductResponse;
-import spharos.msg.domain.product.dto.ProductResponse.ProductDeliveryDto;
+import spharos.msg.domain.product.dto.ProductResponse.ProductIdDto;
 import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductImage;
 import spharos.msg.domain.product.repository.ProductImageRepository;
@@ -92,17 +89,15 @@ public class ProductServiceV2 {
     }
 
     //베스트 상품 목록 가져오기
-    public ProductResponse.BestProductsDto getRankingProducts(Pageable pageable) {
-        Page<Product> productPage = productRepository.findAllByOrderByProductSalesInfoProductSellTotalCountDesc(
-            pageable);
+    public ProductResponse.BestProductsDto getRankingProducts(Pageable pageable, Long cursorTotalSellCount, Long cursorId) {
+        Page<ProductIdDto> bestProductsPage = productRepository.findBestProducts(
+            pageable, cursorTotalSellCount, cursorId);
+        Long totalProductCount = bestProductsPage.getTotalElements();
+        Integer nowPage = pageable.getPageNumber();
 
-        boolean isLast = !productPage.hasNext();
-
-        List<ProductResponse.ProductIdDto> productList = productPage.getContent().stream().map(
-                ProductConverter::toDto)
-            .toList();
-
-        return ProductConverter.toDto(productList, isLast);
+        boolean isLast = !bestProductsPage.hasNext();
+        log.info("getContent 확인"+bestProductsPage.getContent());
+        return ProductConverter.toDto(totalProductCount, nowPage, bestProductsPage.getContent(), isLast);
     }
 
     //랜덤 상품 불러 오기

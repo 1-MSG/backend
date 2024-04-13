@@ -2,6 +2,7 @@ package spharos.msg.domain.product.service;
 
 import static spharos.msg.global.api.code.status.ErrorStatus.NOT_EXIST_PRODUCT;
 
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
@@ -101,6 +102,8 @@ public class ProductService {
     public ProductResponse.BestProductsDto getRankingProducts(Pageable pageable) {
         Page<Product> productPage = productRepository.findAllByOrderByProductSalesInfoProductSellTotalCountDesc(
             pageable);
+        Long totalProductCount = productPage.getTotalElements();
+        Integer nowPage = pageable.getPageNumber();
 
         boolean isLast = !productPage.hasNext();
 
@@ -108,7 +111,7 @@ public class ProductService {
                 ProductConverter::toDto)
             .toList();
 
-        return ProductConverter.toDto(productList, isLast);
+        return ProductConverter.toDto(totalProductCount, nowPage, productList, isLast);
     }
 
     //랜덤 상품 불러 오기

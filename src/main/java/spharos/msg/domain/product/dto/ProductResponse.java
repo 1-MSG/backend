@@ -121,6 +121,12 @@ public class ProductResponse {
 
     @Getter
     public static class BestProductsDto {
+        @Schema(description = "전체 상품 개수")
+        private final Long totalProductCount;
+
+        @Schema(description = "현재 페이지 개수")
+        private final Integer nowPage;
+
         @Schema(description = "베스트 상품 리스트")
         private final List<ProductResponse.ProductIdDto> productList;
 
@@ -130,8 +136,10 @@ public class ProductResponse {
         private final boolean isLast;
 
         @Builder
-        private BestProductsDto(List<ProductResponse.ProductIdDto> productList, boolean isLast) {
+        private BestProductsDto(Long totalProductCount, Integer nowPage, List<ProductResponse.ProductIdDto> productList, boolean isLast) {
 
+            this.totalProductCount = totalProductCount;
+            this.nowPage = nowPage;
             this.productList = productList;
             this.isLast = isLast;
         }

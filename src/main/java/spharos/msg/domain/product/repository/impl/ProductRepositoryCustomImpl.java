@@ -1,11 +1,16 @@
 package spharos.msg.domain.product.repository.impl;
 
+import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.expression.Expression;
 import org.springframework.stereotype.Repository;
 import spharos.msg.domain.brand.entity.QBrand;
@@ -106,5 +111,41 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
         return new QProductResponse_ProductIdDto(
             product.id
         );
+    }
+
+    @Override
+    public Page<ProductIdDto> findBestProducts(Pageable pageable,Long cursorTotalSellCount, Long cursorId) {
+        QProduct product = QProduct.product;
+        QProductSalesInfo productSalesInfo = QProductSalesInfo.productSalesInfo;
+
+        List<ProductIdDto> content = jpaQueryFactory
+            .select(toProductIdDto(product))
+            .from(product)
+            .join(product.productSalesInfo,productSalesInfo)
+            .where(cursorTotalSellCountAndCursorId(cursorTotalSellCount,cursorId,product,productSalesInfo))
+            .orderBy(productSalesInfo.productSellTotalCount.desc())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+        Long totalLong = jpaQueryFactory
+            .select(product.count())
+            .from(product)
+            .fetchOne();
+
+        // null 체크
+        long total = totalLong != null ? totalLong : 0L;
+
+     return new PageImpl<>(content,pageable,total);
+    }
+
+    private BooleanExpression cursorTotalSellCountAndCursorId(Long cursorTotalSellCount, Long cursorId, QProduct product,
+        QProductSalesInfo productSalesInfo){
+        if (cursorTotalSellCount == null || cursorId == null) {
+            return null;
+        }
+
+        return productSalesInfo.productSellTotalCount.eq(cursorTotalSellCount)
+            .and(product.id.gt(cursorId))
+            .or(productSalesInfo.productSellTotalCount.lt(cursorTotalSellCount));
     }
 }

@@ -50,8 +50,10 @@ public class ProductConverter {
             .build();
     }
 
-    public static BestProductsDto toDto(List<ProductResponse.ProductIdDto> productList, boolean isLast){
+    public static BestProductsDto toDto(Long totalProductCount, Integer nowPage, List<ProductResponse.ProductIdDto> productList, boolean isLast){
         return ProductResponse.BestProductsDto.builder()
+            .totalProductCount(totalProductCount)
+            .nowPage(nowPage)
             .productList(productList).isLast(isLast).build();
     }
 

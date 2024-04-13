@@ -6,10 +6,13 @@ import static spharos.msg.global.api.code.status.SuccessStatus.PRODUCT_RANDOM_SU
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -75,12 +78,17 @@ public class ProductControllerV2 {
     }
 
     @Operation(summary = "베스트 상품 목록 조회",
-        description = "베스트탭의 상품들을 반환합니다(sort는 빈문자열을 주시면 됩니다.)")
+        description = "베스트탭의 상품들을 반환합니다")
     @GetMapping("/ranking")
     public ApiResponse<ProductResponse.BestProductsDto> getRankingProducts(
-        @PageableDefault(size = 10, page = 0, sort = "id") Pageable pageable
+        @RequestParam(value = "size",defaultValue = "10") Integer size,
+        @RequestParam(value = "page",defaultValue = "0") Integer page,
+        @RequestParam(value = "cursorTotalSellCount",defaultValue = "999999") Long cursorTotalSellCount,
+        @RequestParam(value = "cursorId",defaultValue = "1") Long cursorId
     ) {
-        return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getRankingProducts(pageable));
+        log.info("확인");
+        Pageable pageable = PageRequest.of(page,size);
+        return ApiResponse.of(PRODUCT_INFO_SUCCESS, productService.getRankingProducts(pageable,cursorTotalSellCount,cursorId));
     }
 
     @Operation(summary = "랜덤 상품 목록 조회",
