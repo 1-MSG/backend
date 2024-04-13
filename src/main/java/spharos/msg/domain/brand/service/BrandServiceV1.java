@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class BrandService {
+public class BrandServiceV1 {
     private final BrandRepository brandRepository;
     public ApiResponse<List<BrandResponseDto>> getBrands() {
         List<BrandResponseDto> brandResponseDtos = brandRepository.findAll()

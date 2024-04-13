@@ -13,6 +13,8 @@ import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class LikesService {
@@ -22,7 +24,7 @@ public class LikesService {
 
     //상품에 좋아요 등록
     @Transactional
-    public ApiResponse<?> likeProduct(Long productId, String userUuid) {
+    public ApiResponse<Void> likeProduct(Long productId, String userUuid) {
         Product product = productRepository.findById(productId).orElseThrow();
         Users users = usersRepository.findByUuid(userUuid).orElseThrow();
 
@@ -37,7 +39,7 @@ public class LikesService {
 
     //좋아요 삭제
     @Transactional
-    public ApiResponse<?> deleteLikeProduct(Long productId, String userUuid) {
+    public ApiResponse<Void> deleteLikeProduct(Long productId, String userUuid) {
         Product product = productRepository.findById(productId).orElseThrow();
         Users users = usersRepository.findByUuid(userUuid).orElseThrow();
 
@@ -48,7 +50,7 @@ public class LikesService {
     }
 
     @Transactional
-    public ApiResponse<?> getProductLikeList(String userUuid) {
+    public ApiResponse<List<Long>> getProductLikeList(String userUuid) {
         Users users = usersRepository.findByUuid(userUuid).orElseThrow();
         return ApiResponse.of(SuccessStatus.LIKES_LIST_GET_SUCCESS,
                 likesRepository.findByUsers(users)
@@ -58,7 +60,7 @@ public class LikesService {
     }
 
     @Transactional
-    public ApiResponse<?> getProductLike(String userUuid, Long productId) {
+    public ApiResponse<IsLikesDto> getProductLike(String userUuid, Long productId) {
         Users users = usersRepository.findByUuid(userUuid).orElseThrow();
         Product product = productRepository.findById(productId).orElseThrow();
 

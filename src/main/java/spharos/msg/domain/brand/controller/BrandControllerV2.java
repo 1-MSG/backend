@@ -9,17 +9,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import spharos.msg.domain.brand.dto.BrandDetailDto;
 import spharos.msg.domain.brand.dto.BrandResponseDto;
-import spharos.msg.domain.brand.service.BrandService;
+import spharos.msg.domain.brand.service.BrandServiceV2;
 import spharos.msg.global.api.ApiResponse;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/brand")
+@RequestMapping("/api/v2/brand")
 @Tag(name = "Brand", description = "브랜드 API")
 @RequiredArgsConstructor
-public class BrandController {
-    private final BrandService brandService;
+public class BrandControllerV2 {
+    private final BrandServiceV2 brandService;
 
     @Operation(summary = "전체 브랜드 조회",
             description = "모든 브랜드 이름을 조회합니다")
