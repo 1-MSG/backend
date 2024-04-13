@@ -13,4 +13,7 @@ public class BrandResponseDto {
     public BrandResponseDto(Brand brand){
         this.brandName = brand.getBrandName();
     }
+    public BrandResponseDto(String brandName){
+        this.brandName=brandName;
+    }
 }
