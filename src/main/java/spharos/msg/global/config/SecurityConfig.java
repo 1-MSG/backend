@@ -54,6 +54,8 @@ public class SecurityConfig {
                 .csrf(CsrfConfigurer::disable)
                 .authorizeHttpRequests(
                         authorizeHttpRequests -> authorizeHttpRequests
+                                //Preflight 요청 처리
+                                .requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
                                 // swagger
                                 .requestMatchers(
                                         "/swagger-ui/**",
