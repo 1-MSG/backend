@@ -1,6 +1,7 @@
 package spharos.msg.domain.product.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -35,13 +36,11 @@ public class ProductResponse {
         private final BigDecimal productStar;
         @Schema(description = "상품 리뷰 개수")
         private final Long reviewCount;
-        @Schema(description = "상품 이미지")
-        private final String productImage;
         @Schema(description = "응답 시간")
         private final String responseTime;
 
         @Builder
-        private ProductInfoDto(Long brandId, String brandName, String productName, Integer productPrice, String productImage,
+        private ProductInfoDto(Long brandId, String brandName, String productName, Integer productPrice,
             BigDecimal productStar, Integer discountPrice, BigDecimal discountRate, Long reviewCount, String responseTime) {
 
             this.brandId = brandId;
@@ -52,6 +51,37 @@ public class ProductResponse {
             this.productStar = productStar;
             this.discountRate = discountRate;
             this.discountPrice = discountPrice;
+            this.responseTime = responseTime;
+        }
+    }
+
+    @Getter
+    public static class ProductInfoAdminDto {
+
+        @Schema(description = "상품id")
+        private final Long productId;
+        @Schema(description = "브랜드명")
+        private final String brandName;
+        @Schema(description = "상품 이름")
+        private final String productName;
+        @Schema(description = "상품 정상가")
+        private final Integer productPrice;
+        @Schema(description = "상품 리뷰 개수")
+        private final Long reviewCount;
+        @Schema(description = "상품 이미지")
+        private final String productImage;
+        @Schema(description = "응답 시간")
+        private final String responseTime;
+
+        @Builder
+        private ProductInfoAdminDto(Long productId, String brandName, String productName, Integer productPrice, String productImage,
+            Long reviewCount, String responseTime) {
+
+            this.productId = productId;
+            this.brandName = brandName;
+            this.productName = productName;
+            this.productPrice = productPrice;
+            this.reviewCount = reviewCount;
             this.productImage = productImage;
             this.responseTime = responseTime;
         }
@@ -91,6 +121,12 @@ public class ProductResponse {
 
     @Getter
     public static class BestProductsDto {
+        @Schema(description = "전체 상품 개수")
+        private final Long totalProductCount;
+
+        @Schema(description = "현재 페이지 개수")
+        private final Integer nowPage;
+
         @Schema(description = "베스트 상품 리스트")
         private final List<ProductResponse.ProductIdDto> productList;
 
@@ -100,8 +136,10 @@ public class ProductResponse {
         private final boolean isLast;
 
         @Builder
-        private BestProductsDto(List<ProductResponse.ProductIdDto> productList, boolean isLast) {
+        private BestProductsDto(Long totalProductCount, Integer nowPage, List<ProductResponse.ProductIdDto> productList, boolean isLast) {
 
+            this.totalProductCount = totalProductCount;
+            this.nowPage = nowPage;
             this.productList = productList;
             this.isLast = isLast;
         }
@@ -113,7 +151,8 @@ public class ProductResponse {
         private final Long productId;
 
         @Builder
-        private ProductIdDto(Long productId) {
+        @QueryProjection
+        public ProductIdDto(Long productId) {
 
             this.productId = productId;
         }
@@ -127,7 +166,8 @@ public class ProductResponse {
         private final Integer minDeliveryFee;
 
         @Builder
-        private ProductDeliveryDto(Integer deliveryFee, Integer minDeliveryFee) {
+        @QueryProjection
+        public ProductDeliveryDto(Integer deliveryFee, Integer minDeliveryFee) {
 
             this.deliveryFee = deliveryFee;
             this.minDeliveryFee = minDeliveryFee;

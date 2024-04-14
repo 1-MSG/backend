@@ -11,9 +11,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import spharos.msg.domain.product.entity.Product;
+import spharos.msg.domain.product.repository.impl.ProductRepositoryCustomImpl;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product, Long>,
+    ProductRepositoryCustom {
 
     //랜덤 상품 반환
     @Query(value = "SELECT * FROM product ORDER BY RAND() LIMIT :limit", nativeQuery = true)
@@ -25,4 +27,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findAllByOrderByProductSalesInfoProductSellTotalCountDesc(Pageable pageable);
 
     List<Product> findTop11ByOrderByProductSalesInfoProductSellTotalCountDesc();
+
 }

@@ -4,9 +4,7 @@ import static spharos.msg.global.api.code.status.ErrorStatus.NOT_EXIST_PRODUCT;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,27 +14,23 @@ import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 import spharos.msg.domain.category.entity.CategoryProduct;
 import spharos.msg.domain.category.repository.CategoryProductRepository;
-import spharos.msg.domain.orders.repository.OrderProductRepository;
-import spharos.msg.domain.product.converter.ProductConvertor;
+import spharos.msg.domain.product.converter.ProductConverter;
 import spharos.msg.domain.product.dto.ProductResponse;
 import spharos.msg.domain.product.entity.Product;
 import spharos.msg.domain.product.entity.ProductImage;
 import spharos.msg.domain.product.repository.ProductImageRepository;
 import spharos.msg.domain.product.repository.ProductRepository;
-import spharos.msg.domain.product.repository.ProductRepositoryCustom;
 import spharos.msg.global.api.exception.ProductNotExistException;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
-public class ProductService {
+public class ProductServiceV1 {
 
     private final ProductRepository productRepository;
     private final CategoryProductRepository categoryProductRepository;
     private final ProductImageRepository productImageRepository;
-    private final ProductRepositoryCustom productRepositoryCustom;
-    private final OrderProductRepository orderProductRepository;
 
     //id로 상품의 기본 정보 불러오기
     public ProductResponse.ProductInfoDto getProductInfo(Long productId) {
@@ -46,7 +40,7 @@ public class ProductService {
         Integer discountPrice = getDiscountedPrice(product.getProductPrice(),
             product.getDiscountRate());
 
-        return ProductConvertor.toDto(product, discountPrice);
+        return ProductConverter.toDto(product, discountPrice);
     }
 
     //id로 상품 썸네일 이미지 불러오기
@@ -57,7 +51,7 @@ public class ProductService {
         ProductImage productImage = productImageRepository.findByProductAndImageIndex(product, 0)
             .orElseThrow(() -> new NotFoundException("해당 상품에 대한 index가 0인 이미지를 찾을 수 없음"));
 
-        return ProductConvertor.toDto(productImage);
+        return ProductConverter.toDto(productImage);
     }
 
     //id로 상품 이미지들 불러오기
@@ -67,7 +61,7 @@ public class ProductService {
 
         List<ProductImage> productImages = productImageRepository.findByProduct(product);
 
-        return productImages.stream().map(ProductConvertor::toDto).toList();
+        return productImages.stream().map(ProductConverter::toDto).toList();
     }
 
     //id로 상품 상세 html 불러오기
@@ -84,12 +78,12 @@ public class ProductService {
             .orElseThrow(() -> new ProductNotExistException(NOT_EXIST_PRODUCT));
         CategoryProduct categoryProduct = categoryProductRepository.findByProduct(product);
 
-        return ProductConvertor.toDto(categoryProduct);
+        return ProductConverter.toDto(categoryProduct);
     }
 
     //id리스트로 여러 상품 불러오기
-    public List<ProductResponse.ProductInfoDto> getProductsDetails(List<Long> idList) {
-        List<Product> products = productRepositoryCustom.findProductsByIdList(idList);
+    public List<ProductResponse.ProductInfoAdminDto> getProductsDetails(List<Long> idList) {
+        List<Product> products = productRepository.findProductsByIdList(idList);
         return products.stream().map(product -> {
             ProductImage productImage = productImageRepository.findByProductAndImageIndex(product,
                     0)
@@ -97,7 +91,7 @@ public class ProductService {
 
             Integer discountPrice = getDiscountedPrice(product.getProductPrice(), product.getDiscountRate());
 
-            return ProductConvertor.toDto(product,productImage,discountPrice);
+            return ProductConverter.toAdminDto(product,productImage);
         }).toList();
     }
 
@@ -105,27 +99,22 @@ public class ProductService {
     public ProductResponse.BestProductsDto getRankingProducts(Pageable pageable) {
         Page<Product> productPage = productRepository.findAllByOrderByProductSalesInfoProductSellTotalCountDesc(
             pageable);
+        Long totalProductCount = productPage.getTotalElements();
+        Integer nowPage = pageable.getPageNumber();
 
         boolean isLast = !productPage.hasNext();
 
         List<ProductResponse.ProductIdDto> productList = productPage.getContent().stream().map(
-                ProductConvertor::toDto)
+                ProductConverter::toDto)
             .toList();
 
-        return ProductConvertor.toDto(productList, isLast);
+        return ProductConverter.toDto(totalProductCount, nowPage, productList, isLast);
     }
 
     //랜덤 상품 불러 오기
     public List<ProductResponse.ProductIdDto> getRandomProducts() {
-        //최근 1달 주문 내역의 productId 불러 오기
-        List<Long> recentProducts = orderProductRepository.findProductIdsCreatedLastMonth();
-        // 주문 내역이 없을 경우
-        if (recentProducts.isEmpty()) {
-            return productRepository.findRandomProducts(12).stream()
-                .map(ProductConvertor::toDto).toList();
-        }
-        // 주문 내역이 있을 경우
-        return getRandomProductsByInterestedCategory(recentProducts);
+        return productRepository.findRandomProducts(12).stream()
+            .map(ProductConverter::toDto).toList();
     }
 
     //어드민 베스트11 불러 오기
@@ -137,7 +126,7 @@ public class ProductService {
                 ProductImage productImage = productImageRepository.findByProductAndImageIndex(product, 0)
                     .orElse(new ProductImage());
 
-                return ProductConvertor.toDto(product,productImage);
+                return ProductConverter.toDto(product,productImage);
             })
             .toList();
     }
@@ -166,54 +155,5 @@ public class ProductService {
 
         // 계산된 할인 가격을 정수로 변환하여 반환
         return discountedPrice.setScale(0, RoundingMode.HALF_UP).intValue();
-    }
-
-    private Long getKeyWithMaxValue(Map<Long, Integer> map) {
-        Long maxKey = null;
-        Integer maxValue = Integer.MIN_VALUE;
-
-        for (Map.Entry<Long, Integer> entry : map.entrySet()) {
-            if (entry.getValue() > maxValue) {
-                maxValue = entry.getValue();
-                maxKey = entry.getKey();
-            }
-        }
-
-        return maxKey;
-    }
-
-    private List<ProductResponse.ProductIdDto> getRandomProductsByInterestedCategory(List<Long> recentProducts) {
-        Map<Long, Integer> categoryCountMap = new HashMap<>();
-
-        for (Long productId : recentProducts) {
-            Long categoryId = categoryProductRepository.findByProductId(productId).getCategory().getId();
-            categoryCountMap.put(categoryId, categoryCountMap.getOrDefault(categoryId, 0) + 1);
-        }
-
-        Long interestedCategoryId = getKeyWithMaxValue(categoryCountMap);
-
-        List<CategoryProduct> categoryProducts = categoryProductRepository.findRandomByCategoryId(interestedCategoryId);
-
-        List<ProductResponse.ProductIdDto> resultProducts = new java.util.ArrayList<>(
-            categoryProducts.stream()
-                .map(categoryProduct -> ProductConvertor.toDto(categoryProduct.getProduct()))
-                .toList());
-
-        // 현재 카테고리 상품의 개수
-        int currentSize = resultProducts.size();
-        int desiredSize = 12; // 원하는 리스트의 최종 크기
-
-        if (currentSize < desiredSize) {
-            // 부족한 개수만큼 랜덤 상품을 추가로 가져오기
-            int additionalProductsNeeded = desiredSize - currentSize;
-            List<Product> additionalRandomProducts = productRepository.findRandomProducts(additionalProductsNeeded);
-            // 추가된 랜덤 상품을 결과 리스트에 추가
-            List<ProductResponse.ProductIdDto> additionalProducts = additionalRandomProducts.stream()
-                .map(ProductConvertor::toDto)
-                .toList();
-            resultProducts.addAll(additionalProducts);
-        }
-
-        return resultProducts;
     }
 }
