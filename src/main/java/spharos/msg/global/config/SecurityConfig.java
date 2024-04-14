@@ -31,7 +31,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         return request -> {
             var cors = new org.springframework.web.cors.CorsConfiguration();
-            cors.setAllowedOriginPatterns(List.of("*"));
+//            cors.setAllowedOriginPatterns(List.of("*"));
             cors.setAllowedOrigins(List.of(
                     "http://localhost:3000",
                     "https://ssgcom-app.vercel.app",
