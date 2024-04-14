@@ -31,6 +31,7 @@ public class SecurityConfig {
             cors.setAllowedOriginPatterns(List.of("*"));
             cors.addAllowedHeader("*");
             cors.addAllowedHeader("http://localhost:3000");
+            cors.addAllowedHeader("https://ssgcom-app.vercel.app/");
             cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
             cors.setAllowedHeaders(List.of("*"));
             cors.setAllowCredentials(true);
