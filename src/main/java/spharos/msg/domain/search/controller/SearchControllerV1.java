@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import spharos.msg.domain.search.dto.SearchResponse.SearchProductDtos;
 import spharos.msg.domain.search.dto.SearchResponse.SearchTextDto;
-import spharos.msg.domain.search.service.SearchService;
+import spharos.msg.domain.search.service.SearchServiceV1;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
@@ -21,9 +21,9 @@ import spharos.msg.global.api.code.status.SuccessStatus;
 @RequestMapping(value = "/api/v1/")
 @Tag(name = "Search", description = "검색 API")
 @Slf4j
-public class SearchController {
+public class SearchControllerV1 {
 
-    private final SearchService searchService;
+    private final SearchServiceV1 searchService;
 
     @GetMapping("search")
     public ApiResponse<SearchProductDtos> searchResultAPI(

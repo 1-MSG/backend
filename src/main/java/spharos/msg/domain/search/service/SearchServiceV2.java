@@ -22,7 +22,7 @@ import spharos.msg.global.api.exception.SearchException;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class SearchService {
+public class SearchServiceV2 {
 
     private static final String KEYWORD_DELIMITER = " ";
     private static final int FIRST_WORD = 0;
@@ -35,7 +35,7 @@ public class SearchService {
             throw new SearchException(ErrorStatus.INVALID_SEARCH_KEYWORD);
         }
 
-        Page<SearchProductDto> searched = searchRepository.searchAllProduct(keyword, pageable);
+        Page<SearchProductDto> searched = searchRepository.searchAllProductV1(keyword, pageable);
         return SearchConverter.toDto(searched, String.valueOf(System.currentTimeMillis()));
     }
 
@@ -44,7 +44,7 @@ public class SearchService {
         if (searchWord.isEmpty() || searchWord.isBlank()) {
             throw new SearchException(ErrorStatus.INVALID_SEARCH_KEYWORD);
         }
-        List<SearchTextDto> originTexts = searchRepository.searchAllKeyword(searchWord);
+        List<SearchTextDto> originTexts = searchRepository.searchAllKeywordV2(searchWord);
 
         return originTexts
             .stream()
@@ -61,9 +61,9 @@ public class SearchService {
 
         originText = filterText(originText);
         int startIndex = findStartIndex(searchWord, originText);
-        String[] splitedText = originText.split(KEYWORD_DELIMITER);
+        String[] splitText = originText.split(KEYWORD_DELIMITER);
 
-        for (String text : splitedText) {
+        for (String text : splitText) {
             if (originText.indexOf(text) >= startIndex) {
                 SearchTextDto madeText = makeText(searchText, text);
                 result.add(madeText);
