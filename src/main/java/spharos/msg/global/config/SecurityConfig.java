@@ -1,6 +1,7 @@
 package spharos.msg.global.config;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -47,32 +48,23 @@ public class SecurityConfig {
 //        };
 //    }
 
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource () {
-//        return request -> {
-//            var cors= new org.springframework.web.cors.CorsConfiguration();
-//            cors.setAllowedOriginPatterns(List.of("*", "http://localhost:3000"));
-//            cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-//            cors.setAllowedHeaders(List.of("*"));
-//            return cors;
-//        };
-//    }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource () {
+        return request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowedHeaders(Collections.singletonList("*"));
+            config.setAllowedMethods(Collections.singletonList("*"));
+            config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000"));
+            config.setAllowCredentials(true);
+            return config;
+        };
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors(c -> {
-            CorsConfigurationSource source = request -> {
-                CorsConfiguration config = new CorsConfiguration();
-                config.setAllowedOrigins(List.of("http://localhost:8080", "*"));
-                config.setAllowedMethods(List.of("*"));
-                config.setAllowCredentials(true);
-                config.addExposedHeader("*");
-                config.addAllowedHeader("*");
-                return config;
-            };
-            c.configurationSource(source);
-        })
+        http
                 .csrf(CsrfConfigurer::disable)
+                .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource())) //add
                 .authorizeHttpRequests(
                         authorizeHttpRequests -> authorizeHttpRequests
                                 //Preflight 요청 처리
