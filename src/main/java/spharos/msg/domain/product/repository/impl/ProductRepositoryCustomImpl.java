@@ -52,9 +52,9 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 
         return jpaQueryFactory
             .selectFrom(product)
-            .leftJoin(product.productSalesInfo,productSalesInfo).fetchJoin()
-            .leftJoin(product.brand,brand).fetchJoin()
-            .leftJoin(product.productImages,productImage).fetchJoin()
+            .innerJoin(product.productSalesInfo,productSalesInfo).fetchJoin()
+            .innerJoin(product.brand,brand).fetchJoin()
+            .innerJoin(product.productImages,productImage).fetchJoin()
             .orderBy(productSalesInfo.productSellTotalCount.desc())
             .limit(11)
             .fetch();
@@ -69,9 +69,9 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 
         return jpaQueryFactory
             .selectFrom(product)
-            .leftJoin(product.productSalesInfo,productSalesInfo).fetchJoin()
-            .leftJoin(product.brand,brand).fetchJoin()
-            .leftJoin(product.productImages,productImage).fetchJoin()
+            .innerJoin(product.productSalesInfo,productSalesInfo).fetchJoin()
+            .innerJoin(product.brand,brand).fetchJoin()
+            .innerJoin(product.productImages,productImage).fetchJoin()
             .where(product.id.in(idList))
             .fetch();
     }
