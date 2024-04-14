@@ -53,7 +53,10 @@ public class CategoryProductRepositoryCustomImpl implements CategoryProductRepos
     public List<SubCategory> findCategoriesByLevel(int categoryLevel) {
         QCategory category = QCategory.category;
         return jpaQueryFactory
-            .select(toSubCategoryDto(null, category))
+            .select(new QCategoryResponse_SubCategory(
+                category.id,
+                category.categoryName,
+                category.categoryImage))
             .from(category)
             .where(category.categoryLevel.eq(categoryLevel))
             .distinct()
@@ -67,22 +70,7 @@ public class CategoryProductRepositoryCustomImpl implements CategoryProductRepos
             .where(validateParentAndLevel(parentId, category))
             .fetch();
     }
-
-    private QCategoryResponse_SubCategory toSubCategoryDto(Long parentId, QCategory category) {
-        BooleanExpression isNotNullAndSameWithParentId = (parentId != null) ?
-            category.id.eq(parentId) :
-            null;
-
-        return new QCategoryResponse_SubCategory(
-            category.id,
-            new CaseBuilder()
-                .when(isNotNullAndSameWithParentId)
-                .then(ALL_CATEGORY_SELECT_NAME)
-                .otherwise(category.categoryName),
-            tryGetCategoryImage(category)
-        );
-    }
-
+    
     private StringExpression tryGetCategoryImage(QCategory category) {
         return new CaseBuilder()
             .when(category.categoryImage.isNotEmpty())
