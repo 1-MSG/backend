@@ -16,9 +16,7 @@ public class CorsConfig implements WebMvcConfigurer {
 //                .allowedOriginPatterns(CorsConfiguration.ALL)
 
                 //add
-                .allowedOrigins("http://localhost:3000")
-                .allowedOrigins("https://ssgcom-app.vercel.app")
-                .allowedOrigins("https://sssg.shop")
+                .allowedOrigins("http://localhost:3000", "https://ssgcom-app.vercel.app", "https://sssg.shop")
                 .allowedMethods("HEAD", "OPTIONS", "GET", "POST", "PUT", "PATCH", "DELETE")
                 .maxAge(3600L)
                 //__
