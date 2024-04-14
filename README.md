@@ -1,11 +1,11 @@
 ## 📖Github Wiki
 
-
 - [Github Wiki](https://github.com/1-MSG/backend/wiki)
 <br>
 
-## 서비스 소개
+## 🌟서비스 소개
 
+ㅇㅇㅇ
 
 ## 🏗️아키텍쳐
 
@@ -17,11 +17,8 @@
 
 ## 🧭ERD
 
-
 ![MSG-ERD](https://github.com/1-MSG/backend/assets/81681883/e65a5b2d-7a61-4bec-94d4-bc35265710d8)
-
 <br>
-
 ## 🍀 기술 스택
 
 
@@ -46,7 +43,7 @@
     - AWS
         - EC2
         - S3
-    - Nginx v1.18.0 (Ubuntu)
+    - Nginx
     - Docker
     - GitAction
 - **Docs**
