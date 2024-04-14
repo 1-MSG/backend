@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class LikesService {
+public class LikesServiceV1 {
     private final ProductRepository productRepository;
     private final LikesRepository likesRepository;
     private final UsersRepository usersRepository;
