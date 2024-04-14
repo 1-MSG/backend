@@ -47,21 +47,31 @@ public class SecurityConfig {
 //        };
 //    }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource () {
-        return request -> {
-            var cors= new org.springframework.web.cors.CorsConfiguration();
-            cors.setAllowedOriginPatterns(List.of("*", "http://localhost:3000"));
-            cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-            cors.setAllowedHeaders(List.of("*"));
-            return cors;
-        };
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource () {
+//        return request -> {
+//            var cors= new org.springframework.web.cors.CorsConfiguration();
+//            cors.setAllowedOriginPatterns(List.of("*", "http://localhost:3000"));
+//            cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+//            cors.setAllowedHeaders(List.of("*"));
+//            return cors;
+//        };
+//    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        http
+        http.cors(c -> {
+            CorsConfigurationSource source = request -> {
+                CorsConfiguration config = new CorsConfiguration();
+                config.setAllowedOrigins(List.of("http://localhost:8080", "*"));
+                config.setAllowedMethods(List.of("*"));
+                config.setAllowCredentials(true);
+                config.addExposedHeader("*");
+                config.addAllowedHeader("*");
+                return config;
+            };
+            c.configurationSource(source);
+        })
                 .csrf(CsrfConfigurer::disable)
                 .authorizeHttpRequests(
                         authorizeHttpRequests -> authorizeHttpRequests
