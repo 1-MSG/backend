@@ -74,6 +74,7 @@ public class SecurityConfig {
 
                                 //Product
                                 .requestMatchers("/api/v1/product/**").permitAll()
+                                .requestMatchers("/api/v1/products").permitAll()
                                 .requestMatchers("/api/v1/random").permitAll()
                                 .requestMatchers("/api/v1/ranking").permitAll()
                                 .requestMatchers("/api/v1/ranking11").permitAll()
@@ -148,6 +149,7 @@ public class SecurityConfig {
 
                                 //Product
                                 .requestMatchers("/api/v2/product/**").permitAll()
+                                .requestMatchers("/api/v2/products").permitAll()
                                 .requestMatchers("/api/v2/random").permitAll()
                                 .requestMatchers("/api/v2/ranking").permitAll()
                                 .requestMatchers("/api/v2/ranking11").permitAll()
