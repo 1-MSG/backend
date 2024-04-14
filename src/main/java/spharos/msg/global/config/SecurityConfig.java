@@ -26,7 +26,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtTokenProvider;
     private final AuthenticationProvider authenticationProvider;
 
-    //cors
+//    //cors
 //    @Bean
 //    public CorsConfigurationSource corsConfigurationSource() {
 //        return request -> {
@@ -46,6 +46,17 @@ public class SecurityConfig {
 //            return cors;
 //        };
 //    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource () {
+        return request -> {
+            var cors= new org.springframework.web.cors.CorsConfiguration();
+            cors.setAllowedOriginPatterns(List.of("*", "http://localhost:3000"));
+            cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+            cors.setAllowedHeaders(List.of("*"));
+            return cors;
+        };
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
