@@ -38,6 +38,7 @@ public class SecurityConfig {
                     "https://sssg.shop"
             ));
             cors.addAllowedHeader("*");
+            cors.addExposedHeader("*");
             cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 //            cors.setAllowedHeaders(List.of("*"));
             cors.setAllowCredentials(true);
