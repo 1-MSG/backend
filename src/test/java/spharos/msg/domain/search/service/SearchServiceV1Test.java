@@ -28,11 +28,11 @@ import spharos.msg.global.api.exception.SearchException;
 @SpringBootTest
 @Transactional
 @Slf4j
-class SearchServiceTest {
+class SearchServiceV1Test {
 
     private static final PageRequest DEFAULT_PAGEABLE = PageRequest.of(0, 10);
     @Autowired
-    private SearchService searchService;
+    private SearchServiceV1 searchServiceV1;
     @Autowired
     private ProductRepository productRepository;
 
@@ -47,7 +47,7 @@ class SearchServiceTest {
     }
 
     private List<String> getSearchResult(String keyword) {
-        List<SearchTextDto> expectedKeywords = searchService.findExpectedKeywords(keyword);
+        List<SearchTextDto> expectedKeywords = searchServiceV1.findExpectedKeywords(keyword);
         return expectedKeywords
             .stream()
             .map(SearchTextDto::getProductName)
@@ -103,7 +103,7 @@ class SearchServiceTest {
     @DisplayName("특정 브랜드 이름이 포함되면 그 브랜드의 Product를 반환한다.")
     void 상품_브랜드_검색_성공_테스트() {
         //given
-        SearchProductDtos result = searchService.findMatchProducts("탑텐", DEFAULT_PAGEABLE);
+        SearchProductDtos result = searchServiceV1.findMatchProducts("탑텐", DEFAULT_PAGEABLE);
         //when, then
         List<String> productNames = getProductNamesByDto(result);
         assertThat(productNames)
@@ -121,7 +121,7 @@ class SearchServiceTest {
             .replaceAll("[^a-zA-Z가-힣0-9\\s-]", "")
             .trim();
 
-        SearchProductDtos result = searchService.findMatchProducts(keyword, DEFAULT_PAGEABLE);
+        SearchProductDtos result = searchServiceV1.findMatchProducts(keyword, DEFAULT_PAGEABLE);
         //when, then
 
         List<String> productNames = getProductNamesByDto(result);
@@ -134,7 +134,7 @@ class SearchServiceTest {
     @DisplayName("검색 상품이 10개가 넘을시, 10개까지만 반환하도록 한다.")
     void 상품_개수_성공_테스트() {
         //given
-        SearchProductDtos result = searchService.findMatchProducts("여성", DEFAULT_PAGEABLE);
+        SearchProductDtos result = searchServiceV1.findMatchProducts("여성", DEFAULT_PAGEABLE);
         //when, then
         assertThat(result.getSearchProductDtos()).hasSize(10);
     }
@@ -142,8 +142,8 @@ class SearchServiceTest {
     @Test
     @DisplayName("현재 인덱스와 다음 인덱스의 제품이 중복되면 안된다")
     void 인덱스_조회_성공_테스트() {
-        SearchProductDtos result1 = searchService.findMatchProducts("여성", DEFAULT_PAGEABLE);
-        SearchProductDtos result2 = searchService.findMatchProducts("여성", PageRequest.of(1, 10));
+        SearchProductDtos result1 = searchServiceV1.findMatchProducts("여성", DEFAULT_PAGEABLE);
+        SearchProductDtos result2 = searchServiceV1.findMatchProducts("여성", PageRequest.of(1, 10));
 
         assertThat(result1.getSearchProductDtos()).noneMatch(
             result2.getSearchProductDtos()::contains);
@@ -152,7 +152,7 @@ class SearchServiceTest {
     @Test
     @DisplayName("존재하지 않는 상품이면, 빈 리스트를 반환한다.")
     void 빈_리스트_반환() {
-        SearchProductDtos result = searchService.findMatchProducts("존재하지 않는 상품 ",
+        SearchProductDtos result = searchServiceV1.findMatchProducts("존재하지 않는 상품 ",
             DEFAULT_PAGEABLE);
         assertThat(result.getSearchProductDtos()).isEmpty();
     }
@@ -160,7 +160,7 @@ class SearchServiceTest {
     @Test
     @DisplayName("카테고리로 검색할 시, 결과가 나와야한다.")
     void 카테고리_검색() {
-        SearchProductDtos result = searchService.findMatchProducts("SEASONAL", DEFAULT_PAGEABLE);
+        SearchProductDtos result = searchServiceV1.findMatchProducts("SEASONAL", DEFAULT_PAGEABLE);
         assertThat(result.getSearchProductDtos()).isNotEmpty();
     }
 
@@ -168,7 +168,8 @@ class SearchServiceTest {
     @ValueSource(ints = {0, 1, 2, 3})
     @DisplayName("배열 개수가 있다면 isLast가 true, 없다면 false")
     void isLast_테스트(int index) {
-        SearchProductDtos result = searchService.findMatchProducts("여성", PageRequest.of(index, 10));
+        SearchProductDtos result = searchServiceV1.findMatchProducts("여성",
+            PageRequest.of(index, 10));
         boolean expected = result.getSearchProductDtos().isEmpty();
         assertThat(result.getIsLast()).isEqualTo(expected);
     }
@@ -178,7 +179,7 @@ class SearchServiceTest {
     @DisplayName("유효하지 않은 검색어가 들어오면 SearchException이 발생한다")
     void searchException_발생_테스트(String keyword) {
         assertThatThrownBy(
-            () -> searchService.findExpectedKeywords(keyword))
+            () -> searchServiceV1.findExpectedKeywords(keyword))
             .isInstanceOf(SearchException.class);
     }
 
@@ -186,7 +187,7 @@ class SearchServiceTest {
     @ValueSource(strings = {"바나나", "우유", "탑텐"})
     @DisplayName("연관검색어에 검색했던 단어가 무조건 다 들어가 있어야 한다.")
     void 연관검색어_포함_테스트(String keyword) {
-        List<SearchTextDto> results = searchService.findExpectedKeywords(keyword);
+        List<SearchTextDto> results = searchServiceV1.findExpectedKeywords(keyword);
         assertThat(results)
             .isNotEmpty()
             .allMatch(e -> e.getProductName().contains(keyword));

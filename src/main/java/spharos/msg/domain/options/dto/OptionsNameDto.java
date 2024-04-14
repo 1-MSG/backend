@@ -1,10 +1,14 @@
 package spharos.msg.domain.options.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spharos.msg.domain.options.entity.Options;
 
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class OptionsNameDto {
     private String optionsType;

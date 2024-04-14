@@ -22,10 +22,11 @@ import spharos.msg.domain.search.dto.SearchResponse.SearchTextDto;
 @Slf4j
 public class SearchRepositoryImpl implements SearchRepository {
 
+    private static final int SEARCH_SIZE = 5;
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<SearchProductDto> searchAllProduct(String keyword, Pageable pageable) {
+    public Page<SearchProductDto> searchAllProductV1(String keyword, Pageable pageable) {
         QCategoryProduct categoryProduct = QCategoryProduct.categoryProduct;
         QProduct product = QProduct.product;
         QCategory category = QCategory.category;
@@ -33,7 +34,7 @@ public class SearchRepositoryImpl implements SearchRepository {
         Long total = getTotal(keyword, categoryProduct, product, category);
 
         List<SearchProductDto> searchProductDtos = getSearchProductIds(
-                keyword, pageable, categoryProduct, product, category);
+            keyword, pageable, categoryProduct, product, category);
         return new PageImpl<>(searchProductDtos, pageable, total);
     }
 
@@ -72,11 +73,12 @@ public class SearchRepositoryImpl implements SearchRepository {
     }
 
     @Override
-    public List<SearchTextDto> searchAllKeyword(String keyword) {
+    public List<SearchTextDto> searchAllKeywordV1(String keyword) {
         QCategoryProduct categoryProduct = QCategoryProduct.categoryProduct;
         QProduct product = QProduct.product;
         QCategory category = QCategory.category;
-        List<String> searchResults = getSearchResults(keyword, categoryProduct, product, category);
+        List<String> searchResults = getSearchResultsV1(keyword, categoryProduct, product,
+            category);
 
         return searchResults.stream()
             .map(SearchTextDto::new)
@@ -84,7 +86,7 @@ public class SearchRepositoryImpl implements SearchRepository {
             .toList();
     }
 
-    private List<String> getSearchResults(String keyword, QCategoryProduct categoryProduct,
+    private List<String> getSearchResultsV1(String keyword, QCategoryProduct categoryProduct,
         QProduct product, QCategory category) {
         return jpaQueryFactory
             .select(
@@ -101,6 +103,41 @@ public class SearchRepositoryImpl implements SearchRepository {
             .where(category.categoryName.containsIgnoreCase(keyword)
                 .or(product.productName.containsIgnoreCase(keyword)))
             .distinct()
+            .fetch();
+    }
+
+    @Override
+    public List<SearchTextDto> searchAllKeywordV2(String keyword) {
+        QCategoryProduct categoryProduct = QCategoryProduct.categoryProduct;
+        QProduct product = QProduct.product;
+        QCategory category = QCategory.category;
+        List<String> searchResults = getSearchResultsV2(keyword, categoryProduct, product,
+            category);
+
+        return searchResults.stream()
+            .map(SearchTextDto::new)
+            .distinct()
+            .toList();
+    }
+
+    private List<String> getSearchResultsV2(String keyword, QCategoryProduct categoryProduct,
+        QProduct product, QCategory category) {
+        return jpaQueryFactory
+            .select(
+                new CaseBuilder()
+                    .when(category.categoryName.containsIgnoreCase(keyword))
+                    .then(category.categoryName)
+                    .when(product.productName.containsIgnoreCase(keyword))
+                    .then(product.productName)
+                    .otherwise((String) null)
+            )
+            .from(categoryProduct)
+            .innerJoin(categoryProduct.product, product)
+            .innerJoin(categoryProduct.category, category)
+            .where(category.categoryName.containsIgnoreCase(keyword)
+                .or(product.productName.containsIgnoreCase(keyword)))
+            .distinct()
+            .limit(SEARCH_SIZE)
             .fetch();
     }
 }

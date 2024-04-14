@@ -23,7 +23,7 @@ import spharos.msg.global.api.exception.CategoryException;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
-public class CategoryService {
+public class CategoryServiceV2 {
 
     private static final int LARGE_CATEGORY_LEVEL = 0;
     
@@ -49,7 +49,7 @@ public class CategoryService {
         return CategoryConverter.toDto(findProducts);
     }
 
-    private CategoryDto createCategoryDto(Category currentCategory, List<SubCategory> categories) {
+    public CategoryDto createCategoryDto(Category currentCategory, List<SubCategory> categories) {
         return currentCategory.getCategoryLevel() == LARGE_CATEGORY_LEVEL ?
             CategoryConverter.toDto(categories) :
             CategoryConverter.toDto(currentCategory, categories);

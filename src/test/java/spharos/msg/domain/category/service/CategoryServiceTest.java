@@ -20,7 +20,7 @@ import spharos.msg.domain.category.repository.CategoryProductRepository;
 class CategoryServiceTest {
 
     @Autowired
-    CategoryService categoryService;
+    CategoryServiceV1 categoryService;
 
     @Autowired
     CategoryProductRepository categoryProductRepository;
