@@ -27,14 +27,13 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
 
     //cors
-    /*/
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         return request -> {
             var cors = new org.springframework.web.cors.CorsConfiguration();
             cors.setAllowedOriginPatterns(List.of("*"));
-            cors.addAllowedOrigin("http://localhost:3000");
-            cors.addAllowedOrigin("https://ssgcom-app.vercel.app/");
+            cors.addAllowedOriginPattern("http://localhost:3000");
+            cors.addAllowedOriginPattern("https://ssgcom-app.vercel.app");
             cors.addAllowedHeader("*");
             cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
             cors.setAllowedHeaders(List.of("*"));
@@ -42,21 +41,6 @@ public class SecurityConfig {
             return cors;
         };
     }
-    /*/
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowedOriginPatterns(List.of("*"));
-        configuration.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
