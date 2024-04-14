@@ -27,7 +27,7 @@ public class OrdersConverter {
     public static OrderUserDto toDto(Users user) {
         return new OrderUserDto(
             user.getLoginId(),
-            user.getUsername(),
+            user.readUserName(),
             user.getAddress(),
             user.getPhoneNumber(),
             user.getEmail()
