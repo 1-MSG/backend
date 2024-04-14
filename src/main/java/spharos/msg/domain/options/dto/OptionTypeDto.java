@@ -13,4 +13,8 @@ public class OptionTypeDto {
         this.optionLevel = options.getOptionLevel();
         this.optionType = options.getOptionType();
     }
+    public OptionTypeDto(int optionLevel,String optionType){
+        this.optionLevel = optionLevel;
+        this.optionType = optionType;
+    }
 }
