@@ -37,9 +37,15 @@ public class SecurityConfig {
                     "https://ssgcom-app.vercel.app",
                     "https://sssg.shop"
             ));
-            cors.addAllowedHeader("*");
+            cors.setAllowedHeaders(List.of("Access-Control-Allow-Headers",
+                    "Origin, X-Api-Key, X-Requested-With, Content-Type, Accept, Authorization"));
+            cors.addAllowedHeader("Access-Control-Allow-Methods");
+            cors.addAllowedHeader("Access-Control-Allow-Origin");
+            cors.setAllowedHeaders(List.of("Access-Control-Allow-Headers",
+                    "Origin, X-Api-Key, X-Requested-With, Content-Type, Accept, Authorization"));
+            //cors.addAllowedHeader("*");
             cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-            cors.setAllowedHeaders(List.of("*"));
+            //cors.setAllowedHeaders(List.of("*"));
             cors.setAllowCredentials(true);
             return cors;
         };
