@@ -73,7 +73,8 @@ public class SecurityConfig {
                                 //비회원 주소 없음
 
                                 //Product
-                                .requestMatchers("/api/v1/product/*").permitAll()
+                                .requestMatchers("/api/v1/product/**").permitAll()
+                                .requestMatchers("/api/v1/products").permitAll()
                                 .requestMatchers("/api/v1/random").permitAll()
                                 .requestMatchers("/api/v1/ranking").permitAll()
                                 .requestMatchers("/api/v1/ranking11").permitAll()
@@ -86,7 +87,7 @@ public class SecurityConfig {
 
                                 //Review
                                 .requestMatchers("/api/v1/product-review/*/reviews").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/product-review/*").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/product-review/**").permitAll()
 
                                 //Option (permitAll)
                                 .requestMatchers("/api/v1/option/**").permitAll()
@@ -117,7 +118,7 @@ public class SecurityConfig {
                                 //Admin (permit All)
                                 //현재 Admin 인증 진행 하지 않음
                                 //todo : Admin 회원 인증 가능 하면 삭제 필요.
-                                .requestMatchers("/api/v1/admin").permitAll()
+                                .requestMatchers("/api/v1/admin/**").permitAll()
 
 
 
@@ -147,7 +148,8 @@ public class SecurityConfig {
                                 //비회원 주소 없음
 
                                 //Product
-                                .requestMatchers("/api/v2/product/*").permitAll()
+                                .requestMatchers("/api/v2/product/**").permitAll()
+                                .requestMatchers("/api/v2/products").permitAll()
                                 .requestMatchers("/api/v2/random").permitAll()
                                 .requestMatchers("/api/v2/ranking").permitAll()
                                 .requestMatchers("/api/v2/ranking11").permitAll()
@@ -160,7 +162,7 @@ public class SecurityConfig {
 
                                 //Review
                                 .requestMatchers("/api/v2/product-review/*/reviews").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/product-review/*").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v2/product-review/**").permitAll()
 
                                 //Option (permitAll)
                                 .requestMatchers("/api/v2/option/**").permitAll()
@@ -169,7 +171,7 @@ public class SecurityConfig {
                                 //비회원 좋아요 없음
 
                                 //Coupon
-                                .requestMatchers(HttpMethod.GET, "/api/v1/coupon").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v2/coupon").permitAll()
 
                                 //Category (permitAll)
                                 .requestMatchers("/api/v2/category").permitAll()
@@ -191,7 +193,7 @@ public class SecurityConfig {
                                 //Admin (permit All)
                                 //현재 Admin 인증 진행 하지 않음
                                 //todo : Admin 회원 인증 가능 하면 삭제 필요.
-                                .requestMatchers("/api/v2/admin").permitAll()
+                                .requestMatchers("/api/v2/admin/**").permitAll()
 
                                 .anyRequest()
                                 .authenticated()
