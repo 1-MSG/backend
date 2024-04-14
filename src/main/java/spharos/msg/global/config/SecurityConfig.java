@@ -51,6 +51,7 @@ public class SecurityConfig {
                                         "/swagger-ui/**",
                                         "/swagger-resources/**",
                                         "/api-docs/**").permitAll()
+                                .requestMatchers("/error").permitAll()
 
                                 //Auth
                                 .requestMatchers("/api/v1/auth/check-duplicate-id").permitAll()
