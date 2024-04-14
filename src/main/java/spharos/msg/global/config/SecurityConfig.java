@@ -27,25 +27,25 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
 
     //cors
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        return request -> {
-            var cors = new org.springframework.web.cors.CorsConfiguration();
-//            cors.setAllowedOriginPatterns(List.of("*"));
-            cors.setAllowedOrigins(List.of(
-                    "http://localhost:3000",
-                    "https://ssgcom-app.vercel.app",
-                    "https://sssg.shop"
-            ));
-            cors.addAllowedHeader("*");
-            cors.addExposedHeader("*");
-            cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-//            cors.setAllowedHeaders(List.of("*"));
-            cors.setAllowCredentials(true);
-            cors.setMaxAge(3600L);
-            return cors;
-        };
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        return request -> {
+//            var cors = new org.springframework.web.cors.CorsConfiguration();
+////            cors.setAllowedOriginPatterns(List.of("*"));
+//            cors.setAllowedOrigins(List.of(
+//                    "http://localhost:3000",
+//                    "https://ssgcom-app.vercel.app",
+//                    "https://sssg.shop"
+//            ));
+//            cors.addAllowedHeader("*");
+//            cors.addExposedHeader("*");
+//            cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+////            cors.setAllowedHeaders(List.of("*"));
+//            cors.setAllowCredentials(true);
+//            cors.setMaxAge(3600L);
+//            return cors;
+//        };
+//    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
