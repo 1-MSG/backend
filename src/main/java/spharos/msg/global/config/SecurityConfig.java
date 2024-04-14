@@ -31,11 +31,12 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         return request -> {
             var cors = new org.springframework.web.cors.CorsConfiguration();
-            cors.setAllowedOriginPatterns(List.of("*"));
-            cors.addAllowedOriginPattern("http://localhost:3000");
-            cors.addAllowedOriginPattern("https://ssgcom-app.vercel.app");
-            cors.addAllowedOriginPattern("https://ssgcom-app.vercel.app");
-            cors.addAllowedOriginPattern("https://sssg.shop");
+            //cors.setAllowedOriginPatterns(List.of("*"));
+            cors.setAllowedOriginPatterns(List.of(
+                    "http://localhost:3000",
+                    "https://ssgcom-app.vercel.app",
+                    "https://sssg.shop"
+            ));
             cors.addAllowedHeader("*");
             cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
             cors.setAllowedHeaders(List.of("*"));
