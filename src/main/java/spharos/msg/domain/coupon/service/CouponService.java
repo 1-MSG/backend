@@ -1,8 +1,5 @@
 package spharos.msg.domain.coupon.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,9 +14,13 @@ import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.ErrorStatus;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
-public class CouponServiceV2 {
+public class CouponService {
     private final CouponRepository couponRepository;
     private final UsersRepository usersRepository;
     private final UsersCouponRepository usersCouponRepository;

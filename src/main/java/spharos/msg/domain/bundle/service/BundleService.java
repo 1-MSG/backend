@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +20,7 @@ import spharos.msg.domain.bundle.repository.BundleRepository;
 
 @Service
 @RequiredArgsConstructor
-public class BundleServiceV2 {
+public class BundleService {
 
     private final BundleRepository bundleRepository;
     private final BundleProductRepository bundleProductRepository;
@@ -29,7 +30,7 @@ public class BundleServiceV2 {
 
         Page<Bundle> bundlePage = bundleRepository.findAll(pageable);
 
-        List<BundleDto> bundles = getBundleList(bundlePage);
+        List<BundleResponse.BundleDto> bundles = getBundleList(bundlePage);
         boolean isLast = !bundlePage.hasNext();
 
         return BundleConvertor.toDto(bundles, isLast);
@@ -44,7 +45,7 @@ public class BundleServiceV2 {
         return BundleConvertor.toDto(bundle, bundlePrice, bundleProductIds);
     }
 
-    private List<BundleDto> getBundleList(Page<Bundle> bundlePage) {
+    private List<BundleResponse.BundleDto> getBundleList(Page<Bundle> bundlePage) {
         return bundlePage.getContent().stream().map(bundle -> {
             Integer bundlePrice = getBundlePrice(bundle);
             return BundleConvertor.toDto(bundle, bundlePrice);
