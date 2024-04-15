@@ -29,7 +29,7 @@ import spharos.msg.domain.users.repository.UsersRepository;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
-public class ReviewService {
+public class ReviewServiceV1 {
 
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;

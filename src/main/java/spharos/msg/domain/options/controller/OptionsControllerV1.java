@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Options", description = "옵션 관련 API")
+@Tag(name = "Options V1", description = "옵션 관련 API")
 @RequestMapping("/api/v1/option")
 public class OptionsControllerV1 {
 
