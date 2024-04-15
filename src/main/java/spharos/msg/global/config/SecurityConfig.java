@@ -1,5 +1,7 @@
 package spharos.msg.global.config;
 
+
+import java.util.Arrays;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +18,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import spharos.msg.global.security.JwtAuthenticationFilter;
 
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -30,7 +33,12 @@ public class SecurityConfig {
             CorsConfiguration config = new CorsConfiguration();
             config.setAllowedHeaders(Collections.singletonList("*"));
             config.setAllowedMethods(Collections.singletonList("*"));
-            config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000"));
+//            config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000"));
+            config.setAllowedOriginPatterns(Arrays.asList(
+                    "http://localhost:3000",
+                    "https://ssgcom-app.vercel.app/",
+                    "https://admin.sssg.shop/"
+            ));
             config.setAllowCredentials(true);
             return config;
         };
