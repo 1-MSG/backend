@@ -8,8 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import spharos.msg.domain.cart.dto.CartProductRequestDto;
 import spharos.msg.domain.cart.dto.CartProductResponseDto;
-import spharos.msg.domain.cart.service.CartProductService;
-import spharos.msg.domain.cart.service.CartProductUpdateService;
+import spharos.msg.domain.cart.service.V1.CartProductServiceV1;
+import spharos.msg.domain.cart.service.V1.CartProductUpdateServiceV1;
 import spharos.msg.global.api.ApiResponse;
 
 import java.util.List;
@@ -18,9 +18,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/cart")
 @Tag(name = "Cart", description = "장바구니 API")
-public class CartProductController {
-    private final CartProductService cartProductService;
-    private final CartProductUpdateService cartProductUpdateService;
+public class CartProductControllerV1 {
+    private final CartProductServiceV1 cartProductService;
+    private final CartProductUpdateServiceV1 cartProductUpdateService;
 
     @Operation(summary = "장바구니 담기",
             description = "옵션에 해당되는 상품을 장바구니에 추가합니다.")
