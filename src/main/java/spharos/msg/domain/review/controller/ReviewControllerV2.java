@@ -21,22 +21,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import spharos.msg.domain.product.entity.ProductSalesInfo;
 import spharos.msg.domain.review.dto.ReviewRequest;
 import spharos.msg.domain.review.dto.ReviewResponse;
-import spharos.msg.domain.review.service.ReviewService;
+import spharos.msg.domain.review.service.ReviewServiceV2;
 import spharos.msg.global.api.ApiResponse;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/product-review")
+@RequestMapping("/api/v2/product-review")
 @Slf4j
-@Tag(name="Review",description = "리뷰 관련 API")
-public class ReviewController {
+@Tag(name="Review V2",description = "리뷰 관련 API")
+public class ReviewControllerV2 {
 
-    private final ReviewService reviewService;
+    private final ReviewServiceV2 reviewService;
 
     @Operation(summary = "상품 리뷰 목록 조회",
         description = "id로 상품 리뷰 목록를 조회합니다")

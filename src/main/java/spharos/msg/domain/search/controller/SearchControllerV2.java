@@ -19,7 +19,7 @@ import spharos.msg.global.api.code.status.SuccessStatus;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/api/v2/")
-@Tag(name = "Search", description = "검색 API")
+@Tag(name = "Search V2", description = "검색 API")
 @Slf4j
 public class SearchControllerV2 {
 
