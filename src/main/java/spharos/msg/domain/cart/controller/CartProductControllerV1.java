@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/cart")
-@Tag(name = "Cart", description = "장바구니 API")
+@Tag(name = "Cart V1", description = "장바구니 API")
 public class CartProductControllerV1 {
     private final CartProductServiceV1 cartProductService;
     private final CartProductUpdateServiceV1 cartProductUpdateService;

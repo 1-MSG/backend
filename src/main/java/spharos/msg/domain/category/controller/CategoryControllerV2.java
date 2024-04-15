@@ -22,7 +22,7 @@ import spharos.msg.global.api.code.status.SuccessStatus;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/api/v2/")
-@Tag(name = "Category", description = "카테고리 API")
+@Tag(name = "Category V2", description = "카테고리 API")
 @Slf4j
 public class CategoryControllerV2 {
 

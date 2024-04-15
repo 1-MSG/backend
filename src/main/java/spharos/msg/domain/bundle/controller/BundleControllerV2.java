@@ -20,7 +20,7 @@ import spharos.msg.global.api.ApiResponse;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v2")
-@Tag(name = "Bundle", description = "특가 관련 api")
+@Tag(name = "Bundle V2", description = "특가 관련 api")
 public class BundleControllerV2 {
 
     private final BundleServiceV2 bundleService;

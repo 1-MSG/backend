@@ -31,7 +31,7 @@ import spharos.msg.global.api.ApiResponse;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/product-review")
 @Slf4j
-@Tag(name="Review",description = "리뷰 관련 API")
+@Tag(name="Review V1",description = "리뷰 관련 API")
 public class ReviewControllerV1 {
 
     private final ReviewServiceV1 reviewService;

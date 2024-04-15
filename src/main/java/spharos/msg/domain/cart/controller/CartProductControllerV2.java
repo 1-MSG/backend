@@ -24,7 +24,7 @@ import spharos.msg.global.api.ApiResponse;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/cart")
-@Tag(name = "Cart", description = "장바구니 API")
+@Tag(name = "Cart V2", description = "장바구니 API")
 public class CartProductControllerV2 {
     private final CartProductServiceV2 cartProductService;
     private final CartProductUpdateServiceV2 cartProductUpdateService;

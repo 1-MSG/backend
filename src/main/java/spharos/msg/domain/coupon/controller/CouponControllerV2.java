@@ -18,7 +18,7 @@ import spharos.msg.global.api.ApiResponse;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v2")
-@Tag(name = "Coupon", description = "쿠폰 API")
+@Tag(name = "Coupon V2", description = "쿠폰 API")
 public class CouponControllerV2 {
     private final CouponServiceV2 couponService;
 

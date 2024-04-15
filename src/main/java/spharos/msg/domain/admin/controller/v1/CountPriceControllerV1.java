@@ -18,7 +18,7 @@ import spharos.msg.global.api.code.status.SuccessStatus;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/admin")
 @Slf4j
-@Tag(name = "Admin Orders", description = "어드민 주문 관련 페이지")
+@Tag(name = "Admin Orders V1", description = "어드민 주문 관련 페이지")
 public class CountPriceControllerV1 {
 
     private final CountPriceServiceV1 countPriceService;
