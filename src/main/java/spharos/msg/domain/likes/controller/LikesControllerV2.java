@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/like")
-@Tag(name = "Likes V2", description = "좋아요 API")
+@Tag(name = "Likes", description = "좋아요 API")
 public class LikesControllerV2 {
     private final LikesServiceV2 likesServiceV2;
 

@@ -2,32 +2,25 @@ package spharos.msg.domain.cart.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import spharos.msg.domain.cart.dto.CartProductRequestDto;
 import spharos.msg.domain.cart.dto.CartProductResponseDto;
-import spharos.msg.domain.cart.service.V2.CartProductServiceV2;
-import spharos.msg.domain.cart.service.V2.CartProductUpdateServiceV2;
+import spharos.msg.domain.cart.service.CartProductService;
+import spharos.msg.domain.cart.service.CartProductUpdateService;
 import spharos.msg.global.api.ApiResponse;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v2/cart")
-@Tag(name = "Cart V2", description = "장바구니 API")
-public class CartProductControllerV2 {
-    private final CartProductServiceV2 cartProductService;
-    private final CartProductUpdateServiceV2 cartProductUpdateService;
+@RequestMapping("/api/v1/cart")
+@Tag(name = "Cart", description = "장바구니 API")
+public class CartProductController {
+    private final CartProductService cartProductService;
+    private final CartProductUpdateService cartProductUpdateService;
 
     @Operation(summary = "장바구니 담기",
             description = "옵션에 해당되는 상품을 장바구니에 추가합니다.")

@@ -1,7 +1,5 @@
-package spharos.msg.domain.cart.service.V2;
+package spharos.msg.domain.cart.service;
 
-import java.util.List;
-import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,9 +15,14 @@ import spharos.msg.domain.users.repository.UsersRepository;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
+import static spharos.msg.domain.cart.converter.CartConverter.toEntity;
+
 @Service
 @RequiredArgsConstructor
-public class CartProductServiceV2 {
+public class CartProductService {
 
     private final CartProductRepository cartProductRepository;
     private final ProductOptionRepository productOptionRepository;
