@@ -31,7 +31,7 @@ import spharos.msg.global.api.code.status.SuccessStatus;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
-@Tag(name = "OrderV1", description = "주문 API")
+@Tag(name = "Order V1", description = "주문 API")
 public class OrderControllerV1 {
 
     private final OrderServiceV1 orderServiceV1;

@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/brand")
-@Tag(name = "Brand", description = "브랜드 API")
+@Tag(name = "Brand V1", description = "브랜드 API")
 @RequiredArgsConstructor
 public class BrandControllerV1 {
     private final BrandServiceV1 brandService;
