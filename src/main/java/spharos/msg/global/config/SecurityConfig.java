@@ -40,6 +40,7 @@ public class SecurityConfig {
                     "https://admin.sssg.shop/"
             ));
             config.setAllowCredentials(true);
+            config.addExposedHeader("*");
             return config;
         };
     }
