@@ -6,7 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import spharos.msg.domain.coupon.dto.CouponResponseDto;
-import spharos.msg.domain.coupon.service.CouponService;
+import spharos.msg.domain.coupon.service.CouponServiceV1;
 import spharos.msg.global.api.ApiResponse;
 
 import java.util.List;
@@ -14,9 +14,9 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
-@Tag(name = "Coupon", description = "쿠폰 API")
-public class CouponController {
-    private final CouponService couponService;
+@Tag(name = "Coupon V1", description = "쿠폰 API")
+public class CouponControllerV1 {
+    private final CouponServiceV1 couponService;
 
     @GetMapping("/coupon")
     private ApiResponse<List<CouponResponseDto>> getCoupon(
