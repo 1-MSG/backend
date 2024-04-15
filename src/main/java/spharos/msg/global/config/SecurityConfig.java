@@ -37,7 +37,8 @@ public class SecurityConfig {
             config.setAllowedOriginPatterns(Arrays.asList(
                     "http://localhost:3000",
                     "https://ssgcom-app.vercel.app/",
-                    "https://admin.sssg.shop/"
+                    "https://admin.sssg.shop/",
+                    "*"
             ));
             config.setAllowCredentials(true);
             config.addExposedHeader("*");
