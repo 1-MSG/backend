@@ -23,8 +23,8 @@ public class CategoryConverter {
     public static CategoryDto toDto(Category parent, List<SubCategory> categories) {
         return CategoryDto
             .builder()
-            .parentId(parent.getId())
-            .parentName(parent.getCategoryName())
+            .parentId(parent.getParent().getId())
+            .parentName(parent.getParent().getCategoryName())
             .subCategories(categories)
             .build();
     }
