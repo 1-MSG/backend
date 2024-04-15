@@ -3,14 +3,10 @@ package spharos.msg.domain.product.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.*;
+
 import java.math.BigDecimal;
-import java.util.Optional;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
 import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
 
 @Data
 @Builder

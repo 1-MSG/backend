@@ -2,22 +2,16 @@ package spharos.msg.domain.users.controller.v2;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import spharos.msg.domain.users.dto.request.AddressRequest;
 import spharos.msg.domain.users.dto.response.AddressResponse;
-import spharos.msg.domain.users.service.AddressService;
 import spharos.msg.domain.users.service.impl.v2.AddressServiceImplV2;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
+
+import java.util.List;
 
 @Slf4j
 @RestController

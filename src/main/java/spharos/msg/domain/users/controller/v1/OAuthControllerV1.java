@@ -2,17 +2,15 @@ package spharos.msg.domain.users.controller.v1;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import java.util.Optional;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import spharos.msg.domain.users.dto.request.OAuthRequest;
 import spharos.msg.domain.users.dto.response.OAuthResponse;
-import spharos.msg.domain.users.service.OAuthService;
 import spharos.msg.domain.users.service.impl.v1.OAuthServiceImplV1;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
+
+import java.util.Optional;
 
 
 @RestController

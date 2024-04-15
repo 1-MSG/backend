@@ -1,7 +1,5 @@
 package spharos.msg.domain.users.controller.v1;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -10,11 +8,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import spharos.msg.domain.users.dto.request.AuthRequest;
 import spharos.msg.domain.users.dto.response.AuthResponse;
-
-import spharos.msg.domain.users.service.AuthService;
 import spharos.msg.domain.users.service.impl.v1.AuthServiceImplV1;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController
 @RequiredArgsConstructor

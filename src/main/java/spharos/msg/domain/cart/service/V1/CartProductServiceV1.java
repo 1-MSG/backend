@@ -18,8 +18,6 @@ import spharos.msg.global.api.code.status.SuccessStatus;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static spharos.msg.domain.cart.converter.CartConverter.toEntity;
-
 @Service
 @RequiredArgsConstructor
 public class CartProductServiceV1 {
