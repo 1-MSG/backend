@@ -28,6 +28,12 @@ public class OptionsConverter {
                 .stock(productOption.getStock())
                 .build();
     }
+    static public OptionsResponseDto toDto(Long productOptionId,int stock){
+        return OptionsResponseDto.builder()
+                .productOptionId(productOptionId)
+                .stock(stock)
+                .build();
+    }
 
     static public OptionsResponseDto toDto (String optionName, Integer stock){
         return OptionsResponseDto.builder()
