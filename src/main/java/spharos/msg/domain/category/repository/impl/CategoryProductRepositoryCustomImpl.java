@@ -59,7 +59,6 @@ public class CategoryProductRepositoryCustomImpl implements CategoryProductRepos
                 category.categoryImage))
             .from(category)
             .where(category.categoryLevel.eq(categoryLevel))
-            .distinct()
             .fetch();
     }
 
@@ -70,7 +69,7 @@ public class CategoryProductRepositoryCustomImpl implements CategoryProductRepos
             .where(validateParentAndLevel(parentId, category))
             .fetch();
     }
-    
+
     private StringExpression tryGetCategoryImage(QCategory category) {
         return new CaseBuilder()
             .when(category.categoryImage.isNotEmpty())

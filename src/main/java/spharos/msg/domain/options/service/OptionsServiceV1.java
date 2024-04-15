@@ -68,7 +68,12 @@ public class OptionsServiceV1 {
     public ApiResponse<List<OptionsResponseDto>> getFirstOptions(Long productId) {
         Product product = productRepository.findById(productId).orElseThrow();
         List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
-
+        if(productOptions.get(0).getOptions()==null||productOptions.get(0).getOptions().getOptionName()==null){
+            return ApiResponse.of(SuccessStatus.OPTION_FIRST_SUCCESS,
+                    productOptions.stream()
+                            .map(productOption -> toDto(productOption.getId(),productOption.getStock()))
+                            .toList());
+        }
         if (productOptions.get(0).getOptions().getParent() == null) {
             if(productOptions.get(0).getOptions()==null||productOptions.get(0).getOptions().getOptionName()==null){
                 return ApiResponse.of(SuccessStatus.OPTION_FIRST_SUCCESS,
