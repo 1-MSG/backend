@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spharos.msg.domain.options.service.OptionsServiceV1;
 import spharos.msg.domain.options.service.OptionsServiceV2;
 import spharos.msg.domain.orders.converter.OrderProductConverter;
 import spharos.msg.domain.orders.converter.OrdersConverter;

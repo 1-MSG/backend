@@ -1,5 +1,6 @@
 package spharos.msg.domain.options.controller;
 
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -7,21 +8,21 @@ import org.springframework.web.bind.annotation.*;
 import spharos.msg.domain.options.dto.OptionTypeDto;
 import spharos.msg.domain.options.dto.OptionsNameDto;
 import spharos.msg.domain.options.dto.OptionsResponseDto;
-import spharos.msg.domain.options.service.OptionsServiceV1;
+import spharos.msg.domain.options.service.OptionsServiceV2;
 import spharos.msg.global.api.ApiResponse;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Options V1", description = "옵션 관련 API")
-@RequestMapping("/api/v1/option")
-public class OptionsControllerV1 {
+@Tag(name = "Options", description = "옵션 관련 API")
+@RequestMapping("/api/v2/option")
+public class OptionsController {
 
-    private final OptionsServiceV1 optionsService;
+    private final OptionsServiceV2 optionsService;
 
     @Operation(summary = "상품 옵션 종류 조회",
-        description = "상품 ID를 입력하면 해당 상품의 옵션 종류를 조회 합니다. (색상,사이즈,기타)")
+            description = "상품 ID를 입력하면 해당 상품의 옵션 종류를 조회 합니다. (색상,사이즈,기타)")
     @GetMapping("/type/{productId}")
     public ApiResponse<List<OptionTypeDto>> getOptionsType(
             @PathVariable Long productId) {
@@ -29,7 +30,7 @@ public class OptionsControllerV1 {
     }
 
     @Operation(summary = "최상위 옵션 조회",
-        description = "상품 ID를 입력하면 해당 상품의 최상위 옵션을 조회 합니다.")
+            description = "상품 ID를 입력하면 해당 상품의 최상위 옵션을 조회 합니다.")
     @GetMapping("/first/{productId}")
     public ApiResponse<List<OptionsResponseDto>> getFirstOptions(
             @PathVariable Long productId) {
