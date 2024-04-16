@@ -19,6 +19,11 @@ import spharos.msg.domain.category.repository.CategoryRepository;
 import spharos.msg.global.api.code.status.ErrorStatus;
 import spharos.msg.global.api.exception.CategoryException;
 
+/**
+ * Version Upgrade
+ * So Not Use
+ */
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
