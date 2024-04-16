@@ -1,10 +1,5 @@
 package spharos.msg.domain.review.controller;
 
-import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_DELETE_SUCCESS;
-import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_READ_SUCCESS;
-import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_SAVE_SUCCESS;
-import static spharos.msg.global.api.code.status.SuccessStatus.REVIEW_UPDATE_SUCCESS;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +17,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import spharos.msg.domain.review.dto.ReviewRequest;
 import spharos.msg.domain.review.dto.ReviewResponse;
 import spharos.msg.domain.review.service.ReviewServiceV2;
 import spharos.msg.global.api.ApiResponse;
+
+import static spharos.msg.global.api.code.status.SuccessStatus.*;
 
 @RestController
 @RequiredArgsConstructor

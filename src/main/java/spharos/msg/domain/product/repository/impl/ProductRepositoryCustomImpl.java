@@ -1,17 +1,13 @@
 package spharos.msg.domain.product.repository.impl;
 
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.expression.Expression;
 import org.springframework.stereotype.Repository;
 import spharos.msg.domain.brand.entity.QBrand;
 import spharos.msg.domain.product.dto.ProductResponse.ProductDeliveryDto;
@@ -23,6 +19,8 @@ import spharos.msg.domain.product.entity.QProduct;
 import spharos.msg.domain.product.entity.QProductImage;
 import spharos.msg.domain.product.entity.QProductSalesInfo;
 import spharos.msg.domain.product.repository.ProductRepositoryCustom;
+
+import java.util.List;
 
 @Repository
 @Slf4j

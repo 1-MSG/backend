@@ -2,8 +2,6 @@ package spharos.msg.domain.admin.service;
 
 import org.springframework.data.domain.Pageable;
 import spharos.msg.domain.admin.dto.AdminResponseDto;
-import spharos.msg.domain.users.entity.LoginType;
-import spharos.msg.domain.users.entity.UserStatus;
 
 import java.util.List;
 

@@ -1,10 +1,10 @@
 package spharos.msg.domain.product.converter;
 
-import java.math.BigDecimal;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import spharos.msg.domain.product.entity.ProductSalesInfo;
-import spharos.msg.domain.review.dto.ReviewRequest;
+
+import java.math.BigDecimal;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProductSalesInfoConverter {

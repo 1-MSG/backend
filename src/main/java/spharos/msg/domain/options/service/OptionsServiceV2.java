@@ -47,7 +47,7 @@ public class OptionsServiceV2 {
         //옵션 없는 상품
         ProductOption firstProductOption = productOptions.get(0);
         Options options = firstProductOption.getOptions();
-        if (options.getOptionName() == null) {
+        if (options == null || options.getOptionName() == null) {
             return ApiResponse.of(SuccessStatus.OPTION_TYPE_SUCCESS, optionTypeDtos);
         }
         //현재 옵션 저장
@@ -68,10 +68,10 @@ public class OptionsServiceV2 {
     public ApiResponse<List<OptionsResponseDto>> getFirstOptions(Long productId) {
         Product product = productRepository.getReferenceById(productId);
         List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
-        if(productOptions.get(0).getOptions()==null||productOptions.get(0).getOptions().getOptionName()==null){
+        if (productOptions.get(0).getOptions() == null || productOptions.get(0).getOptions().getOptionName() == null) {
             return ApiResponse.of(SuccessStatus.OPTION_FIRST_SUCCESS,
                     productOptions.stream()
-                            .map(productOption -> toDto(productOption.getId(),productOption.getStock()))
+                            .map(productOption -> toDto(productOption.getId(), productOption.getStock()))
                             .toList());
         }
         if (productOptions.get(0).getOptions().getParent() == null) {
@@ -97,25 +97,29 @@ public class OptionsServiceV2 {
         Options options = productOption.getOptions();
         int stock = productOption.getStock();
         List<OptionsNameDto> optionsNameDtos = new ArrayList<>();
-        if(options==null||options.getOptionName()==null){
+        if (options == null || options.getOptionName() == null) {
             optionsNameDtos.add(toNameDto(stock));
             return ApiResponse.of(SuccessStatus.OPTION_DETAIL_SUCCESS, optionsNameDtos);
         }
 
-        optionsNameDtos.add(toNameDto(options,stock));
+        optionsNameDtos.add(toNameDto(options, stock));
 
         while (options.getParent() != null) {
-            optionsNameDtos.add(toNameDto(options.getParent(),stock));
+            optionsNameDtos.add(toNameDto(options.getParent(), stock));
             options = options.getParent();
         }
         return ApiResponse.of(SuccessStatus.OPTION_DETAIL_SUCCESS, optionsNameDtos);
     }
+
     //구매쪽 옵션
     public String getOptions(Long productOptionId) {
         ProductOption productOption = productOptionRepository.getReferenceById(productOptionId);
         Options options = productOption.getOptions();
         List<String> optionNames = new ArrayList<>();
 
+        if(options==null||options.getOptionName()==null){
+            return ("");
+        }
         optionNames.add(options.getOptionName());
 
         while (options.getParent() != null) {
@@ -135,7 +139,7 @@ public class OptionsServiceV2 {
         }
         return ApiResponse.of(SuccessStatus.OPTION_DETAIL_SUCCESS,
                 childOptions.stream()
-                        .map(option ->{
+                        .map(option -> {
                             ProductOption productOption = productOptionRepository.findByOptions(option);
                             return toDto(option, productOption.getId(), productOption.getStock());
                         })
@@ -176,10 +180,11 @@ public class OptionsServiceV2 {
         }
         return optionsResponseDtos;
     }
+
     //옵션 없는 상품용 api
     public ApiResponse<Long> getProductOptionId(Long productId) {
         Product product = productRepository.getReferenceById(productId);
         List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
-        return ApiResponse.of(SuccessStatus.PRODUCT_OPTION_ID_GET_SUCCESS,productOptions.get(0).getId());
+        return ApiResponse.of(SuccessStatus.PRODUCT_OPTION_ID_GET_SUCCESS, productOptions.get(0).getId());
     }
 }
