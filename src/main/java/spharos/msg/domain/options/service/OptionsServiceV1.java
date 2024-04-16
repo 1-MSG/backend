@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
 import static spharos.msg.domain.options.converter.OptionsConverter.toDto;
 import static spharos.msg.domain.options.converter.OptionsConverter.toNameDto;
 
