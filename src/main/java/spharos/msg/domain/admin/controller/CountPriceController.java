@@ -1,4 +1,4 @@
-package spharos.msg.domain.admin.controller.v2;
+package spharos.msg.domain.admin.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,12 +14,15 @@ import spharos.msg.domain.orders.repository.OrderRepository;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
+/**
+ * Version : V2
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/admin")
 @Slf4j
-@Tag(name = "Admin Orders V2", description = "어드민 주문 관련 페이지")
-public class CountPriceControllerV2 {
+@Tag(name = "Admin Orders", description = "어드민 주문 관련 페이지")
+public class CountPriceController {
 
     private final CountPriceServiceV2 countPriceService;
     private final OrderRepository orderRepository;

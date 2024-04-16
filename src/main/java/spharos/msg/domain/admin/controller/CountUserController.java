@@ -1,4 +1,4 @@
-package spharos.msg.domain.admin.controller.v2;
+package spharos.msg.domain.admin.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,20 +13,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import spharos.msg.domain.admin.dto.AdminResponseDto;
 import spharos.msg.domain.admin.dto.AdminResponseDto.MonthlySignupCount;
-import spharos.msg.domain.admin.service.Impl.CountUserServiceImplV2;
+import spharos.msg.domain.admin.service.CountUserService;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
+/**
+ * Version : V2
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/admin/users")
-@Tag(name = "Admin Users V2", description = "어드민 관련 페이지")
-public class CountUserControllerV2 {
+@Tag(name = "Admin Users", description = "어드민 관련 페이지")
+public class CountUserController {
 
-    private final CountUserServiceImplV2 countUserService;
+    private final CountUserService countUserService;
 
-    //전체회원 정보 조회
-    //Pageable
     @Operation(summary = "전체 회원 정보 조회 API", description = "전체 회원에 대한 정보를 반환합니다.")
     @GetMapping("/search-all")
     private ApiResponse<List<AdminResponseDto.SearchAllInfo>> SearchAllUsersApi(

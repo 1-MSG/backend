@@ -29,7 +29,10 @@ import spharos.msg.global.redis.RedisService;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-//@Primary
+/**
+ * Version Upgrade
+ * So Not Use
+ */
 public class CountUserServiceImplV1 implements CountUserService {
 
     private final UsersRepository usersRepository;

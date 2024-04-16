@@ -56,6 +56,7 @@ public class AuthServiceImplV2 implements AuthService {
     @Transactional(readOnly = true)
     @Override
     public AuthResponse.LoginResponseDto login(AuthRequest.LoginRequestDto dto) {
+        log.info("dto.loginId = {}", dto.getLoginId());
         Users findUser = usersRepository.findByLoginId(dto.getLoginId())
                 .orElseThrow(() -> new UsersException(ErrorStatus.LOG_IN_UNION_FAIL));
 

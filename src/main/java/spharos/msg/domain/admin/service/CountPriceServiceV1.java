@@ -19,6 +19,10 @@ import spharos.msg.domain.orders.service.OrderProductService;
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+/**
+ * Version Upgrade
+ * So Not Use
+ */
 public class CountPriceServiceV1 {
 
     private static final long FIXED_TABLE_ID = 1L;
