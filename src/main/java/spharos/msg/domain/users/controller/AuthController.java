@@ -1,4 +1,4 @@
-package spharos.msg.domain.users.controller.v2;
+package spharos.msg.domain.users.controller;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -18,17 +18,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import spharos.msg.domain.users.dto.request.AuthRequest;
 import spharos.msg.domain.users.dto.response.AuthResponse;
-import spharos.msg.domain.users.service.impl.v2.AuthServiceImplV2;
+import spharos.msg.domain.users.service.AuthService;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/auth")
-@Tag(name = "Auth V2", description = "사용자 인증 관련 API")
-public class AuthControllerV2 {
+@Tag(name = "Auth", description = "사용자 인증 관련 API")
+public class AuthController {
 
-    private final AuthServiceImplV2 authService;
+    private final AuthService authService;
 
     @Operation(summary = "통합회원가입", description = "통합회원 회원가입")
     @PostMapping("/signup")

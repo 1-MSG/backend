@@ -1,4 +1,4 @@
-package spharos.msg.domain.users.controller.v2;
+package spharos.msg.domain.users.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import spharos.msg.domain.users.dto.request.AddressRequest;
 import spharos.msg.domain.users.dto.response.AddressResponse;
 import spharos.msg.domain.users.service.AddressService;
-import spharos.msg.domain.users.service.impl.v2.AddressServiceImplV2;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
@@ -23,10 +22,10 @@ import spharos.msg.global.api.code.status.SuccessStatus;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/address")
-@Tag(name = "Address V2", description = "배송지 관련 API")
-public class AddressControllerV2 {
+@Tag(name = "Address", description = "배송지 관련 API")
+public class AddressController {
 
-    private final AddressServiceImplV2 addressService;
+    private final AddressService addressService;
 
     @Operation(summary = "배송지 추가", description = "해당 회원의 배송지를 추가 합니다.")
     @PostMapping("/{userId}")

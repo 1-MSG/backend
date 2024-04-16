@@ -27,6 +27,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Primary
 public class AuthServiceImplV2 implements AuthService {
     private final UsersRepository usersRepository;
     private final AuthenticationManager authenticationManager;

@@ -25,6 +25,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Primary
 public class OAuthServiceImplV2 implements OAuthService {
 
     private final UsersRepository userRepository;

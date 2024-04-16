@@ -1,26 +1,28 @@
-package spharos.msg.domain.users.controller.v1;
+package spharos.msg.domain.users.controller;
 
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import spharos.msg.domain.users.dto.request.UsersRequest;
 import spharos.msg.domain.users.dto.response.UsersResponse;
 import spharos.msg.domain.users.service.UsersService;
-import spharos.msg.domain.users.service.impl.v1.UsersServiceImplV1;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/users")
-@Tag(name = "User V1", description = "회원 관련 API")
-public class UsersControllerV1 {
+@RequestMapping("/api/v2/users")
+@Tag(name = "User", description = "회원 관련 API")
+public class UsersController {
 
-    private final UsersServiceImplV1 usersService;
+    private final UsersService usersService;
 
     @Operation(summary = "이메일 발송",
             description = "이메일 중복 확인 후, 이메일 인증을 위한 이메일을 발송 합니다.")

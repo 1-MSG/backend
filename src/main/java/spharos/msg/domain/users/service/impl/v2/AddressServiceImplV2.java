@@ -19,6 +19,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Primary
 public class AddressServiceImplV2 implements AddressService {
 
     private final AddressRepository addressRepository;

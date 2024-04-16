@@ -8,6 +8,7 @@ import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import spharos.msg.global.redis.RedisService;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Primary
 public class UsersServiceImplV2 implements UsersService {
 
     private final JavaMailSender mailSender;

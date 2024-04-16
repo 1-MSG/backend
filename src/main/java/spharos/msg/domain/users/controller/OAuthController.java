@@ -1,4 +1,4 @@
-package spharos.msg.domain.users.controller.v2;
+package spharos.msg.domain.users.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import spharos.msg.domain.users.dto.request.OAuthRequest;
 import spharos.msg.domain.users.dto.response.OAuthResponse;
-import spharos.msg.domain.users.service.impl.v2.OAuthServiceImplV2;
+import spharos.msg.domain.users.service.OAuthService;
 import spharos.msg.global.api.ApiResponse;
 import spharos.msg.global.api.code.status.SuccessStatus;
 
@@ -20,10 +20,10 @@ import spharos.msg.global.api.code.status.SuccessStatus;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/oauth")
-@Tag(name = "OAuth V2", description = "간편 로그인 관련 API")
-public class OAuthControllerV2 {
+@Tag(name = "OAuth", description = "간편 로그인 관련 API")
+public class OAuthController {
 
-    private final OAuthServiceImplV2 oAuthService;
+    private final OAuthService oAuthService;
 
     @Operation(summary = "간편 회원가입", description = "간편회원 회원가입")
     @PostMapping("/signup")
