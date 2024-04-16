@@ -119,7 +119,9 @@ public class OptionsServiceV1 {
         ProductOption productOption = productOptionRepository.findById(productOptionId).orElseThrow();
         Options options = productOption.getOptions();
         List<String> optionNames = new ArrayList<>();
-
+        if(options==null||options.getOptionName()==null){
+            return ("");
+        }
         optionNames.add(options.getOptionName());
 
         while (options.getParent() != null) {
