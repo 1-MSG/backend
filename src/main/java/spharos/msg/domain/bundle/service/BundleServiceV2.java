@@ -70,11 +70,12 @@ public class BundleServiceV2 {
 
     private Integer getDiscountedPrice(Integer price, BigDecimal rate) {
         // 할인율 실수로 변환
-        BigDecimal decimalRate = rate.divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
+        BigDecimal decimalRate = rate.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
         // 할인 가격 계산
         BigDecimal discountedPrice = BigDecimal.valueOf(price)
-            .multiply(BigDecimal.ONE.subtract(decimalRate));
-        // 정수로 변환 하여 반환
+            .multiply(BigDecimal.ONE.subtract(decimalRate))
+            .setScale(0, RoundingMode.HALF_UP);
+        //정수로 변환하여 반환
         return discountedPrice.intValue();
     }
 }
