@@ -14,11 +14,14 @@ import spharos.msg.global.api.ApiResponse;
 
 import java.util.List;
 
+/**
+ * Version : V2
+ */
 @RestController
 @RequestMapping("/api/v2/brand")
-@Tag(name = "Brand V2", description = "브랜드 API")
+@Tag(name = "Brand", description = "브랜드 API")
 @RequiredArgsConstructor
-public class BrandControllerV2 {
+public class BrandController {
     private final BrandServiceV2 brandService;
 
     @Operation(summary = "전체 브랜드 조회",
