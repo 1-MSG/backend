@@ -17,11 +17,15 @@ import spharos.msg.domain.bundle.dto.BundleResponse.BundleDto;
 import spharos.msg.domain.bundle.service.BundleServiceV2;
 import spharos.msg.global.api.ApiResponse;
 
+/**
+ * Version : V2
+ */
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v2")
-@Tag(name = "Bundle V2", description = "특가 관련 api")
-public class BundleControllerV2 {
+@Tag(name = "Bundle", description = "특가 관련 api")
+public class BundleController {
 
     private final BundleServiceV2 bundleService;
 
