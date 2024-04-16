@@ -12,13 +12,14 @@ import spharos.msg.global.api.code.status.SuccessStatus;
 
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
 /**
  * Version Upgrade
  * So Not Use
  */
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class BrandServiceV1 {
     private final BrandRepository brandRepository;
     public ApiResponse<List<BrandResponseDto>> getBrands() {
